@@ -1,0 +1,74 @@
+Configuration	Senior_Project
+STM32CubeMX 	6.9.2
+Date	10/26/2023
+MCU	STM32L010RBTx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN2	ADC_IN2	PA2
+ADC	IN3	ADC_IN3	PA3
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+10	PC2	GPIO_Output	LoadSwitch_Select_18650
+11	PC3	GPIO_Output	LoadSwitch_Select_CMOS
+14	PA0	GPIO_Input	SD_CardDetect_Input
+15	PA1	GPIO_Output	SD_CardDetect_Output
+16	PA2	ADC_IN2	Voltage_ADC_CMOS
+17	PA3	ADC_IN3	Voltage_ADC_18650
+20	PA4	GPIO_Output	
+21	PA5	SPI1_SCK	
+22	PA6	SPI1_MISO	
+23	PA7	SPI1_MOSI	
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN2	ADC_IN2	PA2
+ADC	IN3	ADC_IN3	PA3
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+10	PC2	GPIO_Output	LoadSwitch_Select_18650
+11	PC3	GPIO_Output	LoadSwitch_Select_CMOS
+14	PA0	GPIO_Input	SD_CardDetect_Input
+15	PA1	GPIO_Output	SD_CardDetect_Output
+16	PA2	ADC_IN2	Voltage_ADC_CMOS
+17	PA3	ADC_IN3	Voltage_ADC_18650
+20	PA4	GPIO_Output	
+21	PA5	SPI1_SCK	
+22	PA6	SPI1_MISO	
+23	PA7	SPI1_MOSI	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : Senior_Project
+Project Folder : /Users/mananpatel/Documents/STM32 Files/Senior_Project
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_L0 V1.12.2
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : Yes
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+
