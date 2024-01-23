@@ -118,9 +118,8 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   MX_ADC_Init();
-  start_time_ms = HAL_GetTick();
   /* USER CODE BEGIN 2 */
-
+  start_time_ms = HAL_GetTick();
   /* USER CODE END 2 */
 
   /* Infinite loop */
