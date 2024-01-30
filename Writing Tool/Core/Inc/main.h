@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -57,20 +57,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define B1_Pin GPIO_PIN_13
-#define B1_GPIO_Port GPIOC
-#define MCO_Pin GPIO_PIN_0
-#define MCO_GPIO_Port GPIOH
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
-#define LD2_Pin GPIO_PIN_5
-#define LD2_GPIO_Port GPIOA
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
+#define Current_ADC_CMOS_Pin GPIO_PIN_2
+#define Current_ADC_CMOS_GPIO_Port GPIOC
+#define Voltage_ADC_CMOS_Pin GPIO_PIN_3
+#define Voltage_ADC_CMOS_GPIO_Port GPIOC
+#define SD_CardDetect_Input_Pin GPIO_PIN_0
+#define SD_CardDetect_Input_GPIO_Port GPIOA
+#define SD_CardDetect_Output_Pin GPIO_PIN_1
+#define SD_CardDetect_Output_GPIO_Port GPIOA
+#define Current_ADC_18650_Pin GPIO_PIN_4
+#define Current_ADC_18650_GPIO_Port GPIOC
+#define Voltage_ADC_18650_Pin GPIO_PIN_5
+#define Voltage_ADC_18650_GPIO_Port GPIOC
+#define Load_Switch_CMOS_Pin GPIO_PIN_8
+#define Load_Switch_CMOS_GPIO_Port GPIOB
+#define Load_Switch_18650_Pin GPIO_PIN_9
+#define Load_Switch_18650_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
