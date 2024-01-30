@@ -84,7 +84,8 @@ uint32_t start_time_ms = 0;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+typedef enum { State_CMOS, State_18650 } StateMachine; //State 0 = State_CMOS State 1 = State_18650
+StateMachine state = State_CMOS;
 /* USER CODE END 0 */
 
 /**
@@ -139,6 +140,32 @@ int main(void)
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
 
 	 	  }
+	  if (state == State_CMOS) {
+	 	              // if(Voltage_Current_Read)
+	 		  	 	 if(C_CMOS >= 0.03) //threshold
+	 		  	 		 state = State_18650;  // 18650 Mode >= 20mA //1
+	 	          } else if(state == State_18650){
+	 	        	  if(C_18650 <= .01) //threshold
+	 	              state = State_CMOS;  // Cmos Mode > //2
+	 	          }
+
+	 	  else {
+//	 		  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
+//	 		  HAL_GPIO_WritePin(Load_Switch_18650_GPIO_Port, Load_Switch_18650_Pin, GPIO_PIN_RESET);
+//	 		  HAL_GPIO_WritePin(Load_Switch_CMOS_GPIO_Port, Load_Switch_CMOS_Pin, GPIO_PIN_RESET);
+//	 		  Error_Handler();
+
+	 	  }
+	 	  switch (state) {
+	 	              case State_CMOS: {  //0
+	 	            	  Switch_State = 0;
+	 	                  break;
+	 	              }
+	 	              case State_18650: { //1
+	 	            	  Switch_State = 1;
+	 	                  break;
+	 	              }
+	 	          }
 
     /* USER CODE END WHILE */
 
@@ -232,8 +259,32 @@ static void MX_ADC_Init(void)
 
   /** Configure for the selected ADC regular channel to be converted.
   */
-  sConfig.Channel = ADC_CHANNEL_15;
+  sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_13;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_14;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_15;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -294,11 +345,23 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
+                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4
+                          |Load_Switch_CMOS_Pin|Load_Switch_18650_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : SD_CardDetect_Input_Pin */
+  GPIO_InitStruct.Pin = SD_CardDetect_Input_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(SD_CardDetect_Input_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : SD_CardDetect_Output_Pin PA4 */
   GPIO_InitStruct.Pin = SD_CardDetect_Output_Pin|GPIO_PIN_4;
@@ -307,11 +370,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SD_CardDetect_Input_Pin */
-  GPIO_InitStruct.Pin = SD_CardDetect_Input_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  /*Configure GPIO pins : PB1 PB2 PB12 PB13
+                           PB14 PB15 PB3 PB4
+                           Load_Switch_CMOS_Pin Load_Switch_18650_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
+                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4
+                          |Load_Switch_CMOS_Pin|Load_Switch_18650_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(SD_CardDetect_Input_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
@@ -338,12 +406,12 @@ void process_SD_card( void )
   FIL         fil;                  //File handle
   FRESULT     fres;                 //Result after operations
 
-//Testing Buff Sizes are larger than they need to be currently *CHANGE LATER*
-  char buf[100];
-  char res_18650[17];
-  char res_C18650[17];
-  char res_CCMOS[17];
-  char res_CMOS[17];
+//Testing Buff Sizes are maybe larger than they need to be currently *CHANGE LATER*
+  char buf[1];
+  char res_18650[7];
+  char res_C18650[7];
+  char res_CCMOS[9];
+  char res_CMOS[7];
   char res_time[32];
   char res_SwitchState[7];
 
@@ -371,19 +439,19 @@ void process_SD_card( void )
     f_puts(res_time, &fil);
 
     //Write the 18650 Voltage Readings
-    sprintf(res_18650, "%.5f,", Continuous_Average); //Position B
+    sprintf(res_18650, "%.3f,", Continuous_Average); //Position B
     f_puts(res_18650, &fil);
 
     //Write the 18650 Current Readings
-    sprintf(res_C18650, "%.6f,", C_18650); //Position C
+    sprintf(res_C18650, "%.3f,", C_18650); //Position C
     f_puts(res_C18650, &fil);
 
     //Write the CMOS Voltage Readings
-    sprintf(res_CMOS, "%.5f,", V_CMOS); //Position D
+    sprintf(res_CMOS, "%.3f,", V_CMOS); //Position D
     f_puts(res_CMOS,&fil);
 
     //Write the CMOS Current Readings
-    sprintf(res_CCMOS, "%.6f,", C_CMOS); //Position E
+    sprintf(res_CCMOS, "%.3f,", C_CMOS); //Position E
     f_puts(res_CCMOS, &fil);
 
     //Writes the Switch State, 0 = State_CMOS / 1 = State_18650
@@ -495,14 +563,34 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 }
 
 void ADC_Select_VoltageCMOS(void){
+ADC_ChannelConfTypeDef sConfig = {0};
+sConfig.Channel = ADC_CHANNEL_13;
+sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+{
+Error_Handler();
+}
 
 }
 
 void ADC_Select_Current18650(void){
-
+ADC_ChannelConfTypeDef sConfig = {0};
+sConfig.Channel = ADC_CHANNEL_14;
+sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+{
+	    Error_Handler();
+}
 }
 
 void ADC_Select_CurrentCMOS(void){
+ADC_ChannelConfTypeDef sConfig = {0};
+sConfig.Channel = ADC_CHANNEL_12;
+sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+{
+Error_Handler();
+}
 
 }
 

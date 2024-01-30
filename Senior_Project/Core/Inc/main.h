@@ -57,10 +57,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define Current_ADC_CMOS_Pin GPIO_PIN_2
+#define Current_ADC_CMOS_GPIO_Port GPIOC
+#define Voltage_ADC_CMOS_Pin GPIO_PIN_3
+#define Voltage_ADC_CMOS_GPIO_Port GPIOC
+#define SD_CardDetect_Input_Pin GPIO_PIN_0
+#define SD_CardDetect_Input_GPIO_Port GPIOA
 #define SD_CardDetect_Output_Pin GPIO_PIN_1
 #define SD_CardDetect_Output_GPIO_Port GPIOA
-#define SD_CardDetect_Input_Pin GPIO_PIN_8
-#define SD_CardDetect_Input_GPIO_Port GPIOC
+#define Current_ADC_18650_Pin GPIO_PIN_4
+#define Current_ADC_18650_GPIO_Port GPIOC
+#define Voltage_ADC_18650_Pin GPIO_PIN_5
+#define Voltage_ADC_18650_GPIO_Port GPIOC
+#define Load_Switch_CMOS_Pin GPIO_PIN_8
+#define Load_Switch_CMOS_GPIO_Port GPIOB
+#define Load_Switch_18650_Pin GPIO_PIN_9
+#define Load_Switch_18650_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
