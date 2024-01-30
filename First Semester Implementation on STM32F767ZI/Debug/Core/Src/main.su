@@ -1,0 +1,15 @@
+../Core/Src/main.c:93:5:main	8	static
+../Core/Src/main.c:212:6:SystemClock_Config	88	static
+../Core/Src/main.c:267:13:MX_ADC1_Init	24	static
+../Core/Src/main.c:327:13:MX_SPI1_Init	8	static
+../Core/Src/main.c:367:13:MX_GPIO_Init	40	static
+../Core/Src/main.c:419:6:process_SD_card	8488	static
+../Core/Src/main.c:511:6:Measurement_of_ADC_Voltage_18650	24	static
+../Core/Src/main.c:529:6:Measurement_of_ADC_Voltage_CMOS	24	static
+../Core/Src/main.c:547:6:Measurement_of_ADC_Current_CMOS	24	static
+../Core/Src/main.c:565:6:Measurement_of_ADC_Current_18650	24	static
+../Core/Src/main.c:587:6:ADC_Select_Voltage18650	24	static
+../Core/Src/main.c:598:6:ADC_Select_VoltageCMOS	24	static
+../Core/Src/main.c:609:6:ADC_Select_Current18650	24	static
+../Core/Src/main.c:620:6:ADC_Select_CurrentCMOS	24	static
+../Core/Src/main.c:636:6:Error_Handler	4	static,ignoring_inline_asm

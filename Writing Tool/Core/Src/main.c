@@ -57,9 +57,8 @@ static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
 /* USER CODE BEGIN PFP */
-float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages);
-float Measurement_of_ADC_Voltage_18650();
-float Measurement_of_ADC_Voltage_CMOS();
+void Measurement_of_ADC_Voltage_18650();
+void Measurement_of_ADC_Voltage_CMOS();
 void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
 void Continuous_Same_State_Average();
@@ -75,7 +74,6 @@ float V_50gain= 0.0f;
 float V_25gain = 0.0f;
 float C_CMOS = 0.0f;
 float C_18650 = 0.0f;
-float Continuous_Average = 0.0f;
 int i,j;
 unsigned int Switch_State = 0;
 float seconds_since_start = 0.0f;
@@ -84,8 +82,6 @@ uint32_t start_time_ms = 0;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-typedef enum { State_CMOS, State_18650 } StateMachine; //State 0 = State_CMOS State 1 = State_18650
-StateMachine state = State_CMOS;
 /* USER CODE END 0 */
 
 /**
@@ -132,7 +128,7 @@ int main(void)
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_SET);
 	 			  uint32_t current_time_ms = HAL_GetTick();
 	 			  seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
-	 			  Continuous_Same_State_Average();
+	 			  Measurement_of_ADC_Voltage_18650();
 	 			  process_SD_card();
 	 		  }
 	 		  else
@@ -140,32 +136,6 @@ int main(void)
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
 
 	 	  }
-	  if (state == State_CMOS) {
-	 	              // if(Voltage_Current_Read)
-	 		  	 	 if(C_CMOS >= 0.03) //threshold
-	 		  	 		 state = State_18650;  // 18650 Mode >= 20mA //1
-	 	          } else if(state == State_18650){
-	 	        	  if(C_18650 <= .01) //threshold
-	 	              state = State_CMOS;  // Cmos Mode > //2
-	 	          }
-
-	 	  else {
-//	 		  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
-//	 		  HAL_GPIO_WritePin(Load_Switch_18650_GPIO_Port, Load_Switch_18650_Pin, GPIO_PIN_RESET);
-//	 		  HAL_GPIO_WritePin(Load_Switch_CMOS_GPIO_Port, Load_Switch_CMOS_Pin, GPIO_PIN_RESET);
-//	 		  Error_Handler();
-
-	 	  }
-	 	  switch (state) {
-	 	              case State_CMOS: {  //0
-	 	            	  Switch_State = 0;
-	 	                  break;
-	 	              }
-	 	              case State_18650: { //1
-	 	            	  Switch_State = 1;
-	 	                  break;
-	 	              }
-	 	          }
 
     /* USER CODE END WHILE */
 
@@ -347,15 +317,9 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4
-                          |Load_Switch_CMOS_Pin|Load_Switch_18650_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : SD_CardDetect_Input_Pin */
   GPIO_InitStruct.Pin = SD_CardDetect_Input_Pin;
@@ -369,17 +333,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PB1 PB2 PB12 PB13
-                           PB14 PB15 PB3 PB4
-                           Load_Switch_CMOS_Pin Load_Switch_18650_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4
-                          |Load_Switch_CMOS_Pin|Load_Switch_18650_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
@@ -439,7 +392,7 @@ void process_SD_card( void )
     f_puts(res_time, &fil);
 
     //Write the 18650 Voltage Readings
-    sprintf(res_18650, "%.3f,", Continuous_Average); //Position B
+    sprintf(res_18650, "%.3f,", V_18650); //Position B
     f_puts(res_18650, &fil);
 
     //Write the 18650 Current Readings
@@ -480,7 +433,7 @@ void process_SD_card( void )
   f_mount(NULL, "", 0);
 }
 
-float Measurement_of_ADC_Voltage_18650(){
+void Measurement_of_ADC_Voltage_18650(){
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
@@ -493,11 +446,11 @@ float Measurement_of_ADC_Voltage_18650(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
+	           V_18650 = rawValue1 * V_stepSize;
 	       }
 	    HAL_ADC_Stop(&hadc);
-	    return V_18650 = rawValue1 * V_stepSize;
 }
-float Measurement_of_ADC_Voltage_CMOS(){
+void Measurement_of_ADC_Voltage_CMOS(){
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
@@ -510,9 +463,9 @@ float Measurement_of_ADC_Voltage_CMOS(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
+	           V_CMOS = rawValue1 * V_stepSize;
 	       }
 	    HAL_ADC_Stop(&hadc);
-	    return V_CMOS = rawValue1 * V_stepSize;
 }
 
 void Measurement_of_ADC_Current_18650(){
@@ -593,26 +546,6 @@ Error_Handler();
 }
 
 }
-
-void Continuous_Same_State_Average() {
-float test_voltages[] = {1.4, 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49, 1.5};
-float voltage_sum = 0;
-int x = 0;
-
-int array_length = sizeof(test_voltages) / sizeof(test_voltages[0]);
-for (i = 0; i < array_length; i++) {
-    voltage_sum += test_voltages[i];
-    x++;
-}
-
-Continuous_Average = Calculate_Continuous_Average(voltage_sum, x);
-}
-
-float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages){
-	return sum_voltages/number_of_voltages;
-}
-
-
 /* USER CODE END 4 */
 
 /**

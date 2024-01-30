@@ -69,10 +69,6 @@ void Error_Handler(void);
 #define Current_ADC_18650_GPIO_Port GPIOC
 #define Voltage_ADC_18650_Pin GPIO_PIN_5
 #define Voltage_ADC_18650_GPIO_Port GPIOC
-#define Load_Switch_CMOS_Pin GPIO_PIN_8
-#define Load_Switch_CMOS_GPIO_Port GPIOB
-#define Load_Switch_18650_Pin GPIO_PIN_9
-#define Load_Switch_18650_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

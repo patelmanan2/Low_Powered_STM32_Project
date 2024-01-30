@@ -38,34 +38,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Temp_Sproject
+BUILD_ARTIFACT_NAME := First Semester Implementation on STM32F767ZI
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Temp_Sproject.elf \
+First\ Semester\ Implementation\ on\ STM32F767ZI.elf \
 
 MAP_FILES += \
-Temp_Sproject.map \
+First\ Semester\ Implementation\ on\ STM32F767ZI.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Temp_Sproject.list \
+First\ Semester\ Implementation\ on\ STM32F767ZI.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Temp_Sproject.elf secondary-outputs
+main-build: First\ Semester\ Implementation\ on\ STM32F767ZI.elf secondary-outputs
 
 # Tool invocations
-Temp_Sproject.elf Temp_Sproject.map: $(OBJS) $(USER_OBJS) C:\Users\zlink\OneDrive\Desktop\BatterySwitchingModuleFW\BatterySwitchingModuleFW\Temp_Sproject\STM32F767ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Temp_Sproject.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\zlink\OneDrive\Desktop\BatterySwitchingModuleFW\BatterySwitchingModuleFW\Temp_Sproject\STM32F767ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Temp_Sproject.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+First\ Semester\ Implementation\ on\ STM32F767ZI.elf First\ Semester\ Implementation\ on\ STM32F767ZI.map: $(OBJS) $(USER_OBJS) C:\Users\patel\STM32CubeIDE\workspace_1.14.0\Low_Powered_STM32_Project\First\ Semester\ Implementation\ on\ STM32F767ZI\STM32F767ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "First Semester Implementation on STM32F767ZI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\patel\STM32CubeIDE\workspace_1.14.0\Low_Powered_STM32_Project\First Semester Implementation on STM32F767ZI\STM32F767ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="First Semester Implementation on STM32F767ZI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -74,14 +74,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Temp_Sproject.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Temp_Sproject.list"
+First\ Semester\ Implementation\ on\ STM32F767ZI.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "First Semester Implementation on STM32F767ZI.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Temp_Sproject.elf Temp_Sproject.list Temp_Sproject.map default.size.stdout
+	-$(RM) First\ Semester\ Implementation\ on\ STM32F767ZI.elf First\ Semester\ Implementation\ on\ STM32F767ZI.list First\ Semester\ Implementation\ on\ STM32F767ZI.map First\\ Semester\\ Implementation\\ on\\ STM32F767ZI.elf default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
