@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define Minus_Pin GPIO_PIN_0
+#define Minus_GPIO_Port GPIOC
+#define Plus_Pin GPIO_PIN_1
+#define Plus_GPIO_Port GPIOC
 #define Current_ADC_CMOS_Pin GPIO_PIN_2
 #define Current_ADC_CMOS_GPIO_Port GPIOC
 #define Voltage_ADC_CMOS_Pin GPIO_PIN_3

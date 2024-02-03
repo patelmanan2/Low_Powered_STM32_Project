@@ -45,6 +45,8 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
 
+I2C_HandleTypeDef hi2c1;
+
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
@@ -56,6 +58,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages);
 float Measurement_of_ADC_Voltage_18650();
@@ -80,6 +83,13 @@ int i,j;
 unsigned int Switch_State = 0;
 float seconds_since_start = 0.0f;
 uint32_t start_time_ms = 0;
+static uint32_t lastDebounceTime = 0;
+const uint32_t debounceDelay = 50;  // milliseconds
+const uint32_t flashingDuration = 5000; // 5 seconds
+uint32_t flashingStartTime = 0;
+float valueToAdjust = 0; // Integer value to be adjusted
+uint8_t lastPlusState = GPIO_PIN_RESET;
+uint8_t lastMinusState = GPIO_PIN_RESET;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -119,6 +129,7 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   MX_ADC_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   start_time_ms = HAL_GetTick();
   /* USER CODE END 2 */
@@ -127,6 +138,58 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
+	      uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
+
+	      if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
+	          if ((HAL_GetTick() - lastDebounceTime) > debounceDelay) {
+	              // Only update the value if the state has changed
+	              if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
+	                  (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
+	                  if (currentPlusState == GPIO_PIN_SET) {
+	                      valueToAdjust++;
+	                  } else if (currentMinusState == GPIO_PIN_SET) {
+	                      valueToAdjust--;
+	                  }
+	              }
+
+	              flashingStartTime = HAL_GetTick();
+	              while ((HAL_GetTick() - flashingStartTime) < flashingDuration) {
+	                  // Save the last state before reading the current state
+	                  lastPlusState = currentPlusState;
+	                  lastMinusState = currentMinusState;
+
+	                  currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
+	                  currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
+
+	                  // Check for subsequent button presses to restart the timer
+	                  if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
+	                      flashingStartTime = HAL_GetTick(); // Restart the 5-second interval
+
+	                      // Only update the value if the state has changed
+	                      if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
+	                          (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
+	                          if (currentPlusState == GPIO_PIN_SET) {
+	                              valueToAdjust++;
+	                          } else if (currentMinusState == GPIO_PIN_SET) {
+	                              valueToAdjust--;
+	                          }
+	                      }
+	                  }
+
+	                  HAL_GPIO_TogglePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin);
+	                  HAL_Delay(100);
+	              }
+
+	              HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
+	              lastDebounceTime = HAL_GetTick();
+	          }
+	      }
+
+	      // Save the last state at the end of the loop
+	      lastPlusState = currentPlusState;
+	      lastMinusState = currentMinusState;
+
 	  if (HAL_GPIO_ReadPin(SD_CardDetect_Input_GPIO_Port, SD_CardDetect_Input_Pin) == GPIO_PIN_SET)
 	 		  {
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_SET);
@@ -182,6 +245,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -210,6 +274,12 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
+  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
@@ -296,6 +366,54 @@ static void MX_ADC_Init(void)
 }
 
 /**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.Timing = 0x00000708;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Analogue filter
+  */
+  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Digital filter
+  */
+  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
   * @brief SPI1 Initialization Function
   * @param None
   * @retval None
@@ -356,6 +474,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
                           |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4
                           |Load_Switch_CMOS_Pin|Load_Switch_18650_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : Minus_Pin Plus_Pin */
+  GPIO_InitStruct.Pin = Minus_Pin|Plus_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SD_CardDetect_Input_Pin */
   GPIO_InitStruct.Pin = SD_CardDetect_Input_Pin;
@@ -435,7 +559,7 @@ void process_SD_card( void )
     //write the data
 
     //Write the Time for each write
-    sprintf(res_time,"%.3f,", seconds_since_start); //Position A
+    sprintf(res_time,"%.3f,", valueToAdjust); //Position A //seconds since start, changed for testing
     f_puts(res_time, &fil);
 
     //Write the 18650 Voltage Readings

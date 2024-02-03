@@ -38,34 +38,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Writing Tool
+BUILD_ARTIFACT_NAME := Senior_Project
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Writing\ Tool.elf \
+Senior_Project.elf \
 
 MAP_FILES += \
-Writing\ Tool.map \
+Senior_Project.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Writing\ Tool.list \
+Senior_Project.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Writing\ Tool.elf secondary-outputs
+main-build: Senior_Project.elf secondary-outputs
 
 # Tool invocations
-Writing\ Tool.elf Writing\ Tool.map: $(OBJS) $(USER_OBJS) C:\Users\patel\STM32CubeIDE\workspace_1.14.0\Low_Powered_STM32_Project\Writing\ Tool\STM32L010RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Writing Tool.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\patel\STM32CubeIDE\workspace_1.14.0\Low_Powered_STM32_Project\Writing Tool\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing Tool.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Senior_Project.elf Senior_Project.map: $(OBJS) $(USER_OBJS) C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Senior_Project\STM32L010RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Senior_Project.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Senior_Project\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Senior_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -74,14 +74,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Writing\ Tool.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Writing Tool.list"
+Senior_Project.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Senior_Project.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Writing\ Tool.elf Writing\ Tool.list Writing\ Tool.map Writing\\ Tool.elf default.size.stdout
+	-$(RM) Senior_Project.elf Senior_Project.list Senior_Project.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
