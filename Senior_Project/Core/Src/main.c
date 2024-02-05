@@ -142,6 +142,7 @@ int main(void)
 	      uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
 
 	      if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
+	    	  //set to high state
 	          if ((HAL_GetTick() - lastDebounceTime) > debounceDelay) {
 	              // Only update the value if the state has changed
 	              if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
@@ -190,6 +191,12 @@ int main(void)
 	      lastPlusState = currentPlusState;
 	      lastMinusState = currentMinusState;
 
+
+
+
+	      //BootUp(); < 1 second
+
+
 	  if (HAL_GPIO_ReadPin(SD_CardDetect_Input_GPIO_Port, SD_CardDetect_Input_Pin) == GPIO_PIN_SET)
 	 		  {
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_SET);
@@ -229,6 +236,8 @@ int main(void)
 	 	                  break;
 	 	              }
 	 	          }
+
+
 
     /* USER CODE END WHILE */
 
