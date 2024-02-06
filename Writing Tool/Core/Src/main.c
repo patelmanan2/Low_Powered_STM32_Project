@@ -533,6 +533,8 @@ void setNumber() {
 		        HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
 
 		    }
+		    /*may need to implement state for numbers entered over 7 and numbers
+		    under zero */
 		    //testing
 		}
 
