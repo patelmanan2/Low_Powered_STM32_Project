@@ -82,6 +82,8 @@ unsigned int Switch_State = 0;
 float seconds_since_start = 0.0f;
 uint32_t start_time_ms = 0;
 float valueToAdjust = 0; // Integer value to be adjusted
+int current_State = 0;
+int previous_State = 0;
 
 /* USER CODE END PFP */
 
@@ -140,11 +142,19 @@ int main(void)
 	 			  seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
 	 			  //process_SD_card();
 
-	 			 if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin))
-	 			 		{
-	 			 			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
-	 			 		}
-	 			//readNumber();
+//	 			 if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin))
+//	 			 		{
+//	 			 			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+//	 			 		}
+	 			readNumber();
+	 			if (valueToAdjust == 7)
+	 			{
+	 				HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+	 			}
+	 			else if(valueToAdjust != 7)
+	 			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+
+
 
 
 	 		  }
@@ -365,17 +375,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin : User_Input_Status_Light_Pin */
-  GPIO_InitStruct.Pin = User_Input_Status_Light_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(User_Input_Status_Light_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin */
   GPIO_InitStruct.Pin = Discrete_Bit_0_Pin|Discrete_Bit_1_Pin;
@@ -389,8 +389,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(SD_CardDetect_Input_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SD_CardDetect_Output_Pin PA4 */
-  GPIO_InitStruct.Pin = SD_CardDetect_Output_Pin|GPIO_PIN_4;
+  /*Configure GPIO pins : SD_CardDetect_Output_Pin PA4 User_Input_Status_Light_Pin */
+  GPIO_InitStruct.Pin = SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -617,53 +617,55 @@ Error_Handler();
 
 void readNumber() {
 
-	    // First, check if any of the pins are set
-	    if(HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) ||
-	       HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) ||
-	       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-	    	// Check each combination of pins and set valueToAdjust accordingly
-	    		     if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-	    		        !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-	    		        !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-	    		        HAL_Delay(5);
-	    		        valueToAdjust = 1;
-	    		    }
-//	    		     if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//	    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//	    		        HAL_Delay(5);
-//	    		        valueToAdjust = 2;
-//	    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//	    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//	    		        HAL_Delay(5);
-//	    		        valueToAdjust = 3;
-//	    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//	    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//	    		        HAL_Delay(5);
-//	    		        valueToAdjust = 4;
-//	    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//	    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//	    		        HAL_Delay(5);
-//	    		        valueToAdjust = 5;
-//	    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//	    		        HAL_Delay(5);
-//	    		        valueToAdjust = 6;
-//	    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//	    		        HAL_Delay(5);
-//	    		        valueToAdjust = 7;
-//	    		    }
-	    }
-
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+		HAL_Delay(5);
+		valueToAdjust = 1;
+	}
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+		HAL_Delay(5);
+		valueToAdjust = 2;
+	}
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+			HAL_Delay(5);
+			valueToAdjust = 3;
+		}
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+			HAL_Delay(5);
+			valueToAdjust = 4;
+		}
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+			HAL_Delay(5);
+			valueToAdjust = 5;
+		}
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+			HAL_Delay(5);
+			valueToAdjust = 6;
+		}
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+			HAL_Delay(5);
+			valueToAdjust = 7;
+		}
+	else{
+		valueToAdjust = 10;
+	}
 
 
 }
+
 //void Continuous_Same_State_Average() {
 //float test_voltages[] = {1.4, 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49, 1.5};
 //float voltage_sum = 0;
@@ -682,6 +684,64 @@ void readNumber() {
 //	return sum_voltages/number_of_voltages;
 //}
 
+
+
+
+//		if((current_State != previous_State) || ((current_State && previous_State) == 0)){
+//			// First, check if any of the pins are set
+//				    if(HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) ||
+//				       HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) ||
+//				       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    	// Check each combination of pins and set valueToAdjust accordingly
+//				    		     if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//				    		        !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//				    		        !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    		        HAL_Delay(5);
+//				    		        valueToAdjust = 1;
+//				    		        current_State = 1;
+//				    		    }
+//				    		     if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//				    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    		        HAL_Delay(5);
+//				    		        valueToAdjust = 2;
+//				    		        current_State = 2;
+//
+//				    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//				    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    		        HAL_Delay(5);
+//				    		        valueToAdjust = 3;
+//				    		        current_State = 3;
+//				    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//				    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    		        HAL_Delay(5);
+//				    		        valueToAdjust = 4;
+//				    		        current_State = 4;
+//				    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//				    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    		        HAL_Delay(5);
+//				    		        valueToAdjust = 5;
+//				    		        current_State = 5;
+//				    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    		        HAL_Delay(5);
+//				    		        valueToAdjust = 6;
+//				    		        current_State = 6;
+//				    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//				    		        HAL_Delay(5);
+//				    		        valueToAdjust = 7;
+//				    		        current_State = 7;
+//				    		    }
+//				    }
+//				    previous_State = current_State;
+//
+//		}
 
 /* USER CODE END 4 */
 
@@ -716,3 +776,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+

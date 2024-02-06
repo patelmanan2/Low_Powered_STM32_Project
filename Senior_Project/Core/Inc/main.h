@@ -57,8 +57,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define User_Input_Status_Light_Pin GPIO_PIN_14
-#define User_Input_Status_Light_GPIO_Port GPIOC
 #define Discrete_Bit_0_Pin GPIO_PIN_0
 #define Discrete_Bit_0_GPIO_Port GPIOC
 #define Discrete_Bit_1_Pin GPIO_PIN_1
@@ -77,6 +75,8 @@ void Error_Handler(void);
 #define Voltage_ADC_18650_GPIO_Port GPIOC
 #define Discrete_Bit_2_Pin GPIO_PIN_0
 #define Discrete_Bit_2_GPIO_Port GPIOB
+#define User_Input_Status_Light_Pin GPIO_PIN_8
+#define User_Input_Status_Light_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
