@@ -253,8 +253,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         EXTI->FTSR = temp;
 
         temp = EXTI->EMR;
-        temp &= ~((uint32_t)iocurrent);
-        if ((GPIO_Init->Mode & EXTI_EVT) != 0x00U)
+        temp &= ~((uint32_t)iocurrent);        if ((GPIO_Init->Mode & EXTI_EVT) != 0x00U)
         {
           temp |= iocurrent;
         }

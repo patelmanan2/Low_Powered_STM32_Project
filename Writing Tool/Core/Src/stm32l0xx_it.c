@@ -112,10 +112,6 @@ void SVC_Handler(void)
 void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
-	if(Timer1 > 0)
-	  Timer1--;
-	if(Timer2 > 0)
-	  Timer2--;
   /* USER CODE END PendSV_IRQn 0 */
   /* USER CODE BEGIN PendSV_IRQn 1 */
 

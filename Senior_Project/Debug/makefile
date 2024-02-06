@@ -38,34 +38,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Senior_Project
+BUILD_ARTIFACT_NAME := Writing_Tool_Prototype
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Senior_Project.elf \
+Writing_Tool_Prototype.elf \
 
 MAP_FILES += \
-Senior_Project.map \
+Writing_Tool_Prototype.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Senior_Project.list \
+Writing_Tool_Prototype.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Senior_Project.elf secondary-outputs
+main-build: Writing_Tool_Prototype.elf secondary-outputs
 
 # Tool invocations
-Senior_Project.elf Senior_Project.map: $(OBJS) $(USER_OBJS) C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Senior_Project\STM32L010RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Senior_Project.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Senior_Project\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Senior_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Writing_Tool_Prototype.elf Writing_Tool_Prototype.map: $(OBJS) $(USER_OBJS) C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Senior_Project\STM32L010RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Senior_Project\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -74,14 +74,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Senior_Project.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Senior_Project.list"
+Writing_Tool_Prototype.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Writing_Tool_Prototype.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Senior_Project.elf Senior_Project.list Senior_Project.map default.size.stdout
+	-$(RM) Writing_Tool_Prototype.elf Writing_Tool_Prototype.list Writing_Tool_Prototype.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

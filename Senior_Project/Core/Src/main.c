@@ -45,8 +45,6 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
 
-I2C_HandleTypeDef hi2c1;
-
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
@@ -58,19 +56,19 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
-static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages);
 float Measurement_of_ADC_Voltage_18650();
 float Measurement_of_ADC_Voltage_CMOS();
 void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
-void Continuous_Same_State_Average();
+//void Continuous_Same_State_Average();
 void process_SD_card(void);
 void ADC_Select_Voltage18650(void);
 void ADC_Select_VoltageCMOS(void);
 void ADC_Select_Current18650(void);
 void ADC_Select_CurrentCMOS(void);
+void readNumber();
 
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
@@ -83,19 +81,14 @@ int i,j;
 unsigned int Switch_State = 0;
 float seconds_since_start = 0.0f;
 uint32_t start_time_ms = 0;
-static uint32_t lastDebounceTime = 0;
-const uint32_t debounceDelay = 50;  // milliseconds
-const uint32_t flashingDuration = 5000; // 5 seconds
-uint32_t flashingStartTime = 0;
 float valueToAdjust = 0; // Integer value to be adjusted
-uint8_t lastPlusState = GPIO_PIN_RESET;
-uint8_t lastMinusState = GPIO_PIN_RESET;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-typedef enum { State_CMOS, State_18650 } StateMachine; //State 0 = State_CMOS State 1 = State_18650
-StateMachine state = State_CMOS;
+//typedef enum { State_CMOS, State_18650 } StateMachine; //State 0 = State_CMOS State 1 = State_18650
+//StateMachine state = State_CMOS;
 /* USER CODE END 0 */
 
 /**
@@ -129,7 +122,6 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   MX_ADC_Init();
-  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   start_time_ms = HAL_GetTick();
   /* USER CODE END 2 */
@@ -138,63 +130,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
-	      uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
 
-	      if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
-	    	  //set to high state
-	          if ((HAL_GetTick() - lastDebounceTime) > debounceDelay) {
-	              // Only update the value if the state has changed
-	              if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
-	                  (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
-	                  if (currentPlusState == GPIO_PIN_SET) {
-	                      valueToAdjust++;
-	                  } else if (currentMinusState == GPIO_PIN_SET) {
-	                      valueToAdjust--;
-	                  }
-	              }
-
-	              flashingStartTime = HAL_GetTick();
-	              while ((HAL_GetTick() - flashingStartTime) < flashingDuration) {
-	                  // Save the last state before reading the current state
-	                  lastPlusState = currentPlusState;
-	                  lastMinusState = currentMinusState;
-
-	                  currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
-	                  currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
-
-	                  // Check for subsequent button presses to restart the timer
-	                  if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
-	                      flashingStartTime = HAL_GetTick(); // Restart the 5-second interval
-
-	                      // Only update the value if the state has changed
-	                      if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
-	                          (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
-	                          if (currentPlusState == GPIO_PIN_SET) {
-	                              valueToAdjust++;
-	                          } else if (currentMinusState == GPIO_PIN_SET) {
-	                              valueToAdjust--;
-	                          }
-	                      }
-	                  }
-
-	                  HAL_GPIO_TogglePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin);
-	                  HAL_Delay(100);
-	              }
-
-	              HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
-	              lastDebounceTime = HAL_GetTick();
-	          }
-	      }
-
-	      // Save the last state at the end of the loop
-	      lastPlusState = currentPlusState;
-	      lastMinusState = currentMinusState;
-
-
-
-
-	      //BootUp(); < 1 second
 
 
 	  if (HAL_GPIO_ReadPin(SD_CardDetect_Input_GPIO_Port, SD_CardDetect_Input_Pin) == GPIO_PIN_SET)
@@ -202,40 +138,47 @@ int main(void)
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_SET);
 	 			  uint32_t current_time_ms = HAL_GetTick();
 	 			  seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
-	 			  Continuous_Same_State_Average();
-	 			  process_SD_card();
+	 			  //process_SD_card();
+
+	 			 if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin))
+	 			 		{
+	 			 			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+	 			 		}
+	 			//readNumber();
+
+
 	 		  }
 	 		  else
 	 		  {
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
 
 	 	  }
-	  if (state == State_CMOS) {
-	 	              // if(Voltage_Current_Read)
-	 		  	 	 if(C_CMOS >= 0.03) //threshold
-	 		  	 		 state = State_18650;  // 18650 Mode >= 20mA //1
-	 	          } else if(state == State_18650){
-	 	        	  if(C_18650 <= .01) //threshold
-	 	              state = State_CMOS;  // Cmos Mode > //2
-	 	          }
-
-	 	  else {
-//	 		  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
-//	 		  HAL_GPIO_WritePin(Load_Switch_18650_GPIO_Port, Load_Switch_18650_Pin, GPIO_PIN_RESET);
-//	 		  HAL_GPIO_WritePin(Load_Switch_CMOS_GPIO_Port, Load_Switch_CMOS_Pin, GPIO_PIN_RESET);
-//	 		  Error_Handler();
-
-	 	  }
-	 	  switch (state) {
-	 	              case State_CMOS: {  //0
-	 	            	  Switch_State = 0;
-	 	                  break;
-	 	              }
-	 	              case State_18650: { //1
-	 	            	  Switch_State = 1;
-	 	                  break;
-	 	              }
-	 	          }
+//	  if (state == State_CMOS) {
+//	 	              // if(Voltage_Current_Read)
+//	 		  	 	 if(C_CMOS >= 0.03) //threshold
+//	 		  	 		 state = State_18650;  // 18650 Mode >= 20mA //1
+//	 	          } else if(state == State_18650){
+//	 	        	  if(C_18650 <= .01) //threshold
+//	 	              state = State_CMOS;  // Cmos Mode > //2
+//	 	          }
+//
+//	 	  else {
+////	 		  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
+////	 		  HAL_GPIO_WritePin(Load_Switch_18650_GPIO_Port, Load_Switch_18650_Pin, GPIO_PIN_RESET);
+////	 		  HAL_GPIO_WritePin(Load_Switch_CMOS_GPIO_Port, Load_Switch_CMOS_Pin, GPIO_PIN_RESET);
+////	 		  Error_Handler();
+//
+//	 	  }
+//	 	  switch (state) {
+//	 	              case State_CMOS: {  //0
+//	 	            	  Switch_State = 0;
+//	 	                  break;
+//	 	              }
+//	 	              case State_18650: { //1
+//	 	            	  Switch_State = 1;
+//	 	                  break;
+//	 	              }
+//	 	          }
 
 
 
@@ -254,7 +197,6 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -283,12 +225,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
-  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
@@ -375,54 +311,6 @@ static void MX_ADC_Init(void)
 }
 
 /**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_I2C1_Init(void)
-{
-
-  /* USER CODE BEGIN I2C1_Init 0 */
-
-  /* USER CODE END I2C1_Init 0 */
-
-  /* USER CODE BEGIN I2C1_Init 1 */
-
-  /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x00000708;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Analogue filter
-  */
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Digital filter
-  */
-  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
   * @brief SPI1 Initialization Function
   * @param None
   * @retval None
@@ -477,15 +365,20 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4
-                          |Load_Switch_CMOS_Pin|Load_Switch_18650_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : Minus_Pin Plus_Pin */
-  GPIO_InitStruct.Pin = Minus_Pin|Plus_Pin;
+  /*Configure GPIO pin : User_Input_Status_Light_Pin */
+  GPIO_InitStruct.Pin = User_Input_Status_Light_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(User_Input_Status_Light_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin */
+  GPIO_InitStruct.Pin = Discrete_Bit_0_Pin|Discrete_Bit_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -503,16 +396,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB1 PB2 PB12 PB13
-                           PB14 PB15 PB3 PB4
-                           Load_Switch_CMOS_Pin Load_Switch_18650_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4
-                          |Load_Switch_CMOS_Pin|Load_Switch_18650_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  /*Configure GPIO pin : Discrete_Bit_2_Pin */
+  GPIO_InitStruct.Pin = Discrete_Bit_2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(Discrete_Bit_2_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
@@ -727,23 +615,72 @@ Error_Handler();
 
 }
 
-void Continuous_Same_State_Average() {
-float test_voltages[] = {1.4, 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49, 1.5};
-float voltage_sum = 0;
-int x = 0;
+void readNumber() {
 
-int array_length = sizeof(test_voltages) / sizeof(test_voltages[0]);
-for (i = 0; i < array_length; i++) {
-    voltage_sum += test_voltages[i];
-    x++;
-}
+	    // First, check if any of the pins are set
+	    if(HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) ||
+	       HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) ||
+	       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+	    	// Check each combination of pins and set valueToAdjust accordingly
+	    		     if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+	    		        !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+	    		        !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+	    		        HAL_Delay(5);
+	    		        valueToAdjust = 1;
+	    		    }
+//	    		     if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//	    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//	    		        HAL_Delay(5);
+//	    		        valueToAdjust = 2;
+//	    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//	    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//	    		        HAL_Delay(5);
+//	    		        valueToAdjust = 3;
+//	    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//	    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//	    		        HAL_Delay(5);
+//	    		        valueToAdjust = 4;
+//	    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//	    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//	    		        HAL_Delay(5);
+//	    		        valueToAdjust = 5;
+//	    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//	    		        HAL_Delay(5);
+//	    		        valueToAdjust = 6;
+//	    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
+//	    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
+//	    		        HAL_Delay(5);
+//	    		        valueToAdjust = 7;
+//	    		    }
+	    }
 
-Continuous_Average = Calculate_Continuous_Average(voltage_sum, x);
-}
 
-float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages){
-	return sum_voltages/number_of_voltages;
+
 }
+//void Continuous_Same_State_Average() {
+//float test_voltages[] = {1.4, 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49, 1.5};
+//float voltage_sum = 0;
+//int x = 0;
+//
+//int array_length = sizeof(test_voltages) / sizeof(test_voltages[0]);
+//for (i = 0; i < array_length; i++) {
+//    voltage_sum += test_voltages[i];
+//    x++;
+//}
+//
+//Continuous_Average = Calculate_Continuous_Average(voltage_sum, x);
+//}
+//
+//float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages){
+//	return sum_voltages/number_of_voltages;
+//}
 
 
 /* USER CODE END 4 */
