@@ -140,23 +140,19 @@ int main(void)
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_SET);
 	 			  uint32_t current_time_ms = HAL_GetTick();
 	 			  seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
-	 			  //process_SD_card();
+	 			  process_SD_card();
 
 //	 			 if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin))
 //	 			 		{
 //	 			 			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
 //	 			 		}
 	 			readNumber();
-	 			if (valueToAdjust == 7)
-	 			{
-	 				HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
-	 			}
-	 			else if(valueToAdjust != 7)
-	 			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
-
-
-
-
+//	 			if (valueToAdjust == 7)
+//	 			{
+//	 				//HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+//	 			}
+//	 			else if(valueToAdjust != 20)
+//	 			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
 	 		  }
 	 		  else
 	 		  {
@@ -375,7 +371,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Pin|User_Input_Status_Light_Green_Pin
+                          |User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin */
   GPIO_InitStruct.Pin = Discrete_Bit_0_Pin|Discrete_Bit_1_Pin;
@@ -389,8 +386,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(SD_CardDetect_Input_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SD_CardDetect_Output_Pin PA4 User_Input_Status_Light_Pin */
-  GPIO_InitStruct.Pin = SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Pin;
+  /*Configure GPIO pins : SD_CardDetect_Output_Pin PA4 User_Input_Status_Light_Pin User_Input_Status_Light_Green_Pin
+                           User_Input_Status_Light_Blue_Pin */
+  GPIO_InitStruct.Pin = SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Pin|User_Input_Status_Light_Green_Pin
+                          |User_Input_Status_Light_Blue_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -622,46 +621,78 @@ void readNumber() {
 		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
 		HAL_Delay(5);
 		valueToAdjust = 1;
+		// Set Red
+		HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+
 	}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
 		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
 		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
 		HAL_Delay(5);
 		valueToAdjust = 2;
+		// Set Yellow
+		HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+
 	}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
 			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
 			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
 			HAL_Delay(5);
 			valueToAdjust = 3;
+			// Set Green
+			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
 			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
 			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
 			HAL_Delay(5);
 			valueToAdjust = 4;
+			// Set Cyan
+			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
 			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
 			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
 			HAL_Delay(5);
 			valueToAdjust = 5;
+			// Set Blue
+			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
 			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
 			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
 			HAL_Delay(5);
 			valueToAdjust = 6;
+			// Set Magenta
+			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
 			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
 			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
 			HAL_Delay(5);
 			valueToAdjust = 7;
+			// Set White
+			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+
 		}
-	else{
-		valueToAdjust = 10;
-	}
 
 
 }
@@ -776,4 +807,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-

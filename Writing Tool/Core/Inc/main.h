@@ -77,6 +77,10 @@ void Error_Handler(void);
 #define Voltage_ADC_18650_GPIO_Port GPIOC
 #define User_Input_Status_Light_Pin GPIO_PIN_0
 #define User_Input_Status_Light_GPIO_Port GPIOB
+#define User_Input_Status_Light_Green_Pin GPIO_PIN_1
+#define User_Input_Status_Light_Green_GPIO_Port GPIOB
+#define User_Input_Status_Light_Blue_Pin GPIO_PIN_2
+#define User_Input_Status_Light_Blue_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

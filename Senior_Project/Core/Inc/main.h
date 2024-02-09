@@ -77,6 +77,10 @@ void Error_Handler(void);
 #define Discrete_Bit_2_GPIO_Port GPIOB
 #define User_Input_Status_Light_Pin GPIO_PIN_8
 #define User_Input_Status_Light_GPIO_Port GPIOA
+#define User_Input_Status_Light_Green_Pin GPIO_PIN_9
+#define User_Input_Status_Light_Green_GPIO_Port GPIOA
+#define User_Input_Status_Light_Blue_Pin GPIO_PIN_10
+#define User_Input_Status_Light_Blue_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
