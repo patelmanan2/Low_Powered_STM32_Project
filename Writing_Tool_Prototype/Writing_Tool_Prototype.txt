@@ -1,0 +1,92 @@
+Configuration	Writing_Tool_Prototype
+STM32CubeMX 	6.10.0
+Date	02/12/2024
+MCU	STM32L010RBTx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN12	ADC_IN12	PC2
+ADC	IN13	ADC_IN13	PC3
+ADC	IN14	ADC_IN14	PC4
+ADC	IN15	ADC_IN15	PC5
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+8	PC0	GPIO_Input	Discrete_Bit_0
+9	PC1	GPIO_Input	Discrete_Bit_1
+10	PC2	ADC_IN12	Current_ADC_CMOS
+11	PC3	ADC_IN13	Voltage_ADC_CMOS
+14	PA0	GPIO_Input	SD_CardDetect_Input
+15	PA1	GPIO_Output	SD_CardDetect_Output
+20	PA4	GPIO_Output	
+21	PA5	SPI1_SCK	
+22	PA6	SPI1_MISO	
+23	PA7	SPI1_MOSI	
+24	PC4	ADC_IN14	Current_ADC_18650
+25	PC5	ADC_IN15	Voltage_ADC_18650
+26	PB0	GPIO_Input	Discrete_Bit_2
+41	PA8	GPIO_Output	User_Input_Status_Light
+42	PA9	GPIO_Output	User_Input_Status_Light_Green
+43	PA10	GPIO_Output	User_Input_Status_Light_Blue
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN12	ADC_IN12	PC2
+ADC	IN13	ADC_IN13	PC3
+ADC	IN14	ADC_IN14	PC4
+ADC	IN15	ADC_IN15	PC5
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+8	PC0	GPIO_Input	Discrete_Bit_0
+9	PC1	GPIO_Input	Discrete_Bit_1
+10	PC2	ADC_IN12	Current_ADC_CMOS
+11	PC3	ADC_IN13	Voltage_ADC_CMOS
+14	PA0	GPIO_Input	SD_CardDetect_Input
+15	PA1	GPIO_Output	SD_CardDetect_Output
+20	PA4	GPIO_Output	
+21	PA5	SPI1_SCK	
+22	PA6	SPI1_MISO	
+23	PA7	SPI1_MOSI	
+24	PC4	ADC_IN14	Current_ADC_18650
+25	PC5	ADC_IN15	Voltage_ADC_18650
+26	PB0	GPIO_Input	Discrete_Bit_2
+41	PA8	GPIO_Output	User_Input_Status_Light
+42	PA9	GPIO_Output	User_Input_Status_Light_Green
+43	PA10	GPIO_Output	User_Input_Status_Light_Blue
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : Writing_Tool_Prototype
+Project Folder : C:\Users\patel\STM32CubeIDE\workspace_1.14.0\Low_Powered_STM32_Project\Senior_Project
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_L0 V1.12.2
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+
