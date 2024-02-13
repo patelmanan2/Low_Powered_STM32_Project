@@ -64,6 +64,8 @@ void ADC_Select_VoltageCMOS(void);
 void ADC_Select_Current18650(void);
 void ADC_Select_CurrentCMOS(void);
 void setNumber();
+void User_Input_Light_Cycel();
+void Button_Debounce_Set();
 
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
@@ -79,7 +81,7 @@ static uint32_t lastDebounceTime = 0;
 const uint32_t debounceDelay = 50;       // milliseconds
 const uint32_t flashingDuration = 150;  // 5 seconds
 uint32_t flashingStartTime = 0;
-float valueToAdjust = 1;  // Integer value to be adjusted
+float valueToAdjust = 0;  // Integer value to be adjusted
 uint8_t lastPlusState = GPIO_PIN_RESET;
 uint8_t lastMinusState = GPIO_PIN_RESET;
 /* USER CODE END PFP */
@@ -127,171 +129,14 @@ int main(void) {
      /* Infinite loop */
      /* USER CODE BEGIN WHILE */
      while (1) {
-          uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
-          uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
-
-          if (currentPlusState == GPIO_PIN_SET ||
-              currentMinusState == GPIO_PIN_SET) {
-               // set to high state
-               if ((HAL_GetTick() - lastDebounceTime) > debounceDelay) {
-                    // Only update the value if the state has changed
-                    if ((currentPlusState == GPIO_PIN_SET &&
-                         lastPlusState != GPIO_PIN_SET) ||
-                        (currentMinusState == GPIO_PIN_SET &&
-                         lastMinusState != GPIO_PIN_SET)) {
-                         if (currentPlusState == GPIO_PIN_SET) {
-                              valueToAdjust++;
-                              if (valueToAdjust >= 7) {
-                                   valueToAdjust = 7;
-                              }
-                         }
-
-                         else if (currentMinusState == GPIO_PIN_SET) {
-                              valueToAdjust--;
-                              if (valueToAdjust < 1) {
-                                   valueToAdjust = 1;
-                              }
-                         }
-                    }
-
-                    flashingStartTime = HAL_GetTick();
-                    while ((HAL_GetTick() - flashingStartTime) <
-                           flashingDuration) {
-                         // Save the last state before reading the current state
-                         lastPlusState = currentPlusState;
-                         lastMinusState = currentMinusState;
-
-                         currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
-                         currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
-
-                         // Check for subsequent button presses to restart the
-                         // timer
-                         if (currentPlusState == GPIO_PIN_SET ||
-                             currentMinusState == GPIO_PIN_SET) {
-                              flashingStartTime =
-                                  HAL_GetTick();  // Restart the 5-second
-                                                  // interval
-
-                              // Only update the value if the state has changed
-                              if ((currentPlusState == GPIO_PIN_SET &&
-                                   lastPlusState != GPIO_PIN_SET) ||
-                                  (currentMinusState == GPIO_PIN_SET &&
-                                   lastMinusState != GPIO_PIN_SET)) {
-                                   if (currentPlusState == GPIO_PIN_SET) {
-                                        valueToAdjust++;
-                                        if (valueToAdjust >= 7) {
-                                             valueToAdjust = 7;
-                                        }
-                                   }
-
-                                   else if (currentMinusState == GPIO_PIN_SET) {
-                                        valueToAdjust--;
-                                        if (valueToAdjust < 1) {
-                                             valueToAdjust = 1;
-                                        }
-                                   }
-                              }
-
-                              // HAL_GPIO_TogglePin(User_Input_Status_Light_GPIO_Port,
-                              // User_Input_Status_Light_Pin); HAL_Delay(100);
-                         }
-                         // 1. Set Red
-                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
-                                           User_Input_Status_Light_Pin,
-                                           GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Green_GPIO_Port,
-                             User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Blue_GPIO_Port,
-                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
-                         HAL_Delay(14);
-
-                         // 2. Set Yellow (Red + Green)
-                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
-                                           User_Input_Status_Light_Pin,
-                                           GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Green_GPIO_Port,
-                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Blue_GPIO_Port,
-                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
-                         HAL_Delay(14);
-
-                         // 3. Set Green
-                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
-                                           User_Input_Status_Light_Pin,
-                                           GPIO_PIN_RESET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Green_GPIO_Port,
-                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Blue_GPIO_Port,
-                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
-                         HAL_Delay(14);
-
-                         // 4. Set Cyan (Green + Blue)
-                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
-                                           User_Input_Status_Light_Pin,
-                                           GPIO_PIN_RESET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Green_GPIO_Port,
-                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Blue_GPIO_Port,
-                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
-                         HAL_Delay(14);
-
-                         // 5. Set Blue
-                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
-                                           User_Input_Status_Light_Pin,
-                                           GPIO_PIN_RESET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Green_GPIO_Port,
-                             User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Blue_GPIO_Port,
-                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
-                         HAL_Delay(14);
-
-                         // 6. Set Magenta (Red + Blue)
-                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
-                                           User_Input_Status_Light_Pin,
-                                           GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Green_GPIO_Port,
-                             User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Blue_GPIO_Port,
-                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
-                         HAL_Delay(14);
-
-                         // 7. Set White (Red + Green + Blue)
-                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
-                                           User_Input_Status_Light_Pin,
-                                           GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Green_GPIO_Port,
-                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
-                         HAL_GPIO_WritePin(
-                             User_Input_Status_Light_Blue_GPIO_Port,
-                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
-                         HAL_Delay(14);
-                    }
-                    lastDebounceTime = HAL_GetTick();
-               }
-
-               // Save the last state at the end of the loop
-               lastPlusState = currentPlusState;
-               lastMinusState = currentMinusState;
-
-               /* USER CODE END WHILE */
-
-               /* USER CODE BEGIN 3 */
-          }
+    	  Button_Debounce_Set();
           setNumber();
           HAL_Delay(25);
+          Measurement_of_ADC_Voltage_18650();
+          Measurement_of_ADC_Voltage_CMOS();
+          Measurement_of_ADC_Current_CMOS();
+          Measurement_of_ADC_Current_18650();
+
           /* USER CODE END 3 */
      }
 }
@@ -344,7 +189,7 @@ static void MX_ADC_Init(void) {
 
      /* USER CODE END ADC_Init 0 */
 
-     ADC_ChannelConfTypeDef sConfig = {0};
+     //ADC_ChannelConfTypeDef sConfig = {0};
 
      /* USER CODE BEGIN ADC_Init 1 */
 
@@ -375,36 +220,36 @@ static void MX_ADC_Init(void) {
      }
 
      /** Configure for the selected ADC regular channel to be converted.
-      */
+
      sConfig.Channel = ADC_CHANNEL_12;
      sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
      if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
           Error_Handler();
      }
 
-     /** Configure for the selected ADC regular channel to be converted.
-      */
+     * Configure for the selected ADC regular channel to be converted.
+
      sConfig.Channel = ADC_CHANNEL_13;
      if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
           Error_Handler();
      }
 
-     /** Configure for the selected ADC regular channel to be converted.
-      */
+     * Configure for the selected ADC regular channel to be converted.
+
      sConfig.Channel = ADC_CHANNEL_14;
      if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
           Error_Handler();
      }
 
-     /** Configure for the selected ADC regular channel to be converted.
-      */
+     * Configure for the selected ADC regular channel to be converted.
+
      sConfig.Channel = ADC_CHANNEL_15;
      if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
           Error_Handler();
      }
-     /* USER CODE BEGIN ADC_Init 2 */
+      USER CODE BEGIN ADC_Init 2
 
-     /* USER CODE END ADC_Init 2 */
+      USER CODE END ADC_Init 2 */
 }
 
 /**
@@ -521,14 +366,16 @@ void Measurement_of_ADC_Current_18650() {
      float V_stepSize = V_ref / ADC_resolution;
      // ADC
      /* Start ADC Conversion for ADC1 */
-     ADC_Select_Voltage18650();
+     ADC_Select_Current18650();
      HAL_ADC_Start(&hadc);
      uint16_t rawValue1;
      if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
           /* Read the ADC1 value */
           rawValue1 = HAL_ADC_GetValue(&hadc);
-          C_18650 = (((rawValue1 * V_stepSize) / 50) /
-                     .0299562);  // I_load = ((V_ADC / 50 gain) / .03 calibrated
+          C_18650 = ((rawValue1 * V_stepSize));
+
+        /// 50) /
+        //.0299562) // I_load = ((V_ADC / 50 gain) / .03 calibrated
                                  // shunt)
      }
      HAL_ADC_Stop(&hadc);
@@ -541,14 +388,15 @@ void Measurement_of_ADC_Current_CMOS() {
      float V_stepSize = V_ref / ADC_resolution;
      // ADC
      /* Start ADC Conversion for ADC1 */
-     ADC_Select_Voltage18650();
+     ADC_Select_CurrentCMOS();
      HAL_ADC_Start(&hadc);
      uint16_t rawValue1;
      if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
           /* Read the ADC1 value */
           rawValue1 = HAL_ADC_GetValue(&hadc);
-          C_CMOS = (((rawValue1 * V_stepSize) / 20) /
-                    4.713492);  // I_load = (( V_ADC / 20 Gain ) / 4.71
+          C_CMOS = ((rawValue1 * V_stepSize));
+        		  /// 20) /
+                   // 4.713492);  // I_load = (( V_ADC / 20 Gain ) / 4.71
                                 // calibrated shunt )
      }
      HAL_ADC_Stop(&hadc);
@@ -690,10 +538,197 @@ void setNumber() {
           HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port,
                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
      }
+
+     else if (valueToAdjust == 0) {
+               // value 7 = 111
+               HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+               HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+               HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+               // Set White
+               HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+                                 User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+               HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port,
+                                 User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+               HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port,
+                                 User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+          }
      /*may need to implement state for numbers entered over 7 and numbers
      under zero */
-     // testing
 }
+     // testing
+
+void User_Input_Light_Cycel(){
+	// 1. Set Red
+	                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+	                                           User_Input_Status_Light_Pin,
+	                                           GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Green_GPIO_Port,
+	                             User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Blue_GPIO_Port,
+	                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+	                         HAL_Delay(14);
+
+	                         // 2. Set Yellow (Red + Green)
+	                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+	                                           User_Input_Status_Light_Pin,
+	                                           GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Green_GPIO_Port,
+	                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Blue_GPIO_Port,
+	                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+	                         HAL_Delay(14);
+
+	                         // 3. Set Green
+	                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+	                                           User_Input_Status_Light_Pin,
+	                                           GPIO_PIN_RESET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Green_GPIO_Port,
+	                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Blue_GPIO_Port,
+	                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+	                         HAL_Delay(14);
+
+	                         // 4. Set Cyan (Green + Blue)
+	                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+	                                           User_Input_Status_Light_Pin,
+	                                           GPIO_PIN_RESET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Green_GPIO_Port,
+	                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Blue_GPIO_Port,
+	                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+	                         HAL_Delay(14);
+
+	                         // 5. Set Blue
+	                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+	                                           User_Input_Status_Light_Pin,
+	                                           GPIO_PIN_RESET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Green_GPIO_Port,
+	                             User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Blue_GPIO_Port,
+	                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+	                         HAL_Delay(14);
+
+	                         // 6. Set Magenta (Red + Blue)
+	                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+	                                           User_Input_Status_Light_Pin,
+	                                           GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Green_GPIO_Port,
+	                             User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Blue_GPIO_Port,
+	                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+	                         HAL_Delay(14);
+
+	                         // 7. Set White (Red + Green + Blue)
+	                         HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port,
+	                                           User_Input_Status_Light_Pin,
+	                                           GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Green_GPIO_Port,
+	                             User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+	                         HAL_GPIO_WritePin(
+	                             User_Input_Status_Light_Blue_GPIO_Port,
+	                             User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+	                         HAL_Delay(14);
+}
+
+void Button_Debounce_Set(){
+	uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
+	          uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
+
+	          if (currentPlusState == GPIO_PIN_SET ||
+	              currentMinusState == GPIO_PIN_SET) {
+	               // set to high state
+	               if ((HAL_GetTick() - lastDebounceTime) > debounceDelay) {
+	                    // Only update the value if the state has changed
+	                    if ((currentPlusState == GPIO_PIN_SET &&
+	                         lastPlusState != GPIO_PIN_SET) ||
+	                        (currentMinusState == GPIO_PIN_SET &&
+	                         lastMinusState != GPIO_PIN_SET)) {
+	                         if (currentPlusState == GPIO_PIN_SET) {
+	                              valueToAdjust++;
+	                              if (valueToAdjust >= 7) {
+	                                   valueToAdjust = 7;
+	                              }
+	                         }
+
+	                         else if (currentMinusState == GPIO_PIN_SET) {
+	                              valueToAdjust--;
+	                              if (valueToAdjust < 0) {
+	                                   valueToAdjust = 0;
+	                              }
+	                         }
+	                    }
+
+	                    flashingStartTime = HAL_GetTick();
+	                    while ((HAL_GetTick() - flashingStartTime) <
+	                           flashingDuration) {
+	                         // Save the last state before reading the current state
+	                         lastPlusState = currentPlusState;
+	                         lastMinusState = currentMinusState;
+
+	                         currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
+	                         currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
+
+	                         // Check for subsequent button presses to restart the
+	                         // timer
+	                         if (currentPlusState == GPIO_PIN_SET ||
+	                             currentMinusState == GPIO_PIN_SET) {
+	                              flashingStartTime =
+	                                  HAL_GetTick();  // Restart the 5-second
+	                                                  // interval
+
+	                              // Only update the value if the state has changed
+	                              if ((currentPlusState == GPIO_PIN_SET &&
+	                                   lastPlusState != GPIO_PIN_SET) ||
+	                                  (currentMinusState == GPIO_PIN_SET &&
+	                                   lastMinusState != GPIO_PIN_SET)) {
+	                                   if (currentPlusState == GPIO_PIN_SET) {
+	                                        valueToAdjust++;
+	                                        if (valueToAdjust >= 7) {
+	                                             valueToAdjust = 7;
+	                                        }
+	                                   }
+
+	                                   else if (currentMinusState == GPIO_PIN_SET) {
+	                                        valueToAdjust--;
+	                                        if (valueToAdjust < 0) {
+	                                             valueToAdjust = 0;
+	                                        }
+	                                   }
+	                              }
+
+	                              // HAL_GPIO_TogglePin(User_Input_Status_Light_GPIO_Port,
+	                              // User_Input_Status_Light_Pin); HAL_Delay(100);
+	                         }
+	                         // 1. Set Red
+	                         User_Input_Light_Cycel();
+	                    }
+	                    lastDebounceTime = HAL_GetTick();
+	               }
+
+	               // Save the last state at the end of the loop
+	               lastPlusState = currentPlusState;
+	               lastMinusState = currentMinusState;
+
+	               /* USER CODE END WHILE */
+
+	               /* USER CODE BEGIN 3 */
+	          }
+}
+
 
 /* USER CODE END 4 */
 

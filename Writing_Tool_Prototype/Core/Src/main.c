@@ -58,8 +58,8 @@ static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
 /* USER CODE BEGIN PFP */
 float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages);
-float Measurement_of_ADC_Voltage_18650();
-float Measurement_of_ADC_Voltage_CMOS();
+void Measurement_of_ADC_Voltage_18650();
+void Measurement_of_ADC_Voltage_CMOS();
 void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
 //void Continuous_Same_State_Average();
@@ -69,7 +69,6 @@ void ADC_Select_VoltageCMOS(void);
 void ADC_Select_Current18650(void);
 void ADC_Select_CurrentCMOS(void);
 void readNumber();
-
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
 float V_50gain= 0.0f;
@@ -178,11 +177,11 @@ int main(void)
 //	 	          }
 
     /* USER CODE END WHILE */
-  }
 
-  /* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
 
   /* USER CODE END 3 */
+}
 }
 
 /**
@@ -238,7 +237,6 @@ static void MX_ADC_Init(void)
 
   /* USER CODE END ADC_Init 0 */
 
-  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC_Init 1 */
 
@@ -268,38 +266,6 @@ static void MX_ADC_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_12;
-  sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_13;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_14;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_15;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC_Init 2 */
 
   /* USER CODE END ADC_Init 2 */
@@ -451,7 +417,7 @@ void process_SD_card(void)
 }
 
 
-float Measurement_of_ADC_Voltage_18650(){
+void Measurement_of_ADC_Voltage_18650(){
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
@@ -466,9 +432,8 @@ float Measurement_of_ADC_Voltage_18650(){
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
 	       }
 	    HAL_ADC_Stop(&hadc);
-	    return V_18650 = rawValue1 * V_stepSize;
 }
-float Measurement_of_ADC_Voltage_CMOS(){
+void Measurement_of_ADC_Voltage_CMOS(){
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
@@ -483,7 +448,6 @@ float Measurement_of_ADC_Voltage_CMOS(){
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
 	       }
 	    HAL_ADC_Stop(&hadc);
-	    return V_CMOS = rawValue1 * V_stepSize;
 }
 
 void Measurement_of_ADC_Current_18650(){
@@ -493,13 +457,14 @@ void Measurement_of_ADC_Current_18650(){
 		float V_stepSize = V_ref / ADC_resolution;
 		// ADC
 	    /* Start ADC Conversion for ADC1 */
-	    ADC_Select_Voltage18650();
+	    ADC_Select_Current18650();
 	    HAL_ADC_Start(&hadc);
 	    uint16_t rawValue1;
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
-	           C_18650 = (((rawValue1 * V_stepSize)/50)/.0299562); //I_load = ((V_ADC / 50 gain) / .03 calibrated shunt)
+	           C_18650 = ((rawValue1 * V_stepSize));
+	        		   //50)/.0299562); //I_load = ((V_ADC / 50 gain) / .03 calibrated shunt)
 	       }
 	    HAL_ADC_Stop(&hadc);
 }
@@ -511,13 +476,14 @@ void Measurement_of_ADC_Current_CMOS(){
 		float V_stepSize = V_ref / ADC_resolution;
 		// ADC
 	    /* Start ADC Conversion for ADC1 */
-	    ADC_Select_Voltage18650();
+	    ADC_Select_CurrentCMOS();
 	    HAL_ADC_Start(&hadc);
 	    uint16_t rawValue1;
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
-	           C_CMOS = (((rawValue1 * V_stepSize)/20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt )
+	           C_CMOS = ((rawValue1 * V_stepSize));
+	        		   ///20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt )
 	       }
 	    HAL_ADC_Stop(&hadc);
 }
@@ -546,12 +512,13 @@ Error_Handler();
 
 void ADC_Select_Current18650(void){
 ADC_ChannelConfTypeDef sConfig = {0};
-sConfig.Channel = ADC_CHANNEL_14;
+sConfig.Channel = ADC_CHANNEL_9;
 sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
 if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 {
 	    Error_Handler();
 }
+
 }
 
 void ADC_Select_CurrentCMOS(void){
