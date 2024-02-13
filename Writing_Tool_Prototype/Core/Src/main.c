@@ -562,6 +562,18 @@ Error_Handler();
 
 void readNumber() {
 
+	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+		HAL_Delay(5);
+		valueToAdjust = 0;
+		// Set LED to Off
+		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+
+		}
+
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
 		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
 		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
@@ -639,8 +651,6 @@ void readNumber() {
 			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
 
 		}
-
-
 }
 
 //void Continuous_Same_State_Average() {

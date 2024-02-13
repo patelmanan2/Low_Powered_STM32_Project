@@ -13,5 +13,5 @@
 ../Core/Src/main.c:531:6:ADC_Select_VoltageCMOS	2
 ../Core/Src/main.c:542:6:ADC_Select_Current18650	2
 ../Core/Src/main.c:552:6:ADC_Select_CurrentCMOS	2
-../Core/Src/main.c:563:6:readNumber	22
-../Core/Src/main.c:729:6:Error_Handler	1
+../Core/Src/main.c:563:6:readNumber	25
+../Core/Src/main.c:739:6:Error_Handler	1
