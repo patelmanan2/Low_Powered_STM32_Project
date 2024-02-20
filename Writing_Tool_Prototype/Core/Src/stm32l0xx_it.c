@@ -117,6 +117,7 @@ void PendSV_Handler(void)
 	if(Timer2 > 0)
 	  Timer2--;
   /* USER CODE END PendSV_IRQn 0 */
+	HAL_IncTick();
   /* USER CODE BEGIN PendSV_IRQn 1 */
 
   /* USER CODE END PendSV_IRQn 1 */
