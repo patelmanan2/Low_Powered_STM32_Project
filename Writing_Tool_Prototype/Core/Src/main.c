@@ -138,8 +138,8 @@ int main(void)
 	 			  seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
 	 			  readNumber();
 	 			  Measurement_of_ADC_Voltage_18650();
-	 			  //Measurement_of_ADC_Voltage_CMOS();
-	 			  //Measurement_of_ADC_Current_CMOS();
+	 			  Measurement_of_ADC_Voltage_CMOS();
+	 			  Measurement_of_ADC_Current_CMOS();
 	 			  Measurement_of_ADC_Current_18650();
 
 	 			  process_SD_card();

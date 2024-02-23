@@ -184,72 +184,51 @@ void SystemClock_Config(void) {
  * @param None
  * @retval None
  */
-static void MX_ADC_Init(void) {
-     /* USER CODE BEGIN ADC_Init 0 */
+static void MX_ADC_Init(void)
+{
 
-     /* USER CODE END ADC_Init 0 */
+  /* USER CODE BEGIN ADC_Init 0 */
+	ADC_Select_Voltage18650();
+	ADC_Select_VoltageCMOS();
+	ADC_Select_Current18650();
+	ADC_Select_CurrentCMOS();
+  /* USER CODE END ADC_Init 0 */
 
-     //ADC_ChannelConfTypeDef sConfig = {0};
+  /* USER CODE BEGIN ADC_Init 1 */
 
-     /* USER CODE BEGIN ADC_Init 1 */
+  /* USER CODE END ADC_Init 1 */
 
-     /* USER CODE END ADC_Init 1 */
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc.Instance = ADC1;
+  hadc.Init.OversamplingMode = DISABLE;
+  hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc.Init.SamplingTime = ADC_SAMPLETIME_3CYCLES_5;
+  hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
+  hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc.Init.ContinuousConvMode = ENABLE;
+  hadc.Init.DiscontinuousConvMode = DISABLE;
+  hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc.Init.DMAContinuousRequests = DISABLE;
+  hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc.Init.LowPowerAutoWait = DISABLE;
+  hadc.Init.LowPowerFrequencyMode = DISABLE;
+  hadc.Init.LowPowerAutoPowerOff = DISABLE;
+  if (HAL_ADC_Init(&hadc) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-     /** Configure the global features of the ADC (Clock, Resolution, Data
-      * Alignment and number of conversion)
-      */
-     hadc.Instance = ADC1;
-     hadc.Init.OversamplingMode = DISABLE;
-     hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-     hadc.Init.Resolution = ADC_RESOLUTION_12B;
-     hadc.Init.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-     hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
-     hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-     hadc.Init.ContinuousConvMode = DISABLE;
-     hadc.Init.DiscontinuousConvMode = DISABLE;
-     hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-     hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-     hadc.Init.DMAContinuousRequests = DISABLE;
-     hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-     hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-     hadc.Init.LowPowerAutoWait = DISABLE;
-     hadc.Init.LowPowerFrequencyMode = ENABLE;
-     hadc.Init.LowPowerAutoPowerOff = DISABLE;
-     if (HAL_ADC_Init(&hadc) != HAL_OK) {
-          Error_Handler();
-     }
+  /** Configure for the selected ADC regular channel to be converted.
+  */
 
-     /** Configure for the selected ADC regular channel to be converted.
+  /* USER CODE BEGIN ADC_Init 2 */
 
-     sConfig.Channel = ADC_CHANNEL_12;
-     sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-     if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
-          Error_Handler();
-     }
+  /* USER CODE END ADC_Init 2 */
 
-     * Configure for the selected ADC regular channel to be converted.
-
-     sConfig.Channel = ADC_CHANNEL_13;
-     if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
-          Error_Handler();
-     }
-
-     * Configure for the selected ADC regular channel to be converted.
-
-     sConfig.Channel = ADC_CHANNEL_14;
-     if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
-          Error_Handler();
-     }
-
-     * Configure for the selected ADC regular channel to be converted.
-
-     sConfig.Channel = ADC_CHANNEL_15;
-     if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
-          Error_Handler();
-     }
-      USER CODE BEGIN ADC_Init 2
-
-      USER CODE END ADC_Init 2 */
 }
 
 /**
@@ -325,12 +304,15 @@ int fputc(int ch, FILE *f)
 }
 
 void Measurement_of_ADC_Voltage_18650() {
+	HAL_ADC_Stop(&hadc);
+		 HAL_ADC_Init(&hadc);
      float V_ref = 3.3;  // This is known for each micro controller from data
      // sheet, V_ref = power supply in
      float ADC_resolution = (4096 - 1);  // 2^12 - 1
      float V_stepSize = V_ref / ADC_resolution;
      // ADC
      /* Start ADC Conversion for ADC1 */
+     ADC1 ->CHSELR=0x8000;
      ADC_Select_Voltage18650();
      HAL_ADC_Start(&hadc);
      uint16_t rawValue1;
@@ -342,12 +324,15 @@ void Measurement_of_ADC_Voltage_18650() {
      HAL_ADC_Stop(&hadc);
 }
 void Measurement_of_ADC_Voltage_CMOS() {
+	HAL_ADC_Stop(&hadc);
+		 HAL_ADC_Init(&hadc);
      float V_ref = 3.3;  // This is known for each micro controller from data
      // sheet, V_ref = power supply in
      float ADC_resolution = (4096 - 1);  // 2^12 - 1
      float V_stepSize = V_ref / ADC_resolution;
      // ADC
      /* Start ADC Conversion for ADC1 */
+     ADC1 ->CHSELR=0x2000;
      ADC_Select_VoltageCMOS();
      HAL_ADC_Start(&hadc);
      uint16_t rawValue1;
@@ -360,12 +345,15 @@ void Measurement_of_ADC_Voltage_CMOS() {
 }
 
 void Measurement_of_ADC_Current_18650() {
+	HAL_ADC_Stop(&hadc);
+		 HAL_ADC_Init(&hadc);
      float V_ref = 3.3;  // This is known for each micro controller from data
      // sheet, V_ref = power supply in
      float ADC_resolution = (4096 - 1);  // 2^12 - 1
      float V_stepSize = V_ref / ADC_resolution;
      // ADC
      /* Start ADC Conversion for ADC1 */
+     ADC1 ->CHSELR=0x4000;
      ADC_Select_Current18650();
      HAL_ADC_Start(&hadc);
      uint16_t rawValue1;
@@ -382,12 +370,15 @@ void Measurement_of_ADC_Current_18650() {
 }
 
 void Measurement_of_ADC_Current_CMOS() {
+	HAL_ADC_Stop(&hadc);
+		 HAL_ADC_Init(&hadc);
      float V_ref = 3.3;  // This is known for each micro controller from data
      // sheet, V_ref = power supply in
      float ADC_resolution = (4096 - 1);  // 2^12 - 1
      float V_stepSize = V_ref / ADC_resolution;
      // ADC
      /* Start ADC Conversion for ADC1 */
+     ADC1 ->CHSELR=0x1000;
      ADC_Select_CurrentCMOS();
      HAL_ADC_Start(&hadc);
      uint16_t rawValue1;
@@ -403,6 +394,7 @@ void Measurement_of_ADC_Current_CMOS() {
 }
 
 void ADC_Select_Voltage18650(void) {
+
      ADC_ChannelConfTypeDef sConfig = {0};
      sConfig.Channel = ADC_CHANNEL_15;
      sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
