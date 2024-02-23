@@ -64,10 +64,10 @@ void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
 //void Continuous_Same_State_Average();
 void process_SD_card(void);
-void ADC_Select_Voltage18650(void);
-void ADC_Select_VoltageCMOS(void);
-void ADC_Select_Current18650(void);
-void ADC_Select_CurrentCMOS(void);
+void ADC_Select_Voltage18650();
+void ADC_Select_VoltageCMOS();
+void ADC_Select_Current18650();
+void ADC_Select_CurrentCMOS();
 void readNumber();
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
@@ -123,7 +123,6 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   MX_ADC_Init();
-  process_SD_card();
   /* USER CODE BEGIN 2 */
   start_time_ms = HAL_GetTick();
   /* USER CODE END 2 */
@@ -139,8 +138,8 @@ int main(void)
 	 			  seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
 	 			  readNumber();
 	 			  Measurement_of_ADC_Voltage_18650();
-	 			  Measurement_of_ADC_Voltage_CMOS();
-	 			  Measurement_of_ADC_Current_CMOS();
+	 			  //Measurement_of_ADC_Voltage_CMOS();
+	 			  //Measurement_of_ADC_Current_CMOS();
 	 			  Measurement_of_ADC_Current_18650();
 
 	 			  process_SD_card();
@@ -200,11 +199,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
-  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
-  RCC_OscInitStruct.MSICalibrationValue = 0;
-  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_5;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
+  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -214,12 +215,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -234,7 +235,10 @@ static void MX_ADC_Init(void)
 {
 
   /* USER CODE BEGIN ADC_Init 0 */
-
+	ADC_Select_Voltage18650();
+	ADC_Select_VoltageCMOS();
+	ADC_Select_Current18650();
+	ADC_Select_CurrentCMOS();
   /* USER CODE END ADC_Init 0 */
 
   /* USER CODE BEGIN ADC_Init 1 */
@@ -247,10 +251,10 @@ static void MX_ADC_Init(void)
   hadc.Init.OversamplingMode = DISABLE;
   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc.Init.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  hadc.Init.SamplingTime = ADC_SAMPLETIME_3CYCLES_5;
   hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
   hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc.Init.ContinuousConvMode = DISABLE;
+  hadc.Init.ContinuousConvMode = ENABLE;
   hadc.Init.DiscontinuousConvMode = DISABLE;
   hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
@@ -258,7 +262,7 @@ static void MX_ADC_Init(void)
   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   hadc.Init.LowPowerAutoWait = DISABLE;
-  hadc.Init.LowPowerFrequencyMode = ENABLE;
+  hadc.Init.LowPowerFrequencyMode = DISABLE;
   hadc.Init.LowPowerAutoPowerOff = DISABLE;
   if (HAL_ADC_Init(&hadc) != HAL_OK)
   {
@@ -267,6 +271,7 @@ static void MX_ADC_Init(void)
 
   /** Configure for the selected ADC regular channel to be converted.
   */
+
   /* USER CODE BEGIN ADC_Init 2 */
 
   /* USER CODE END ADC_Init 2 */
@@ -384,7 +389,7 @@ void process_SD_card(void)
     FRESULT fres;  // Result after operations
 
     // Buffer for storing the complete string to write
-    char writeBuffer[50]; // Adjust the size based on your needs
+    char writeBuffer[500]; // Adjust the size based on your needs
 
     // Attempt to mount the SD Card
     fres = f_mount(&FatFs, "", 1); // 1=mount now
@@ -419,12 +424,15 @@ void process_SD_card(void)
 
 
 void Measurement_of_ADC_Voltage_18650(){
+	HAL_ADC_Stop(&hadc);
+	HAL_ADC_Init(&hadc);
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
 		float V_stepSize = V_ref / ADC_resolution;
 		// ADC
 	    /* Start ADC Conversion for ADC1 */
+		ADC1->CHSELR = 0x8000;
 	    ADC_Select_Voltage18650();
 	    HAL_ADC_Start(&hadc);
 	    uint16_t rawValue1;
@@ -436,12 +444,15 @@ void Measurement_of_ADC_Voltage_18650(){
 	    HAL_ADC_Stop(&hadc);
 }
 void Measurement_of_ADC_Voltage_CMOS(){
+	HAL_ADC_Stop(&hadc);
+	HAL_ADC_Init(&hadc);
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
 		float V_stepSize = V_ref / ADC_resolution;
 		// ADC
 	    /* Start ADC Conversion for ADC1 */
+		ADC1->CHSELR = 0x2000;
 	    ADC_Select_VoltageCMOS();
 	    HAL_ADC_Start(&hadc);
 	    uint16_t rawValue2;
@@ -455,12 +466,15 @@ void Measurement_of_ADC_Voltage_CMOS(){
 }
 
 void Measurement_of_ADC_Current_18650(){
+	HAL_ADC_Stop(&hadc);
+	HAL_ADC_Init(&hadc);
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
 		float V_stepSize = V_ref / ADC_resolution;
 		// ADC
 	    /* Start ADC Conversion for ADC1 */
+		ADC1->CHSELR = 0x0200;
 	    ADC_Select_Current18650();
 	    HAL_ADC_Start(&hadc);
 	    uint16_t rawValue3;
@@ -474,12 +488,15 @@ void Measurement_of_ADC_Current_18650(){
 }
 
 void Measurement_of_ADC_Current_CMOS(){
+	 HAL_ADC_Stop(&hadc);
+	 HAL_ADC_Init(&hadc);
 	float V_ref = 3.3;  // This is known for each micro controller from data
 		// sheet, V_ref = power supply in
 		float ADC_resolution = (4096 - 1);  // 2^12 - 1
 		float V_stepSize = V_ref / ADC_resolution;
 		// ADC
 	    /* Start ADC Conversion for ADC1 */
+		ADC1->CHSELR = 0x1000;
 	    ADC_Select_CurrentCMOS();
 	    HAL_ADC_Start(&hadc);
 	    uint16_t rawValue4;
@@ -493,20 +510,20 @@ void Measurement_of_ADC_Current_CMOS(){
 }
 
 
-void ADC_Select_Voltage18650(void){
+void ADC_Select_Voltage18650(){
 ADC_ChannelConfTypeDef sConfig = {0};
 sConfig.Channel = ADC_CHANNEL_15;
-sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+sConfig.Rank = 0;
 if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 {
   Error_Handler();
 }
 }
 
-void ADC_Select_VoltageCMOS(void){
+void ADC_Select_VoltageCMOS(){
 ADC_ChannelConfTypeDef sConfig = {0};
 sConfig.Channel = ADC_CHANNEL_13;
-sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+sConfig.Rank = 0;
 if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 {
 Error_Handler();
@@ -514,10 +531,10 @@ Error_Handler();
 
 }
 
-void ADC_Select_Current18650(void){
+void ADC_Select_Current18650(){
 ADC_ChannelConfTypeDef sConfig = {0};
 sConfig.Channel = ADC_CHANNEL_9;
-sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+sConfig.Rank = 0;
 if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 {
 	    Error_Handler();
@@ -525,10 +542,10 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 
 }
 
-void ADC_Select_CurrentCMOS(void){
+void ADC_Select_CurrentCMOS(){
 ADC_ChannelConfTypeDef sConfig = {0};
 sConfig.Channel = ADC_CHANNEL_12;
-sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+sConfig.Rank = 0;
 if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 {
 Error_Handler();

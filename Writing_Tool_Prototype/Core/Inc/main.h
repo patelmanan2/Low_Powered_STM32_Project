@@ -73,6 +73,8 @@ void Error_Handler(void);
 #define Voltage_ADC_18650_GPIO_Port GPIOC
 #define Discrete_Bit_2_Pin GPIO_PIN_0
 #define Discrete_Bit_2_GPIO_Port GPIOB
+#define Current_ADC_18650_Pin GPIO_PIN_1
+#define Current_ADC_18650_GPIO_Port GPIOB
 #define User_Input_Status_Light_Red_Pin GPIO_PIN_8
 #define User_Input_Status_Light_Red_GPIO_Port GPIOA
 #define User_Input_Status_Light_Green_Pin GPIO_PIN_9
