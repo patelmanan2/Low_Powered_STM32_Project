@@ -81,6 +81,26 @@ void Error_Handler(void);
 #define User_Input_Status_Light_Green_GPIO_Port GPIOB
 #define User_Input_Status_Light_Blue_Pin GPIO_PIN_2
 #define User_Input_Status_Light_Blue_GPIO_Port GPIOB
+#define LS_1_Pin GPIO_PIN_12
+#define LS_1_GPIO_Port GPIOB
+#define LS_2_Pin GPIO_PIN_13
+#define LS_2_GPIO_Port GPIOB
+#define LS_3_Pin GPIO_PIN_14
+#define LS_3_GPIO_Port GPIOB
+#define LS_4_Pin GPIO_PIN_15
+#define LS_4_GPIO_Port GPIOB
+#define LS_LOW_Pin GPIO_PIN_6
+#define LS_LOW_GPIO_Port GPIOC
+#define LS_5_Pin GPIO_PIN_7
+#define LS_5_GPIO_Port GPIOC
+#define LS_6_Pin GPIO_PIN_8
+#define LS_6_GPIO_Port GPIOC
+#define LS_7_Pin GPIO_PIN_9
+#define LS_7_GPIO_Port GPIOC
+#define LS_8_Pin GPIO_PIN_8
+#define LS_8_GPIO_Port GPIOA
+#define LS_HIGH_Pin GPIO_PIN_9
+#define LS_HIGH_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

@@ -439,7 +439,8 @@ void Measurement_of_ADC_Voltage_18650(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
-	           V_18650 = ((rawValue1 * V_stepSize));
+	           //V_18650 = ((rawValue1 * V_stepSize));
+	           V_18650 = rawValue1;
 	       }
 	    HAL_ADC_Stop(&hadc);
 }
@@ -459,7 +460,8 @@ void Measurement_of_ADC_Voltage_CMOS(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue2 = HAL_ADC_GetValue(&hadc);
-	           V_CMOS = ((rawValue2 * V_stepSize));
+	           //V_CMOS = ((rawValue2 * V_stepSize));
+	           V_CMOS = rawValue2;
 
 	       }
 	    HAL_ADC_Stop(&hadc);
@@ -481,7 +483,8 @@ void Measurement_of_ADC_Current_18650(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue3 = HAL_ADC_GetValue(&hadc);
-	           C_18650 = ((rawValue3 * V_stepSize));
+	           //C_18650 = ((rawValue3 * V_stepSize));
+	           C_18650 = rawValue3;
 	        		   //50)/.0299562); //I_load = ((V_ADC / 50 gain) / .03 calibrated shunt)
 	       }
 	    HAL_ADC_Stop(&hadc);
@@ -503,7 +506,8 @@ void Measurement_of_ADC_Current_CMOS(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue4 = HAL_ADC_GetValue(&hadc);
-	           C_CMOS = ((rawValue4 * V_stepSize));
+	           //C_CMOS = ((rawValue4 * V_stepSize));
+	           C_CMOS = rawValue4;
 	        		   ///20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt )
 	       }
 	    HAL_ADC_Stop(&hadc);
