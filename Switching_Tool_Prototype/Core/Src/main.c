@@ -43,6 +43,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
+UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
@@ -52,6 +53,7 @@ ADC_HandleTypeDef hadc;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void Measurement_of_ADC_Voltage_18650();
 void Measurement_of_ADC_Voltage_CMOS();
@@ -81,7 +83,7 @@ static uint32_t lastDebounceTime = 0;
 const uint32_t debounceDelay = 50;       // milliseconds
 const uint32_t flashingDuration = 150;  // 5 seconds
 uint32_t flashingStartTime = 0;
-float valueToAdjust = 0;  // Integer value to be adjusted
+int valueToAdjust = 0;  // Integer value to be adjusted
 uint8_t lastPlusState = GPIO_PIN_RESET;
 uint8_t lastMinusState = GPIO_PIN_RESET;
 /* USER CODE END PFP */
@@ -120,7 +122,9 @@ int main(void) {
      /* Initialize all configured peripherals */
      MX_GPIO_Init();
      MX_ADC_Init();
+     MX_USART2_UART_Init();
      /* USER CODE BEGIN 2 */
+     char msg[128];
      start_time_ms = HAL_GetTick();
      HAL_Delay(15);
      setNumber();
@@ -137,6 +141,16 @@ int main(void) {
           Measurement_of_ADC_Voltage_CMOS();
           Measurement_of_ADC_Current_CMOS();
           Measurement_of_ADC_Current_18650();
+
+          //UART Debugging
+          sprintf(msg, "%.3f,%.3f,%.3f,%.3f,%d,%d\r\n",
+        		 V_18650,
+				 C_18650, // 18650 Current
+                 V_CMOS, // CMOS Voltage
+                 C_CMOS, // CMOS Current
+     			 valueToAdjust, //Threshold
+     			 Switch_State);
+          HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg), HAL_MAX_DELAY);
 
           /* USER CODE END 3 */
      }
@@ -229,6 +243,35 @@ static void MX_ADC_Init(void)
   /* USER CODE BEGIN ADC_Init 2 */
 
   /* USER CODE END ADC_Init 2 */
+
+}
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
 
 }
 

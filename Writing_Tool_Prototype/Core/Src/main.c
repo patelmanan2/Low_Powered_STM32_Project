@@ -57,12 +57,10 @@ static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
 /* USER CODE BEGIN PFP */
-float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages);
 void Measurement_of_ADC_Voltage_18650();
 void Measurement_of_ADC_Voltage_CMOS();
 void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
-//void Continuous_Same_State_Average();
 void process_SD_card(void);
 void ADC_Select_Voltage18650();
 void ADC_Select_VoltageCMOS();
@@ -88,8 +86,6 @@ int previous_State = 0;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-//typedef enum { State_CMOS, State_18650 } StateMachine; //State 0 = State_CMOS State 1 = State_18650
-//StateMachine state = State_CMOS;
 /* USER CODE END 0 */
 
 /**
@@ -149,33 +145,6 @@ int main(void)
 	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
 
 	 	  }
-//	  if (state == State_CMOS) {
-//	 	              // if(Voltage_Current_Read)
-//	 		  	 	 if(C_CMOS >= 0.03) //threshold
-//	 		  	 		 state = State_18650;  // 18650 Mode >= 20mA //1
-//	 	          } else if(state == State_18650){
-//	 	        	  if(C_18650 <= .01) //threshold
-//	 	              state = State_CMOS;  // Cmos Mode > //2
-//	 	          }
-//
-//	 	  else {
-////	 		  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
-////	 		  HAL_GPIO_WritePin(Load_Switch_18650_GPIO_Port, Load_Switch_18650_Pin, GPIO_PIN_RESET);
-////	 		  HAL_GPIO_WritePin(Load_Switch_CMOS_GPIO_Port, Load_Switch_CMOS_Pin, GPIO_PIN_RESET);
-////	 		  Error_Handler();
-//
-//	 	  }
-//	 	  switch (state) {
-//	 	              case State_CMOS: {  //0
-//	 	            	  Switch_State = 0;
-//	 	                  break;
-//	 	              }
-//	 	              case State_18650: { //1
-//	 	            	  Switch_State = 1;
-//	 	                  break;
-//	 	              }
-//	 	          }
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -235,10 +204,6 @@ static void MX_ADC_Init(void)
 {
 
   /* USER CODE BEGIN ADC_Init 0 */
-	ADC_Select_Voltage18650();
-	ADC_Select_VoltageCMOS();
-	ADC_Select_Current18650();
-	ADC_Select_CurrentCMOS();
   /* USER CODE END ADC_Init 0 */
 
   /* USER CODE BEGIN ADC_Init 1 */
@@ -389,7 +354,7 @@ void process_SD_card(void)
     FRESULT fres;  // Result after operations
 
     // Buffer for storing the complete string to write
-    char writeBuffer[500]; // Adjust the size based on your needs
+    char writeBuffer[51]; // Adjust the size based on your needs
 
     // Attempt to mount the SD Card
     fres = f_mount(&FatFs, "", 1); // 1=mount now
@@ -404,13 +369,14 @@ void process_SD_card(void)
 
     // Prepare the data string
     snprintf(writeBuffer, sizeof(writeBuffer),
-             "%.3f,%.3f,%.3f,%.3f,%.3f,%d,\n",
+             "%.3f,%.3f,%.3f,%.3f,%.3f,%d,%d\n",
              seconds_since_start, // Time
              V_18650, // 18650 Voltage
              C_18650, // 18650 Current
              V_CMOS, // CMOS Voltage
              C_CMOS, // CMOS Current
-			 valueToAdjust); // Switch State
+			 valueToAdjust, //Threshold
+			 Switch_State); // Switch State
 
     // Write the prepared string to the file
     f_puts(writeBuffer, &fil);
@@ -439,8 +405,7 @@ void Measurement_of_ADC_Voltage_18650(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue1 = HAL_ADC_GetValue(&hadc);
-	           //V_18650 = ((rawValue1 * V_stepSize));
-	           V_18650 = rawValue1;
+	           V_18650 = ((rawValue1 * V_stepSize));
 	       }
 	    HAL_ADC_Stop(&hadc);
 }
@@ -460,8 +425,7 @@ void Measurement_of_ADC_Voltage_CMOS(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue2 = HAL_ADC_GetValue(&hadc);
-	           //V_CMOS = ((rawValue2 * V_stepSize));
-	           V_CMOS = rawValue2;
+	           V_CMOS = ((rawValue2 * V_stepSize));
 
 	       }
 	    HAL_ADC_Stop(&hadc);
@@ -483,9 +447,7 @@ void Measurement_of_ADC_Current_18650(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue3 = HAL_ADC_GetValue(&hadc);
-	           //C_18650 = ((rawValue3 * V_stepSize));
-	           C_18650 = rawValue3;
-	        		   //50)/.0299562); //I_load = ((V_ADC / 50 gain) / .03 calibrated shunt)
+	           C_18650 = ((rawValue3 * V_stepSize)); //50)/.0299562); //I_load = ((V_ADC / 50 gain) / .03 calibrated shunt)
 	       }
 	    HAL_ADC_Stop(&hadc);
 }
@@ -506,9 +468,7 @@ void Measurement_of_ADC_Current_CMOS(){
 	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
 	           /* Read the ADC1 value */
 	           rawValue4 = HAL_ADC_GetValue(&hadc);
-	           //C_CMOS = ((rawValue4 * V_stepSize));
-	           C_CMOS = rawValue4;
-	        		   ///20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt )
+	           C_CMOS = ((rawValue4 * V_stepSize)); ///20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt )
 	       }
 	    HAL_ADC_Stop(&hadc);
 }
@@ -594,139 +554,60 @@ void readNumber() {
 
 	}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
-			HAL_Delay(5);
-			valueToAdjust = 3;
-			// Set Green
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+	    HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+		HAL_Delay(5);
+		valueToAdjust = 3;
+		// Set Green
+		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
 
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
-			HAL_Delay(5);
-			valueToAdjust = 4;
-			// Set Cyan
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+		HAL_Delay(5);
+		valueToAdjust = 4;
+		// Set Cyan
+		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
 
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
-			HAL_Delay(5);
-			valueToAdjust = 5;
-			// Set Blue
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+		HAL_Delay(5);
+		valueToAdjust = 5;
+		// Set Blue
+		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
 
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
-			HAL_Delay(5);
-			valueToAdjust = 6;
-			// Set Magenta
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+		HAL_Delay(5);
+		valueToAdjust = 6;
+		// Set Magenta
+		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
 
 		}
 	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
-			HAL_Delay(5);
-			valueToAdjust = 7;
-			// Set White
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
-
+		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+		HAL_Delay(5);
+		valueToAdjust = 7;
+		// Set White
+		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
 		}
 }
-
-//void Continuous_Same_State_Average() {
-//float test_voltages[] = {1.4, 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49, 1.5};
-//float voltage_sum = 0;
-//int x = 0;
-//
-//int array_length = sizeof(test_voltages) / sizeof(test_voltages[0]);
-//for (i = 0; i < array_length; i++) {
-//    voltage_sum += test_voltages[i];
-//    x++;
-//}
-//
-//Continuous_Average = Calculate_Continuous_Average(voltage_sum, x);
-//}
-//
-//float Calculate_Continuous_Average(float sum_voltages, int number_of_voltages){
-//	return sum_voltages/number_of_voltages;
-//}
-
-
-
-
-//		if((current_State != previous_State) || ((current_State && previous_State) == 0)){
-//			// First, check if any of the pins are set
-//				    if(HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) ||
-//				       HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) ||
-//				       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    	// Check each combination of pins and set valueToAdjust accordingly
-//				    		     if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//				    		        !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//				    		        !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    		        HAL_Delay(5);
-//				    		        valueToAdjust = 1;
-//				    		        current_State = 1;
-//				    		    }
-//				    		     if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//				    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    		        HAL_Delay(5);
-//				    		        valueToAdjust = 2;
-//				    		        current_State = 2;
-//
-//				    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//				    		               !HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    		        HAL_Delay(5);
-//				    		        valueToAdjust = 3;
-//				    		        current_State = 3;
-//				    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//				    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    		        HAL_Delay(5);
-//				    		        valueToAdjust = 4;
-//				    		        current_State = 4;
-//				    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//				    		               !HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    		        HAL_Delay(5);
-//				    		        valueToAdjust = 5;
-//				    		        current_State = 5;
-//				    		    }  if (!HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    		        HAL_Delay(5);
-//				    		        valueToAdjust = 6;
-//				    		        current_State = 6;
-//				    		    }  if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) &&
-//				    		               HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin)) {
-//				    		        HAL_Delay(5);
-//				    		        valueToAdjust = 7;
-//				    		        current_State = 7;
-//				    		    }
-//				    }
-//				    previous_State = current_State;
-//
-//		}
-
 /* USER CODE END 4 */
 
 /**
