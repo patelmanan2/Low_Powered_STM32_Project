@@ -29,23 +29,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .comment      00000043  00000000  00000000  00020214  2**0
                   CONTENTS, READONLY
- 13 .debug_info   0000ba25  00000000  00000000  00020257  2**0
+ 13 .debug_info   0000b9fe  00000000  00000000  00020257  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00002585  00000000  00000000  0002bc7c  2**0
+ 14 .debug_abbrev 00002570  00000000  00000000  0002bc55  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00000bf0  00000000  00000000  0002e208  2**3
+ 15 .debug_aranges 00000bf0  00000000  00000000  0002e1c8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 00000905  00000000  00000000  0002edf8  2**0
+ 16 .debug_rnglists 00000905  00000000  00000000  0002edb8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  00013829  00000000  00000000  0002f6fd  2**0
+ 17 .debug_macro  00013744  00000000  00000000  0002f6bd  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   00012e11  00000000  00000000  00042f26  2**0
+ 18 .debug_line   00012e39  00000000  00000000  00042e01  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    00069e44  00000000  00000000  00055d37  2**0
+ 19 .debug_str    00069e27  00000000  00000000  00055c3a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00003fc4  00000000  00000000  000bfb7c  2**2
+ 20 .debug_frame  00003fc4  00000000  00000000  000bfa64  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000088  00000000  00000000  000c3b40  2**0
+ 21 .debug_line_str 00000088  00000000  00000000  000c3a28  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -7293,59 +7293,59 @@ DRESULT SD_disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
  80036b0:	0800ea38 	.word	0x0800ea38
 
 080036b4 <main>:
+
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
  80036b4:	b580      	push	{r7, lr}
  80036b6:	b082      	sub	sp, #8
  80036b8:	af00      	add	r7, sp, #0
-  /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+   /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+   /* Reset of all peripherals, Initializes the Flash interface and the Systick.
+    */
+   HAL_Init();
  80036ba:	f000 ffcd 	bl	8004658 <HAL_Init>
-  /* USER CODE BEGIN Init */
+   /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+   /* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+   /* Configure the system clock */
+   SystemClock_Config();
  80036be:	f000 f853 	bl	8003768 <SystemClock_Config>
-  /* USER CODE BEGIN SysInit */
+   /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+   /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+   /* Initialize all configured peripherals */
+   MX_GPIO_Init();
  80036c2:	f000 f92f 	bl	8003924 <MX_GPIO_Init>
-  MX_SPI1_Init();
+   MX_SPI1_Init();
  80036c6:	f000 f8f5 	bl	80038b4 <MX_SPI1_Init>
-  MX_FATFS_Init();
+   MX_FATFS_Init();
  80036ca:	f003 f9a7 	bl	8006a1c <MX_FATFS_Init>
-  MX_ADC_Init();
+   MX_ADC_Init();
  80036ce:	f000 f8a7 	bl	8003820 <MX_ADC_Init>
-  /* USER CODE BEGIN 2 */
-  start_time_ms = HAL_GetTick();
+   /* USER CODE BEGIN 2 */
+   start_time_ms = HAL_GetTick();
  80036d2:	f001 f827 	bl	8004724 <HAL_GetTick>
  80036d6:	0002      	movs	r2, r0
  80036d8:	4b1f      	ldr	r3, [pc, #124]	; (8003758 <main+0xa4>)
  80036da:	601a      	str	r2, [r3, #0]
-  HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
+   HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
  80036dc:	4b1f      	ldr	r3, [pc, #124]	; (800375c <main+0xa8>)
  80036de:	2100      	movs	r1, #0
  80036e0:	0018      	movs	r0, r3
  80036e2:	f001 fca1 	bl	8005028 <HAL_ADCEx_Calibration_Start>
+   /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-	  if (HAL_GPIO_ReadPin(SD_CardDetect_Input_GPIO_Port, SD_CardDetect_Input_Pin) == GPIO_PIN_SET)
+   /* Infinite loop */
+   /* USER CODE BEGIN WHILE */
+   while (1) {
+      if (HAL_GPIO_ReadPin(SD_CardDetect_Input_GPIO_Port, SD_CardDetect_Input_Pin) == GPIO_PIN_SET) {
  80036e6:	23a0      	movs	r3, #160	; 0xa0
  80036e8:	05db      	lsls	r3, r3, #23
  80036ea:	2101      	movs	r1, #1
@@ -7354,19 +7354,18 @@ int main(void)
  80036f2:	0003      	movs	r3, r0
  80036f4:	2b01      	cmp	r3, #1
  80036f6:	d127      	bne.n	8003748 <main+0x94>
-	 		  {
-	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_SET);
+         HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_SET);
  80036f8:	23a0      	movs	r3, #160	; 0xa0
  80036fa:	05db      	lsls	r3, r3, #23
  80036fc:	2201      	movs	r2, #1
  80036fe:	2102      	movs	r1, #2
  8003700:	0018      	movs	r0, r3
  8003702:	f001 ff7e 	bl	8005602 <HAL_GPIO_WritePin>
-	 			  uint32_t current_time_ms = HAL_GetTick();
+         uint32_t current_time_ms = HAL_GetTick();
  8003706:	f001 f80d 	bl	8004724 <HAL_GetTick>
  800370a:	0003      	movs	r3, r0
  800370c:	607b      	str	r3, [r7, #4]
-	 			  seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
+         seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
  800370e:	4b12      	ldr	r3, [pc, #72]	; (8003758 <main+0xa4>)
  8003710:	681b      	ldr	r3, [r3, #0]
  8003712:	687a      	ldr	r2, [r7, #4]
@@ -7381,31 +7380,29 @@ int main(void)
  8003728:	1c1a      	adds	r2, r3, #0
  800372a:	4b0e      	ldr	r3, [pc, #56]	; (8003764 <main+0xb0>)
  800372c:	601a      	str	r2, [r3, #0]
-	 			  readNumber();
+         readNumber();
  800372e:	f000 fbf3 	bl	8003f18 <readNumber>
-	 			  Measurement_of_ADC_Voltage_18650();
+         Measurement_of_ADC_Voltage_18650();
  8003732:	f000 fa29 	bl	8003b88 <Measurement_of_ADC_Voltage_18650>
-	 			  Measurement_of_ADC_Voltage_CMOS();
+         Measurement_of_ADC_Voltage_CMOS();
  8003736:	f000 fa77 	bl	8003c28 <Measurement_of_ADC_Voltage_CMOS>
-	 			  Measurement_of_ADC_Current_CMOS();
+         Measurement_of_ADC_Current_CMOS();
  800373a:	f000 fb15 	bl	8003d68 <Measurement_of_ADC_Current_CMOS>
-	 			  Measurement_of_ADC_Current_18650();
+         Measurement_of_ADC_Current_18650();
  800373e:	f000 fac3 	bl	8003cc8 <Measurement_of_ADC_Current_18650>
 
-	 			  process_SD_card();
+         process_SD_card();
  8003742:	f000 f97d 	bl	8003a40 <process_SD_card>
  8003746:	e7ce      	b.n	80036e6 <main+0x32>
-	 		  }
-	 		  else
-	 		  {
-	 			  HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
+      } else {
+         HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
  8003748:	23a0      	movs	r3, #160	; 0xa0
  800374a:	05db      	lsls	r3, r3, #23
  800374c:	2200      	movs	r2, #0
  800374e:	2102      	movs	r1, #2
  8003750:	0018      	movs	r0, r3
  8003752:	f001 ff56 	bl	8005602 <HAL_GPIO_WritePin>
-	  if (HAL_GPIO_ReadPin(SD_CardDetect_Input_GPIO_Port, SD_CardDetect_Input_Pin) == GPIO_PIN_SET)
+      if (HAL_GPIO_ReadPin(SD_CardDetect_Input_GPIO_Port, SD_CardDetect_Input_Pin) == GPIO_PIN_SET) {
  8003756:	e7c6      	b.n	80036e6 <main+0x32>
  8003758:	200002d8 	.word	0x200002d8
  800375c:	20000210 	.word	0x20000210
@@ -7413,16 +7410,16 @@ int main(void)
  8003764:	200002d4 	.word	0x200002d4
 
 08003768 <SystemClock_Config>:
+
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
  8003768:	b590      	push	{r4, r7, lr}
  800376a:	b093      	sub	sp, #76	; 0x4c
  800376c:	af00      	add	r7, sp, #0
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
  800376e:	2414      	movs	r4, #20
  8003770:	193b      	adds	r3, r7, r4
  8003772:	0018      	movs	r0, r3
@@ -7430,7 +7427,7 @@ void SystemClock_Config(void)
  8003776:	001a      	movs	r2, r3
  8003778:	2100      	movs	r1, #0
  800377a:	f007 fbd5 	bl	800af28 <memset>
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
  800377e:	003b      	movs	r3, r7
  8003780:	0018      	movs	r0, r3
  8003782:	2314      	movs	r3, #20
@@ -7438,9 +7435,9 @@ void SystemClock_Config(void)
  8003786:	2100      	movs	r1, #0
  8003788:	f007 fbce 	bl	800af28 <memset>
 
-  /** Configure the main internal regulator output voltage
-  */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+   /** Configure the main internal regulator output voltage
+    */
+   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
  800378c:	4b22      	ldr	r3, [pc, #136]	; (8003818 <SystemClock_Config+0xb0>)
  800378e:	681b      	ldr	r3, [r3, #0]
  8003790:	4a22      	ldr	r2, [pc, #136]	; (800381c <SystemClock_Config+0xb4>)
@@ -7451,86 +7448,84 @@ void SystemClock_Config(void)
  800379a:	430a      	orrs	r2, r1
  800379c:	601a      	str	r2, [r3, #0]
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+   /** Initializes the RCC Oscillators according to the specified parameters
+    * in the RCC_OscInitTypeDef structure.
+    */
+   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
  800379e:	0021      	movs	r1, r4
  80037a0:	187b      	adds	r3, r7, r1
  80037a2:	2202      	movs	r2, #2
  80037a4:	601a      	str	r2, [r3, #0]
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
  80037a6:	187b      	adds	r3, r7, r1
  80037a8:	2201      	movs	r2, #1
  80037aa:	60da      	str	r2, [r3, #12]
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
  80037ac:	187b      	adds	r3, r7, r1
  80037ae:	2210      	movs	r2, #16
  80037b0:	611a      	str	r2, [r3, #16]
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
  80037b2:	187b      	adds	r3, r7, r1
  80037b4:	2202      	movs	r2, #2
  80037b6:	625a      	str	r2, [r3, #36]	; 0x24
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
  80037b8:	187b      	adds	r3, r7, r1
  80037ba:	2200      	movs	r2, #0
  80037bc:	629a      	str	r2, [r3, #40]	; 0x28
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
+   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
  80037be:	187b      	adds	r3, r7, r1
  80037c0:	2280      	movs	r2, #128	; 0x80
  80037c2:	02d2      	lsls	r2, r2, #11
  80037c4:	62da      	str	r2, [r3, #44]	; 0x2c
-  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
+   RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
  80037c6:	187b      	adds	r3, r7, r1
  80037c8:	2280      	movs	r2, #128	; 0x80
  80037ca:	03d2      	lsls	r2, r2, #15
  80037cc:	631a      	str	r2, [r3, #48]	; 0x30
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
  80037ce:	187b      	adds	r3, r7, r1
  80037d0:	0018      	movs	r0, r3
  80037d2:	f001 ff33 	bl	800563c <HAL_RCC_OscConfig>
  80037d6:	1e03      	subs	r3, r0, #0
  80037d8:	d001      	beq.n	80037de <SystemClock_Config+0x76>
-  {
-    Error_Handler();
+      Error_Handler();
  80037da:	f000 fd4d 	bl	8004278 <Error_Handler>
-  }
+   }
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+   /** Initializes the CPU, AHB and APB buses clocks
+    */
+   RCC_ClkInitStruct.ClockType =
  80037de:	003b      	movs	r3, r7
  80037e0:	220f      	movs	r2, #15
  80037e2:	601a      	str	r2, [r3, #0]
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+       RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
  80037e4:	003b      	movs	r3, r7
  80037e6:	2203      	movs	r2, #3
  80037e8:	605a      	str	r2, [r3, #4]
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
  80037ea:	003b      	movs	r3, r7
  80037ec:	2200      	movs	r2, #0
  80037ee:	609a      	str	r2, [r3, #8]
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
  80037f0:	003b      	movs	r3, r7
  80037f2:	2200      	movs	r2, #0
  80037f4:	60da      	str	r2, [r3, #12]
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
  80037f6:	003b      	movs	r3, r7
  80037f8:	2200      	movs	r2, #0
  80037fa:	611a      	str	r2, [r3, #16]
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
  80037fc:	003b      	movs	r3, r7
  80037fe:	2101      	movs	r1, #1
  8003800:	0018      	movs	r0, r3
  8003802:	f002 fa97 	bl	8005d34 <HAL_RCC_ClockConfig>
  8003806:	1e03      	subs	r3, r0, #0
  8003808:	d001      	beq.n	800380e <SystemClock_Config+0xa6>
-  {
-    Error_Handler();
+      Error_Handler();
  800380a:	f000 fd35 	bl	8004278 <Error_Handler>
-  }
+   }
 }
  800380e:	46c0      	nop			; (mov r8, r8)
  8003810:	46bd      	mov	sp, r7
@@ -7541,106 +7536,105 @@ void SystemClock_Config(void)
  800381c:	ffffe7ff 	.word	0xffffe7ff
 
 08003820 <MX_ADC_Init>:
-  * @brief ADC Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_ADC_Init(void)
-{
+/**
+ * @brief ADC Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_ADC_Init(void) {
  8003820:	b580      	push	{r7, lr}
  8003822:	af00      	add	r7, sp, #0
+   /* USER CODE END ADC_Init 1 */
 
-  /* USER CODE END ADC_Init 1 */
-
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
-  */
-  hadc.Instance = ADC1;
+   /** Configure the global features of the ADC (Clock, Resolution, Data
+    * Alignment and number of conversion)
+    */
+   hadc.Instance = ADC1;
  8003824:	4b21      	ldr	r3, [pc, #132]	; (80038ac <MX_ADC_Init+0x8c>)
  8003826:	4a22      	ldr	r2, [pc, #136]	; (80038b0 <MX_ADC_Init+0x90>)
  8003828:	601a      	str	r2, [r3, #0]
-  hadc.Init.OversamplingMode = DISABLE;
+   hadc.Init.OversamplingMode = DISABLE;
  800382a:	4b20      	ldr	r3, [pc, #128]	; (80038ac <MX_ADC_Init+0x8c>)
  800382c:	2200      	movs	r2, #0
  800382e:	63da      	str	r2, [r3, #60]	; 0x3c
-  hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
  8003830:	4b1e      	ldr	r3, [pc, #120]	; (80038ac <MX_ADC_Init+0x8c>)
  8003832:	2280      	movs	r2, #128	; 0x80
  8003834:	0612      	lsls	r2, r2, #24
  8003836:	605a      	str	r2, [r3, #4]
-  hadc.Init.Resolution = ADC_RESOLUTION_12B;
+   hadc.Init.Resolution = ADC_RESOLUTION_12B;
  8003838:	4b1c      	ldr	r3, [pc, #112]	; (80038ac <MX_ADC_Init+0x8c>)
  800383a:	2200      	movs	r2, #0
  800383c:	609a      	str	r2, [r3, #8]
-  hadc.Init.SamplingTime = ADC_SAMPLETIME_3CYCLES_5;
+   hadc.Init.SamplingTime = ADC_SAMPLETIME_3CYCLES_5;
  800383e:	4b1b      	ldr	r3, [pc, #108]	; (80038ac <MX_ADC_Init+0x8c>)
  8003840:	2201      	movs	r2, #1
  8003842:	639a      	str	r2, [r3, #56]	; 0x38
-  hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
+   hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
  8003844:	4b19      	ldr	r3, [pc, #100]	; (80038ac <MX_ADC_Init+0x8c>)
  8003846:	2201      	movs	r2, #1
  8003848:	611a      	str	r2, [r3, #16]
-  hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+   hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
  800384a:	4b18      	ldr	r3, [pc, #96]	; (80038ac <MX_ADC_Init+0x8c>)
  800384c:	2200      	movs	r2, #0
  800384e:	60da      	str	r2, [r3, #12]
-  hadc.Init.ContinuousConvMode = ENABLE;
+   hadc.Init.ContinuousConvMode = ENABLE;
  8003850:	4b16      	ldr	r3, [pc, #88]	; (80038ac <MX_ADC_Init+0x8c>)
  8003852:	2220      	movs	r2, #32
  8003854:	2101      	movs	r1, #1
  8003856:	5499      	strb	r1, [r3, r2]
-  hadc.Init.DiscontinuousConvMode = DISABLE;
+   hadc.Init.DiscontinuousConvMode = DISABLE;
  8003858:	4b14      	ldr	r3, [pc, #80]	; (80038ac <MX_ADC_Init+0x8c>)
  800385a:	2221      	movs	r2, #33	; 0x21
  800385c:	2100      	movs	r1, #0
  800385e:	5499      	strb	r1, [r3, r2]
-  hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+   hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
  8003860:	4b12      	ldr	r3, [pc, #72]	; (80038ac <MX_ADC_Init+0x8c>)
  8003862:	2200      	movs	r2, #0
  8003864:	629a      	str	r2, [r3, #40]	; 0x28
-  hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
  8003866:	4b11      	ldr	r3, [pc, #68]	; (80038ac <MX_ADC_Init+0x8c>)
  8003868:	22c2      	movs	r2, #194	; 0xc2
  800386a:	32ff      	adds	r2, #255	; 0xff
  800386c:	625a      	str	r2, [r3, #36]	; 0x24
-  hadc.Init.DMAContinuousRequests = DISABLE;
+   hadc.Init.DMAContinuousRequests = DISABLE;
  800386e:	4b0f      	ldr	r3, [pc, #60]	; (80038ac <MX_ADC_Init+0x8c>)
  8003870:	222c      	movs	r2, #44	; 0x2c
  8003872:	2100      	movs	r1, #0
  8003874:	5499      	strb	r1, [r3, r2]
-  hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
  8003876:	4b0d      	ldr	r3, [pc, #52]	; (80038ac <MX_ADC_Init+0x8c>)
  8003878:	2204      	movs	r2, #4
  800387a:	615a      	str	r2, [r3, #20]
-  hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+   hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
  800387c:	4b0b      	ldr	r3, [pc, #44]	; (80038ac <MX_ADC_Init+0x8c>)
  800387e:	2200      	movs	r2, #0
  8003880:	631a      	str	r2, [r3, #48]	; 0x30
-  hadc.Init.LowPowerAutoWait = DISABLE;
+   hadc.Init.LowPowerAutoWait = DISABLE;
  8003882:	4b0a      	ldr	r3, [pc, #40]	; (80038ac <MX_ADC_Init+0x8c>)
  8003884:	2200      	movs	r2, #0
  8003886:	619a      	str	r2, [r3, #24]
-  hadc.Init.LowPowerFrequencyMode = DISABLE;
+   hadc.Init.LowPowerFrequencyMode = DISABLE;
  8003888:	4b08      	ldr	r3, [pc, #32]	; (80038ac <MX_ADC_Init+0x8c>)
  800388a:	2200      	movs	r2, #0
  800388c:	635a      	str	r2, [r3, #52]	; 0x34
-  hadc.Init.LowPowerAutoPowerOff = DISABLE;
+   hadc.Init.LowPowerAutoPowerOff = DISABLE;
  800388e:	4b07      	ldr	r3, [pc, #28]	; (80038ac <MX_ADC_Init+0x8c>)
  8003890:	2200      	movs	r2, #0
  8003892:	61da      	str	r2, [r3, #28]
-  if (HAL_ADC_Init(&hadc) != HAL_OK)
+   if (HAL_ADC_Init(&hadc) != HAL_OK) {
  8003894:	4b05      	ldr	r3, [pc, #20]	; (80038ac <MX_ADC_Init+0x8c>)
  8003896:	0018      	movs	r0, r3
  8003898:	f000 ff72 	bl	8004780 <HAL_ADC_Init>
  800389c:	1e03      	subs	r3, r0, #0
  800389e:	d001      	beq.n	80038a4 <MX_ADC_Init+0x84>
-  {
-    Error_Handler();
+      Error_Handler();
  80038a0:	f000 fcea 	bl	8004278 <Error_Handler>
+    */
 
-  /* USER CODE BEGIN ADC_Init 2 */
+   /* USER CODE BEGIN ADC_Init 2 */
 
-  /* USER CODE END ADC_Init 2 */
-
+   /* USER CODE END ADC_Init 2 */
 }
  80038a4:	46c0      	nop			; (mov r8, r8)
  80038a6:	46bd      	mov	sp, r7
@@ -7650,83 +7644,81 @@ static void MX_ADC_Init(void)
  80038b0:	40012400 	.word	0x40012400
 
 080038b4 <MX_SPI1_Init>:
-  * @brief SPI1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_SPI1_Init(void)
-{
+/**
+ * @brief SPI1 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_SPI1_Init(void) {
  80038b4:	b580      	push	{r7, lr}
  80038b6:	af00      	add	r7, sp, #0
 
-  /* USER CODE BEGIN SPI1_Init 1 */
+   /* USER CODE BEGIN SPI1_Init 1 */
 
-  /* USER CODE END SPI1_Init 1 */
-  /* SPI1 parameter configuration*/
-  hspi1.Instance = SPI1;
+   /* USER CODE END SPI1_Init 1 */
+   /* SPI1 parameter configuration*/
+   hspi1.Instance = SPI1;
  80038b8:	4b18      	ldr	r3, [pc, #96]	; (800391c <MX_SPI1_Init+0x68>)
  80038ba:	4a19      	ldr	r2, [pc, #100]	; (8003920 <MX_SPI1_Init+0x6c>)
  80038bc:	601a      	str	r2, [r3, #0]
-  hspi1.Init.Mode = SPI_MODE_MASTER;
+   hspi1.Init.Mode = SPI_MODE_MASTER;
  80038be:	4b17      	ldr	r3, [pc, #92]	; (800391c <MX_SPI1_Init+0x68>)
  80038c0:	2282      	movs	r2, #130	; 0x82
  80038c2:	0052      	lsls	r2, r2, #1
  80038c4:	605a      	str	r2, [r3, #4]
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
  80038c6:	4b15      	ldr	r3, [pc, #84]	; (800391c <MX_SPI1_Init+0x68>)
  80038c8:	2200      	movs	r2, #0
  80038ca:	609a      	str	r2, [r3, #8]
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
  80038cc:	4b13      	ldr	r3, [pc, #76]	; (800391c <MX_SPI1_Init+0x68>)
  80038ce:	2200      	movs	r2, #0
  80038d0:	60da      	str	r2, [r3, #12]
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
  80038d2:	4b12      	ldr	r3, [pc, #72]	; (800391c <MX_SPI1_Init+0x68>)
  80038d4:	2200      	movs	r2, #0
  80038d6:	611a      	str	r2, [r3, #16]
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
  80038d8:	4b10      	ldr	r3, [pc, #64]	; (800391c <MX_SPI1_Init+0x68>)
  80038da:	2200      	movs	r2, #0
  80038dc:	615a      	str	r2, [r3, #20]
-  hspi1.Init.NSS = SPI_NSS_SOFT;
+   hspi1.Init.NSS = SPI_NSS_SOFT;
  80038de:	4b0f      	ldr	r3, [pc, #60]	; (800391c <MX_SPI1_Init+0x68>)
  80038e0:	2280      	movs	r2, #128	; 0x80
  80038e2:	0092      	lsls	r2, r2, #2
  80038e4:	619a      	str	r2, [r3, #24]
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
  80038e6:	4b0d      	ldr	r3, [pc, #52]	; (800391c <MX_SPI1_Init+0x68>)
  80038e8:	2200      	movs	r2, #0
  80038ea:	61da      	str	r2, [r3, #28]
-  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
  80038ec:	4b0b      	ldr	r3, [pc, #44]	; (800391c <MX_SPI1_Init+0x68>)
  80038ee:	2200      	movs	r2, #0
  80038f0:	621a      	str	r2, [r3, #32]
-  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
  80038f2:	4b0a      	ldr	r3, [pc, #40]	; (800391c <MX_SPI1_Init+0x68>)
  80038f4:	2200      	movs	r2, #0
  80038f6:	625a      	str	r2, [r3, #36]	; 0x24
-  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
  80038f8:	4b08      	ldr	r3, [pc, #32]	; (800391c <MX_SPI1_Init+0x68>)
  80038fa:	2200      	movs	r2, #0
  80038fc:	629a      	str	r2, [r3, #40]	; 0x28
-  hspi1.Init.CRCPolynomial = 7;
+   hspi1.Init.CRCPolynomial = 7;
  80038fe:	4b07      	ldr	r3, [pc, #28]	; (800391c <MX_SPI1_Init+0x68>)
  8003900:	2207      	movs	r2, #7
  8003902:	62da      	str	r2, [r3, #44]	; 0x2c
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+   if (HAL_SPI_Init(&hspi1) != HAL_OK) {
  8003904:	4b05      	ldr	r3, [pc, #20]	; (800391c <MX_SPI1_Init+0x68>)
  8003906:	0018      	movs	r0, r3
  8003908:	f002 fc02 	bl	8006110 <HAL_SPI_Init>
  800390c:	1e03      	subs	r3, r0, #0
  800390e:	d001      	beq.n	8003914 <MX_SPI1_Init+0x60>
-  {
-    Error_Handler();
+      Error_Handler();
  8003910:	f000 fcb2 	bl	8004278 <Error_Handler>
-  }
-  /* USER CODE BEGIN SPI1_Init 2 */
+   }
+   /* USER CODE BEGIN SPI1_Init 2 */
 
-  /* USER CODE END SPI1_Init 2 */
-
+   /* USER CODE END SPI1_Init 2 */
 }
  8003914:	46c0      	nop			; (mov r8, r8)
  8003916:	46bd      	mov	sp, r7
@@ -7736,16 +7728,16 @@ static void MX_SPI1_Init(void)
  8003920:	40013000 	.word	0x40013000
 
 08003924 <MX_GPIO_Init>:
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
+/**
+ * @brief GPIO Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_GPIO_Init(void) {
  8003924:	b590      	push	{r4, r7, lr}
  8003926:	b089      	sub	sp, #36	; 0x24
  8003928:	af00      	add	r7, sp, #0
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
+   GPIO_InitTypeDef GPIO_InitStruct = {0};
  800392a:	240c      	movs	r4, #12
  800392c:	193b      	adds	r3, r7, r4
  800392e:	0018      	movs	r0, r3
@@ -7753,11 +7745,11 @@ static void MX_GPIO_Init(void)
  8003932:	001a      	movs	r2, r3
  8003934:	2100      	movs	r1, #0
  8003936:	f007 faf7 	bl	800af28 <memset>
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
+   /* USER CODE BEGIN MX_GPIO_Init_1 */
+   /* USER CODE END MX_GPIO_Init_1 */
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
+   /* GPIO Ports Clock Enable */
+   __HAL_RCC_GPIOC_CLK_ENABLE();
  800393a:	4b38      	ldr	r3, [pc, #224]	; (8003a1c <MX_GPIO_Init+0xf8>)
  800393c:	6ada      	ldr	r2, [r3, #44]	; 0x2c
  800393e:	4b37      	ldr	r3, [pc, #220]	; (8003a1c <MX_GPIO_Init+0xf8>)
@@ -7770,7 +7762,7 @@ static void MX_GPIO_Init(void)
  800394c:	4013      	ands	r3, r2
  800394e:	60bb      	str	r3, [r7, #8]
  8003950:	68bb      	ldr	r3, [r7, #8]
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+   __HAL_RCC_GPIOA_CLK_ENABLE();
  8003952:	4b32      	ldr	r3, [pc, #200]	; (8003a1c <MX_GPIO_Init+0xf8>)
  8003954:	6ada      	ldr	r2, [r3, #44]	; 0x2c
  8003956:	4b31      	ldr	r3, [pc, #196]	; (8003a1c <MX_GPIO_Init+0xf8>)
@@ -7783,7 +7775,7 @@ static void MX_GPIO_Init(void)
  8003964:	4013      	ands	r3, r2
  8003966:	607b      	str	r3, [r7, #4]
  8003968:	687b      	ldr	r3, [r7, #4]
-  __HAL_RCC_GPIOB_CLK_ENABLE();
+   __HAL_RCC_GPIOB_CLK_ENABLE();
  800396a:	4b2c      	ldr	r3, [pc, #176]	; (8003a1c <MX_GPIO_Init+0xf8>)
  800396c:	6ada      	ldr	r2, [r3, #44]	; 0x2c
  800396e:	4b2b      	ldr	r3, [pc, #172]	; (8003a1c <MX_GPIO_Init+0xf8>)
@@ -7797,50 +7789,52 @@ static void MX_GPIO_Init(void)
  800397e:	603b      	str	r3, [r7, #0]
  8003980:	683b      	ldr	r3, [r7, #0]
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Red_Pin|User_Input_Status_Light_Green_Pin
+   /*Configure GPIO pin Output Level */
+   HAL_GPIO_WritePin(GPIOA,
  8003982:	4927      	ldr	r1, [pc, #156]	; (8003a20 <MX_GPIO_Init+0xfc>)
  8003984:	23a0      	movs	r3, #160	; 0xa0
  8003986:	05db      	lsls	r3, r3, #23
  8003988:	2200      	movs	r2, #0
  800398a:	0018      	movs	r0, r3
  800398c:	f001 fe39 	bl	8005602 <HAL_GPIO_WritePin>
-                          |User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+                     SD_CardDetect_Output_Pin | GPIO_PIN_4 | User_Input_Status_Light_Red_Pin |
+                         User_Input_Status_Light_Green_Pin | User_Input_Status_Light_Blue_Pin,
+                     GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin */
-  GPIO_InitStruct.Pin = Discrete_Bit_0_Pin|Discrete_Bit_1_Pin;
+   /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin */
+   GPIO_InitStruct.Pin = Discrete_Bit_0_Pin | Discrete_Bit_1_Pin;
  8003990:	193b      	adds	r3, r7, r4
  8003992:	2203      	movs	r2, #3
  8003994:	601a      	str	r2, [r3, #0]
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
  8003996:	193b      	adds	r3, r7, r4
  8003998:	2200      	movs	r2, #0
  800399a:	605a      	str	r2, [r3, #4]
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+   GPIO_InitStruct.Pull = GPIO_NOPULL;
  800399c:	193b      	adds	r3, r7, r4
  800399e:	2200      	movs	r2, #0
  80039a0:	609a      	str	r2, [r3, #8]
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
  80039a2:	193b      	adds	r3, r7, r4
  80039a4:	4a1f      	ldr	r2, [pc, #124]	; (8003a24 <MX_GPIO_Init+0x100>)
  80039a6:	0019      	movs	r1, r3
  80039a8:	0010      	movs	r0, r2
  80039aa:	f001 fc8f 	bl	80052cc <HAL_GPIO_Init>
 
-  /*Configure GPIO pin : SD_CardDetect_Input_Pin */
-  GPIO_InitStruct.Pin = SD_CardDetect_Input_Pin;
+   /*Configure GPIO pin : SD_CardDetect_Input_Pin */
+   GPIO_InitStruct.Pin = SD_CardDetect_Input_Pin;
  80039ae:	193b      	adds	r3, r7, r4
  80039b0:	2201      	movs	r2, #1
  80039b2:	601a      	str	r2, [r3, #0]
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
  80039b4:	193b      	adds	r3, r7, r4
  80039b6:	2200      	movs	r2, #0
  80039b8:	605a      	str	r2, [r3, #4]
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+   GPIO_InitStruct.Pull = GPIO_NOPULL;
  80039ba:	193b      	adds	r3, r7, r4
  80039bc:	2200      	movs	r2, #0
  80039be:	609a      	str	r2, [r3, #8]
-  HAL_GPIO_Init(SD_CardDetect_Input_GPIO_Port, &GPIO_InitStruct);
+   HAL_GPIO_Init(SD_CardDetect_Input_GPIO_Port, &GPIO_InitStruct);
  80039c0:	193a      	adds	r2, r7, r4
  80039c2:	23a0      	movs	r3, #160	; 0xa0
  80039c4:	05db      	lsls	r3, r3, #23
@@ -7848,26 +7842,27 @@ static void MX_GPIO_Init(void)
  80039c8:	0018      	movs	r0, r3
  80039ca:	f001 fc7f 	bl	80052cc <HAL_GPIO_Init>
 
-  /*Configure GPIO pins : SD_CardDetect_Output_Pin PA4 User_Input_Status_Light_Red_Pin User_Input_Status_Light_Green_Pin
-                           User_Input_Status_Light_Blue_Pin */
-  GPIO_InitStruct.Pin = SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Red_Pin|User_Input_Status_Light_Green_Pin
+   /*Configure GPIO pins : SD_CardDetect_Output_Pin PA4
+      User_Input_Status_Light_Red_Pin User_Input_Status_Light_Green_Pin
+                            User_Input_Status_Light_Blue_Pin */
+   GPIO_InitStruct.Pin = SD_CardDetect_Output_Pin | GPIO_PIN_4 | User_Input_Status_Light_Red_Pin |
  80039ce:	193b      	adds	r3, r7, r4
  80039d0:	4a13      	ldr	r2, [pc, #76]	; (8003a20 <MX_GPIO_Init+0xfc>)
  80039d2:	601a      	str	r2, [r3, #0]
-                          |User_Input_Status_Light_Blue_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+                         User_Input_Status_Light_Green_Pin | User_Input_Status_Light_Blue_Pin;
+   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
  80039d4:	193b      	adds	r3, r7, r4
  80039d6:	2201      	movs	r2, #1
  80039d8:	605a      	str	r2, [r3, #4]
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+   GPIO_InitStruct.Pull = GPIO_NOPULL;
  80039da:	193b      	adds	r3, r7, r4
  80039dc:	2200      	movs	r2, #0
  80039de:	609a      	str	r2, [r3, #8]
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
  80039e0:	193b      	adds	r3, r7, r4
  80039e2:	2200      	movs	r2, #0
  80039e4:	60da      	str	r2, [r3, #12]
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
  80039e6:	193a      	adds	r2, r7, r4
  80039e8:	23a0      	movs	r3, #160	; 0xa0
  80039ea:	05db      	lsls	r3, r3, #23
@@ -7875,28 +7870,28 @@ static void MX_GPIO_Init(void)
  80039ee:	0018      	movs	r0, r3
  80039f0:	f001 fc6c 	bl	80052cc <HAL_GPIO_Init>
 
-  /*Configure GPIO pin : Discrete_Bit_2_Pin */
-  GPIO_InitStruct.Pin = Discrete_Bit_2_Pin;
+   /*Configure GPIO pin : Discrete_Bit_2_Pin */
+   GPIO_InitStruct.Pin = Discrete_Bit_2_Pin;
  80039f4:	193b      	adds	r3, r7, r4
  80039f6:	2201      	movs	r2, #1
  80039f8:	601a      	str	r2, [r3, #0]
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
  80039fa:	193b      	adds	r3, r7, r4
  80039fc:	2200      	movs	r2, #0
  80039fe:	605a      	str	r2, [r3, #4]
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+   GPIO_InitStruct.Pull = GPIO_NOPULL;
  8003a00:	193b      	adds	r3, r7, r4
  8003a02:	2200      	movs	r2, #0
  8003a04:	609a      	str	r2, [r3, #8]
-  HAL_GPIO_Init(Discrete_Bit_2_GPIO_Port, &GPIO_InitStruct);
+   HAL_GPIO_Init(Discrete_Bit_2_GPIO_Port, &GPIO_InitStruct);
  8003a06:	193b      	adds	r3, r7, r4
  8003a08:	4a07      	ldr	r2, [pc, #28]	; (8003a28 <MX_GPIO_Init+0x104>)
  8003a0a:	0019      	movs	r1, r3
  8003a0c:	0010      	movs	r0, r2
  8003a0e:	f001 fc5d 	bl	80052cc <HAL_GPIO_Init>
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
+   /* USER CODE BEGIN MX_GPIO_Init_2 */
+   /* USER CODE END MX_GPIO_Init_2 */
 }
  8003a12:	46c0      	nop			; (mov r8, r8)
  8003a14:	46bd      	mov	sp, r7
@@ -7909,7 +7904,7 @@ static void MX_GPIO_Init(void)
  8003a28:	50000400 	.word	0x50000400
 
 08003a2c <__io_putchar>:
-     set to 'Yes') calls __io_putchar() */
+   set to 'Yes') calls __io_putchar() */
 int __io_putchar(int ch)
 #else
 int fputc(int ch, FILE *f)
@@ -7919,10 +7914,11 @@ int fputc(int ch, FILE *f)
  8003a2e:	b082      	sub	sp, #8
  8003a30:	af00      	add	r7, sp, #0
  8003a32:	6078      	str	r0, [r7, #4]
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the UART3 and Loop until the end of transmission */
-  //HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-  return ch;
+   /* Place your implementation of fputc here */
+   /* e.g. write a character to the UART3 and Loop until the end of transmission
+    */
+   // HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+   return ch;
  8003a34:	687b      	ldr	r3, [r7, #4]
 }
  8003a36:	0018      	movs	r0, r3
@@ -7933,18 +7929,17 @@ int fputc(int ch, FILE *f)
 
 08003a40 <process_SD_card>:
 
-void process_SD_card(void)
-{
+void process_SD_card(void) {
  8003a40:	b5f0      	push	{r4, r5, r6, r7, lr}
  8003a42:	4c44      	ldr	r4, [pc, #272]	; (8003b54 <process_SD_card+0x114>)
  8003a44:	44a5      	add	sp, r4
  8003a46:	af0c      	add	r7, sp, #48	; 0x30
 
-    // Buffer for storing the complete string to write
-    char writeBuffer[500]; // Adjust the size based on your needs
+   // Buffer for storing the complete string to write
+   char writeBuffer[500];  // Adjust the size based on your needs
 
-    // Attempt to mount the SD Card
-    fres = f_mount(&FatFs, "", 1); // 1=mount now
+   // Attempt to mount the SD Card
+   fres = f_mount(&FatFs, "", 1);  // 1=mount now
  8003a48:	4d43      	ldr	r5, [pc, #268]	; (8003b58 <process_SD_card+0x118>)
  8003a4a:	2618      	movs	r6, #24
  8003a4c:	19ab      	adds	r3, r5, r6
@@ -7958,15 +7953,15 @@ void process_SD_card(void)
  8003a5c:	f005 fbce 	bl	80091fc <f_mount>
  8003a60:	0003      	movs	r3, r0
  8003a62:	7023      	strb	r3, [r4, #0]
-    if (fres != FR_OK) return; // Exit if fail to mount
+   if (fres != FR_OK) return;      // Exit if fail to mount
  8003a64:	19ab      	adds	r3, r5, r6
  8003a66:	19db      	adds	r3, r3, r7
  8003a68:	781b      	ldrb	r3, [r3, #0]
  8003a6a:	2b00      	cmp	r3, #0
  8003a6c:	d16d      	bne.n	8003b4a <process_SD_card+0x10a>
 
-    // Open or create the file and append data
-    fres = f_open(&fil, "TestingReadings.csv", FA_WRITE | FA_READ | FA_OPEN_APPEND);
+   // Open or create the file and append data
+   fres = f_open(&fil, "TestingReadings.csv", FA_WRITE | FA_READ | FA_OPEN_APPEND);
  8003a6e:	19ab      	adds	r3, r5, r6
  8003a70:	19dc      	adds	r4, r3, r7
  8003a72:	493c      	ldr	r1, [pc, #240]	; (8003b64 <process_SD_card+0x124>)
@@ -7979,24 +7974,24 @@ void process_SD_card(void)
  8003a80:	f005 fc08 	bl	8009294 <f_open>
  8003a84:	0003      	movs	r3, r0
  8003a86:	7023      	strb	r3, [r4, #0]
-    if (fres != FR_OK) {
+   if (fres != FR_OK) {
  8003a88:	19ab      	adds	r3, r5, r6
  8003a8a:	19db      	adds	r3, r3, r7
  8003a8c:	781b      	ldrb	r3, [r3, #0]
  8003a8e:	2b00      	cmp	r3, #0
  8003a90:	d006      	beq.n	8003aa0 <process_SD_card+0x60>
-        f_mount(NULL, "", 0); // Dismount the SD card if fail to open
+      f_mount(NULL, "", 0);  // Dismount the SD card if fail to open
  8003a92:	4b32      	ldr	r3, [pc, #200]	; (8003b5c <process_SD_card+0x11c>)
  8003a94:	2200      	movs	r2, #0
  8003a96:	0019      	movs	r1, r3
  8003a98:	2000      	movs	r0, #0
  8003a9a:	f005 fbaf 	bl	80091fc <f_mount>
-        return; // Exit if fail to open/create the file
+      return;                // Exit if fail to open/create the file
  8003a9e:	e055      	b.n	8003b4c <process_SD_card+0x10c>
-    }
+   }
 
-    // Prepare the data string
-    snprintf(writeBuffer, sizeof(writeBuffer),
+   // Prepare the data string
+   snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%.3f,%.3f,%.3f,%d,\n",
  8003aa0:	4b31      	ldr	r3, [pc, #196]	; (8003b68 <process_SD_card+0x128>)
  8003aa2:	681b      	ldr	r3, [r3, #0]
  8003aa4:	1c18      	adds	r0, r3, #0
@@ -8054,12 +8049,12 @@ void process_SD_card(void)
  8003b16:	0031      	movs	r1, r6
  8003b18:	0018      	movs	r0, r3
  8003b1a:	f007 f965 	bl	800ade8 <sniprintf>
-             V_CMOS, // CMOS Voltage
-             C_CMOS, // CMOS Current
-			 valueToAdjust); // Switch State
+            V_CMOS,               // CMOS Voltage
+            C_CMOS,               // CMOS Current
+            valueToAdjust);       // Switch State
 
-    // Write the prepared string to the file
-    f_puts(writeBuffer, &fil);
+   // Write the prepared string to the file
+   f_puts(writeBuffer, &fil);
  8003b1e:	24fa      	movs	r4, #250	; 0xfa
  8003b20:	0064      	lsls	r4, r4, #1
  8003b22:	2518      	movs	r5, #24
@@ -8070,22 +8065,22 @@ void process_SD_card(void)
  8003b2c:	0018      	movs	r0, r3
  8003b2e:	f006 f886 	bl	8009c3e <f_puts>
 
-    // Close the file to ensure data is written to the SD card
-    f_close(&fil);
+   // Close the file to ensure data is written to the SD card
+   f_close(&fil);
  8003b32:	1963      	adds	r3, r4, r5
  8003b34:	19db      	adds	r3, r3, r7
  8003b36:	0018      	movs	r0, r3
  8003b38:	f005 ffd5 	bl	8009ae6 <f_close>
 
-    // Dismount the SD card
-    f_mount(NULL, "", 0);
+   // Dismount the SD card
+   f_mount(NULL, "", 0);
  8003b3c:	4b07      	ldr	r3, [pc, #28]	; (8003b5c <process_SD_card+0x11c>)
  8003b3e:	2200      	movs	r2, #0
  8003b40:	0019      	movs	r1, r3
  8003b42:	2000      	movs	r0, #0
  8003b44:	f005 fb5a 	bl	80091fc <f_mount>
  8003b48:	e000      	b.n	8003b4c <process_SD_card+0x10c>
-    if (fres != FR_OK) return; // Exit if fail to mount
+   if (fres != FR_OK) return;      // Exit if fail to mount
  8003b4a:	46c0      	nop			; (mov r8, r8)
 }
  8003b4c:	46bd      	mov	sp, r7
@@ -8108,47 +8103,46 @@ void process_SD_card(void)
 
 08003b88 <Measurement_of_ADC_Voltage_18650>:
 
-
-void Measurement_of_ADC_Voltage_18650(){
+void Measurement_of_ADC_Voltage_18650() {
  8003b88:	b580      	push	{r7, lr}
  8003b8a:	b084      	sub	sp, #16
  8003b8c:	af00      	add	r7, sp, #0
-	HAL_ADC_Stop(&hadc);
+   HAL_ADC_Stop(&hadc);
  8003b8e:	4b21      	ldr	r3, [pc, #132]	; (8003c14 <Measurement_of_ADC_Voltage_18650+0x8c>)
  8003b90:	0018      	movs	r0, r3
  8003b92:	f000 ffbd 	bl	8004b10 <HAL_ADC_Stop>
-	HAL_ADC_Init(&hadc);
+   HAL_ADC_Init(&hadc);
  8003b96:	4b1f      	ldr	r3, [pc, #124]	; (8003c14 <Measurement_of_ADC_Voltage_18650+0x8c>)
  8003b98:	0018      	movs	r0, r3
  8003b9a:	f000 fdf1 	bl	8004780 <HAL_ADC_Init>
-	float V_ref = 3.3;  // This is known for each micro controller from data
+   float V_ref = 3.3;  // This is known for each micro controller from data
  8003b9e:	4b1e      	ldr	r3, [pc, #120]	; (8003c18 <Measurement_of_ADC_Voltage_18650+0x90>)
  8003ba0:	60fb      	str	r3, [r7, #12]
-		// sheet, V_ref = power supply in
-		float ADC_resolution = (4096 - 1);  // 2^12 - 1
+   // sheet, V_ref = power supply in
+   float ADC_resolution = (4096 - 1);  // 2^12 - 1
  8003ba2:	4b1e      	ldr	r3, [pc, #120]	; (8003c1c <Measurement_of_ADC_Voltage_18650+0x94>)
  8003ba4:	60bb      	str	r3, [r7, #8]
-		float V_stepSize = V_ref / ADC_resolution;
+   float V_stepSize = V_ref / ADC_resolution;
  8003ba6:	68b9      	ldr	r1, [r7, #8]
  8003ba8:	68f8      	ldr	r0, [r7, #12]
  8003baa:	f7fc fe07 	bl	80007bc <__aeabi_fdiv>
  8003bae:	1c03      	adds	r3, r0, #0
  8003bb0:	607b      	str	r3, [r7, #4]
-		// ADC
-	    /* Start ADC Conversion for ADC1 */
-		ADC1->CHSELR = 0x8000;
+   // ADC
+   /* Start ADC Conversion for ADC1 */
+   ADC1->CHSELR = 0x8000;
  8003bb2:	4b1b      	ldr	r3, [pc, #108]	; (8003c20 <Measurement_of_ADC_Voltage_18650+0x98>)
  8003bb4:	2280      	movs	r2, #128	; 0x80
  8003bb6:	0212      	lsls	r2, r2, #8
  8003bb8:	629a      	str	r2, [r3, #40]	; 0x28
-	    ADC_Select_Voltage18650();
+   ADC_Select_Voltage18650();
  8003bba:	f000 f925 	bl	8003e08 <ADC_Select_Voltage18650>
-	    HAL_ADC_Start(&hadc);
+   HAL_ADC_Start(&hadc);
  8003bbe:	4b15      	ldr	r3, [pc, #84]	; (8003c14 <Measurement_of_ADC_Voltage_18650+0x8c>)
  8003bc0:	0018      	movs	r0, r3
  8003bc2:	f000 ff51 	bl	8004a68 <HAL_ADC_Start>
-	    uint16_t rawValue1;
-	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
+   uint16_t rawValue1;
+   if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
  8003bc6:	2301      	movs	r3, #1
  8003bc8:	425a      	negs	r2, r3
  8003bca:	4b12      	ldr	r3, [pc, #72]	; (8003c14 <Measurement_of_ADC_Voltage_18650+0x8c>)
@@ -8157,15 +8151,15 @@ void Measurement_of_ADC_Voltage_18650(){
  8003bd0:	f000 ffde 	bl	8004b90 <HAL_ADC_PollForConversion>
  8003bd4:	1e03      	subs	r3, r0, #0
  8003bd6:	d114      	bne.n	8003c02 <Measurement_of_ADC_Voltage_18650+0x7a>
-	           /* Read the ADC1 value */
-	           rawValue1 = HAL_ADC_GetValue(&hadc);
+      /* Read the ADC1 value */
+      rawValue1 = HAL_ADC_GetValue(&hadc);
  8003bd8:	4b0e      	ldr	r3, [pc, #56]	; (8003c14 <Measurement_of_ADC_Voltage_18650+0x8c>)
  8003bda:	0018      	movs	r0, r3
  8003bdc:	f001 f874 	bl	8004cc8 <HAL_ADC_GetValue>
  8003be0:	0002      	movs	r2, r0
  8003be2:	1cbb      	adds	r3, r7, #2
  8003be4:	801a      	strh	r2, [r3, #0]
-	           V_18650 = ((rawValue1 * V_stepSize));
+      V_18650 = ((rawValue1 * V_stepSize));
  8003be6:	1cbb      	adds	r3, r7, #2
  8003be8:	881b      	ldrh	r3, [r3, #0]
  8003bea:	0018      	movs	r0, r3
@@ -8178,9 +8172,9 @@ void Measurement_of_ADC_Voltage_18650(){
  8003bfc:	1c1a      	adds	r2, r3, #0
  8003bfe:	4b09      	ldr	r3, [pc, #36]	; (8003c24 <Measurement_of_ADC_Voltage_18650+0x9c>)
  8003c00:	601a      	str	r2, [r3, #0]
-	           //V_18650 = rawValue1;
-	       }
-	    HAL_ADC_Stop(&hadc);
+      // V_18650 = rawValue1;
+   }
+   HAL_ADC_Stop(&hadc);
  8003c02:	4b04      	ldr	r3, [pc, #16]	; (8003c14 <Measurement_of_ADC_Voltage_18650+0x8c>)
  8003c04:	0018      	movs	r0, r3
  8003c06:	f000 ff83 	bl	8004b10 <HAL_ADC_Stop>
@@ -8197,46 +8191,46 @@ void Measurement_of_ADC_Voltage_18650(){
  8003c24:	200002c4 	.word	0x200002c4
 
 08003c28 <Measurement_of_ADC_Voltage_CMOS>:
-void Measurement_of_ADC_Voltage_CMOS(){
+void Measurement_of_ADC_Voltage_CMOS() {
  8003c28:	b580      	push	{r7, lr}
  8003c2a:	b084      	sub	sp, #16
  8003c2c:	af00      	add	r7, sp, #0
-	HAL_ADC_Stop(&hadc);
+   HAL_ADC_Stop(&hadc);
  8003c2e:	4b21      	ldr	r3, [pc, #132]	; (8003cb4 <Measurement_of_ADC_Voltage_CMOS+0x8c>)
  8003c30:	0018      	movs	r0, r3
  8003c32:	f000 ff6d 	bl	8004b10 <HAL_ADC_Stop>
-	HAL_ADC_Init(&hadc);
+   HAL_ADC_Init(&hadc);
  8003c36:	4b1f      	ldr	r3, [pc, #124]	; (8003cb4 <Measurement_of_ADC_Voltage_CMOS+0x8c>)
  8003c38:	0018      	movs	r0, r3
  8003c3a:	f000 fda1 	bl	8004780 <HAL_ADC_Init>
-	float V_ref = 3.3;  // This is known for each micro controller from data
+   float V_ref = 3.3;  // This is known for each micro controller from data
  8003c3e:	4b1e      	ldr	r3, [pc, #120]	; (8003cb8 <Measurement_of_ADC_Voltage_CMOS+0x90>)
  8003c40:	60fb      	str	r3, [r7, #12]
-		// sheet, V_ref = power supply in
-		float ADC_resolution = (4096 - 1);  // 2^12 - 1
+   // sheet, V_ref = power supply in
+   float ADC_resolution = (4096 - 1);  // 2^12 - 1
  8003c42:	4b1e      	ldr	r3, [pc, #120]	; (8003cbc <Measurement_of_ADC_Voltage_CMOS+0x94>)
  8003c44:	60bb      	str	r3, [r7, #8]
-		float V_stepSize = V_ref / ADC_resolution;
+   float V_stepSize = V_ref / ADC_resolution;
  8003c46:	68b9      	ldr	r1, [r7, #8]
  8003c48:	68f8      	ldr	r0, [r7, #12]
  8003c4a:	f7fc fdb7 	bl	80007bc <__aeabi_fdiv>
  8003c4e:	1c03      	adds	r3, r0, #0
  8003c50:	607b      	str	r3, [r7, #4]
-		// ADC
-	    /* Start ADC Conversion for ADC1 */
-		ADC1->CHSELR = 0x2000;
+   // ADC
+   /* Start ADC Conversion for ADC1 */
+   ADC1->CHSELR = 0x2000;
  8003c52:	4b1b      	ldr	r3, [pc, #108]	; (8003cc0 <Measurement_of_ADC_Voltage_CMOS+0x98>)
  8003c54:	2280      	movs	r2, #128	; 0x80
  8003c56:	0192      	lsls	r2, r2, #6
  8003c58:	629a      	str	r2, [r3, #40]	; 0x28
-	    ADC_Select_VoltageCMOS();
+   ADC_Select_VoltageCMOS();
  8003c5a:	f000 f8f7 	bl	8003e4c <ADC_Select_VoltageCMOS>
-	    HAL_ADC_Start(&hadc);
+   HAL_ADC_Start(&hadc);
  8003c5e:	4b15      	ldr	r3, [pc, #84]	; (8003cb4 <Measurement_of_ADC_Voltage_CMOS+0x8c>)
  8003c60:	0018      	movs	r0, r3
  8003c62:	f000 ff01 	bl	8004a68 <HAL_ADC_Start>
-	    uint16_t rawValue2;
-	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
+   uint16_t rawValue2;
+   if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
  8003c66:	2301      	movs	r3, #1
  8003c68:	425a      	negs	r2, r3
  8003c6a:	4b12      	ldr	r3, [pc, #72]	; (8003cb4 <Measurement_of_ADC_Voltage_CMOS+0x8c>)
@@ -8245,15 +8239,15 @@ void Measurement_of_ADC_Voltage_CMOS(){
  8003c70:	f000 ff8e 	bl	8004b90 <HAL_ADC_PollForConversion>
  8003c74:	1e03      	subs	r3, r0, #0
  8003c76:	d114      	bne.n	8003ca2 <Measurement_of_ADC_Voltage_CMOS+0x7a>
-	           /* Read the ADC1 value */
-	           rawValue2 = HAL_ADC_GetValue(&hadc);
+      /* Read the ADC1 value */
+      rawValue2 = HAL_ADC_GetValue(&hadc);
  8003c78:	4b0e      	ldr	r3, [pc, #56]	; (8003cb4 <Measurement_of_ADC_Voltage_CMOS+0x8c>)
  8003c7a:	0018      	movs	r0, r3
  8003c7c:	f001 f824 	bl	8004cc8 <HAL_ADC_GetValue>
  8003c80:	0002      	movs	r2, r0
  8003c82:	1cbb      	adds	r3, r7, #2
  8003c84:	801a      	strh	r2, [r3, #0]
-	           V_CMOS = ((rawValue2 * V_stepSize));
+      V_CMOS = ((rawValue2 * V_stepSize));
  8003c86:	1cbb      	adds	r3, r7, #2
  8003c88:	881b      	ldrh	r3, [r3, #0]
  8003c8a:	0018      	movs	r0, r3
@@ -8266,10 +8260,9 @@ void Measurement_of_ADC_Voltage_CMOS(){
  8003c9c:	1c1a      	adds	r2, r3, #0
  8003c9e:	4b09      	ldr	r3, [pc, #36]	; (8003cc4 <Measurement_of_ADC_Voltage_CMOS+0x9c>)
  8003ca0:	601a      	str	r2, [r3, #0]
-	           //V_CMOS = rawValue2;
-
-	       }
-	    HAL_ADC_Stop(&hadc);
+      // V_CMOS = rawValue2;
+   }
+   HAL_ADC_Stop(&hadc);
  8003ca2:	4b04      	ldr	r3, [pc, #16]	; (8003cb4 <Measurement_of_ADC_Voltage_CMOS+0x8c>)
  8003ca4:	0018      	movs	r0, r3
  8003ca6:	f000 ff33 	bl	8004b10 <HAL_ADC_Stop>
@@ -8287,46 +8280,46 @@ void Measurement_of_ADC_Voltage_CMOS(){
 
 08003cc8 <Measurement_of_ADC_Current_18650>:
 
-void Measurement_of_ADC_Current_18650(){
+void Measurement_of_ADC_Current_18650() {
  8003cc8:	b580      	push	{r7, lr}
  8003cca:	b084      	sub	sp, #16
  8003ccc:	af00      	add	r7, sp, #0
-	HAL_ADC_Stop(&hadc);
+   HAL_ADC_Stop(&hadc);
  8003cce:	4b21      	ldr	r3, [pc, #132]	; (8003d54 <Measurement_of_ADC_Current_18650+0x8c>)
  8003cd0:	0018      	movs	r0, r3
  8003cd2:	f000 ff1d 	bl	8004b10 <HAL_ADC_Stop>
-	HAL_ADC_Init(&hadc);
+   HAL_ADC_Init(&hadc);
  8003cd6:	4b1f      	ldr	r3, [pc, #124]	; (8003d54 <Measurement_of_ADC_Current_18650+0x8c>)
  8003cd8:	0018      	movs	r0, r3
  8003cda:	f000 fd51 	bl	8004780 <HAL_ADC_Init>
-	float V_ref = 3.3;  // This is known for each micro controller from data
+   float V_ref = 3.3;  // This is known for each micro controller from data
  8003cde:	4b1e      	ldr	r3, [pc, #120]	; (8003d58 <Measurement_of_ADC_Current_18650+0x90>)
  8003ce0:	60fb      	str	r3, [r7, #12]
-		// sheet, V_ref = power supply in
-		float ADC_resolution = (4096 - 1);  // 2^12 - 1
+   // sheet, V_ref = power supply in
+   float ADC_resolution = (4096 - 1);  // 2^12 - 1
  8003ce2:	4b1e      	ldr	r3, [pc, #120]	; (8003d5c <Measurement_of_ADC_Current_18650+0x94>)
  8003ce4:	60bb      	str	r3, [r7, #8]
-		float V_stepSize = V_ref / ADC_resolution;
+   float V_stepSize = V_ref / ADC_resolution;
  8003ce6:	68b9      	ldr	r1, [r7, #8]
  8003ce8:	68f8      	ldr	r0, [r7, #12]
  8003cea:	f7fc fd67 	bl	80007bc <__aeabi_fdiv>
  8003cee:	1c03      	adds	r3, r0, #0
  8003cf0:	607b      	str	r3, [r7, #4]
-		// ADC
-	    /* Start ADC Conversion for ADC1 */
-		ADC1->CHSELR = 0x0200;
+   // ADC
+   /* Start ADC Conversion for ADC1 */
+   ADC1->CHSELR = 0x0200;
  8003cf2:	4b1b      	ldr	r3, [pc, #108]	; (8003d60 <Measurement_of_ADC_Current_18650+0x98>)
  8003cf4:	2280      	movs	r2, #128	; 0x80
  8003cf6:	0092      	lsls	r2, r2, #2
  8003cf8:	629a      	str	r2, [r3, #40]	; 0x28
-	    ADC_Select_Current18650();
+   ADC_Select_Current18650();
  8003cfa:	f000 f8c9 	bl	8003e90 <ADC_Select_Current18650>
-	    HAL_ADC_Start(&hadc);
+   HAL_ADC_Start(&hadc);
  8003cfe:	4b15      	ldr	r3, [pc, #84]	; (8003d54 <Measurement_of_ADC_Current_18650+0x8c>)
  8003d00:	0018      	movs	r0, r3
  8003d02:	f000 feb1 	bl	8004a68 <HAL_ADC_Start>
-	    uint16_t rawValue3;
-	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
+   uint16_t rawValue3;
+   if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
  8003d06:	2301      	movs	r3, #1
  8003d08:	425a      	negs	r2, r3
  8003d0a:	4b12      	ldr	r3, [pc, #72]	; (8003d54 <Measurement_of_ADC_Current_18650+0x8c>)
@@ -8335,15 +8328,15 @@ void Measurement_of_ADC_Current_18650(){
  8003d10:	f000 ff3e 	bl	8004b90 <HAL_ADC_PollForConversion>
  8003d14:	1e03      	subs	r3, r0, #0
  8003d16:	d114      	bne.n	8003d42 <Measurement_of_ADC_Current_18650+0x7a>
-	           /* Read the ADC1 value */
-	           rawValue3 = HAL_ADC_GetValue(&hadc);
+      /* Read the ADC1 value */
+      rawValue3 = HAL_ADC_GetValue(&hadc);
  8003d18:	4b0e      	ldr	r3, [pc, #56]	; (8003d54 <Measurement_of_ADC_Current_18650+0x8c>)
  8003d1a:	0018      	movs	r0, r3
  8003d1c:	f000 ffd4 	bl	8004cc8 <HAL_ADC_GetValue>
  8003d20:	0002      	movs	r2, r0
  8003d22:	1cbb      	adds	r3, r7, #2
  8003d24:	801a      	strh	r2, [r3, #0]
-	           C_18650 = ((rawValue3 * V_stepSize));
+      C_18650 = ((rawValue3 * V_stepSize));
  8003d26:	1cbb      	adds	r3, r7, #2
  8003d28:	881b      	ldrh	r3, [r3, #0]
  8003d2a:	0018      	movs	r0, r3
@@ -8356,10 +8349,10 @@ void Measurement_of_ADC_Current_18650(){
  8003d3c:	1c1a      	adds	r2, r3, #0
  8003d3e:	4b09      	ldr	r3, [pc, #36]	; (8003d64 <Measurement_of_ADC_Current_18650+0x9c>)
  8003d40:	601a      	str	r2, [r3, #0]
-	           //C_18650 = rawValue3;
-	        		   //50)/.0299562); //I_load = ((V_ADC / 50 gain) / .03 calibrated shunt)
-	       }
-	    HAL_ADC_Stop(&hadc);
+      // C_18650 = rawValue3;
+      // 50)/.0299562); //I_load = ((V_ADC / 50 gain) / .03 calibrated shunt)
+   }
+   HAL_ADC_Stop(&hadc);
  8003d42:	4b04      	ldr	r3, [pc, #16]	; (8003d54 <Measurement_of_ADC_Current_18650+0x8c>)
  8003d44:	0018      	movs	r0, r3
  8003d46:	f000 fee3 	bl	8004b10 <HAL_ADC_Stop>
@@ -8377,46 +8370,46 @@ void Measurement_of_ADC_Current_18650(){
 
 08003d68 <Measurement_of_ADC_Current_CMOS>:
 
-void Measurement_of_ADC_Current_CMOS(){
+void Measurement_of_ADC_Current_CMOS() {
  8003d68:	b580      	push	{r7, lr}
  8003d6a:	b084      	sub	sp, #16
  8003d6c:	af00      	add	r7, sp, #0
-	 HAL_ADC_Stop(&hadc);
+   HAL_ADC_Stop(&hadc);
  8003d6e:	4b21      	ldr	r3, [pc, #132]	; (8003df4 <Measurement_of_ADC_Current_CMOS+0x8c>)
  8003d70:	0018      	movs	r0, r3
  8003d72:	f000 fecd 	bl	8004b10 <HAL_ADC_Stop>
-	 HAL_ADC_Init(&hadc);
+   HAL_ADC_Init(&hadc);
  8003d76:	4b1f      	ldr	r3, [pc, #124]	; (8003df4 <Measurement_of_ADC_Current_CMOS+0x8c>)
  8003d78:	0018      	movs	r0, r3
  8003d7a:	f000 fd01 	bl	8004780 <HAL_ADC_Init>
-	float V_ref = 3.3;  // This is known for each micro controller from data
+   float V_ref = 3.3;  // This is known for each micro controller from data
  8003d7e:	4b1e      	ldr	r3, [pc, #120]	; (8003df8 <Measurement_of_ADC_Current_CMOS+0x90>)
  8003d80:	60fb      	str	r3, [r7, #12]
-		// sheet, V_ref = power supply in
-		float ADC_resolution = (4096 - 1);  // 2^12 - 1
+   // sheet, V_ref = power supply in
+   float ADC_resolution = (4096 - 1);  // 2^12 - 1
  8003d82:	4b1e      	ldr	r3, [pc, #120]	; (8003dfc <Measurement_of_ADC_Current_CMOS+0x94>)
  8003d84:	60bb      	str	r3, [r7, #8]
-		float V_stepSize = V_ref / ADC_resolution;
+   float V_stepSize = V_ref / ADC_resolution;
  8003d86:	68b9      	ldr	r1, [r7, #8]
  8003d88:	68f8      	ldr	r0, [r7, #12]
  8003d8a:	f7fc fd17 	bl	80007bc <__aeabi_fdiv>
  8003d8e:	1c03      	adds	r3, r0, #0
  8003d90:	607b      	str	r3, [r7, #4]
-		// ADC
-	    /* Start ADC Conversion for ADC1 */
-		ADC1->CHSELR = 0x1000;
+   // ADC
+   /* Start ADC Conversion for ADC1 */
+   ADC1->CHSELR = 0x1000;
  8003d92:	4b1b      	ldr	r3, [pc, #108]	; (8003e00 <Measurement_of_ADC_Current_CMOS+0x98>)
  8003d94:	2280      	movs	r2, #128	; 0x80
  8003d96:	0152      	lsls	r2, r2, #5
  8003d98:	629a      	str	r2, [r3, #40]	; 0x28
-	    ADC_Select_CurrentCMOS();
+   ADC_Select_CurrentCMOS();
  8003d9a:	f000 f89b 	bl	8003ed4 <ADC_Select_CurrentCMOS>
-	    HAL_ADC_Start(&hadc);
+   HAL_ADC_Start(&hadc);
  8003d9e:	4b15      	ldr	r3, [pc, #84]	; (8003df4 <Measurement_of_ADC_Current_CMOS+0x8c>)
  8003da0:	0018      	movs	r0, r3
  8003da2:	f000 fe61 	bl	8004a68 <HAL_ADC_Start>
-	    uint16_t rawValue4;
-	       if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
+   uint16_t rawValue4;
+   if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
  8003da6:	2301      	movs	r3, #1
  8003da8:	425a      	negs	r2, r3
  8003daa:	4b12      	ldr	r3, [pc, #72]	; (8003df4 <Measurement_of_ADC_Current_CMOS+0x8c>)
@@ -8425,15 +8418,15 @@ void Measurement_of_ADC_Current_CMOS(){
  8003db0:	f000 feee 	bl	8004b90 <HAL_ADC_PollForConversion>
  8003db4:	1e03      	subs	r3, r0, #0
  8003db6:	d114      	bne.n	8003de2 <Measurement_of_ADC_Current_CMOS+0x7a>
-	           /* Read the ADC1 value */
-	           rawValue4 = HAL_ADC_GetValue(&hadc);
+      /* Read the ADC1 value */
+      rawValue4 = HAL_ADC_GetValue(&hadc);
  8003db8:	4b0e      	ldr	r3, [pc, #56]	; (8003df4 <Measurement_of_ADC_Current_CMOS+0x8c>)
  8003dba:	0018      	movs	r0, r3
  8003dbc:	f000 ff84 	bl	8004cc8 <HAL_ADC_GetValue>
  8003dc0:	0002      	movs	r2, r0
  8003dc2:	1cbb      	adds	r3, r7, #2
  8003dc4:	801a      	strh	r2, [r3, #0]
-	           C_CMOS = ((rawValue4 * V_stepSize));
+      C_CMOS = ((rawValue4 * V_stepSize));
  8003dc6:	1cbb      	adds	r3, r7, #2
  8003dc8:	881b      	ldrh	r3, [r3, #0]
  8003dca:	0018      	movs	r0, r3
@@ -8446,10 +8439,11 @@ void Measurement_of_ADC_Current_CMOS(){
  8003ddc:	1c1a      	adds	r2, r3, #0
  8003dde:	4b09      	ldr	r3, [pc, #36]	; (8003e04 <Measurement_of_ADC_Current_CMOS+0x9c>)
  8003de0:	601a      	str	r2, [r3, #0]
-	           //C_CMOS = rawValue4;
-	        		   ///20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt )
-	       }
-	    HAL_ADC_Stop(&hadc);
+      // C_CMOS = rawValue4;
+      /// 20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt
+      /// )
+   }
+   HAL_ADC_Stop(&hadc);
  8003de2:	4b04      	ldr	r3, [pc, #16]	; (8003df4 <Measurement_of_ADC_Current_CMOS+0x8c>)
  8003de4:	0018      	movs	r0, r3
  8003de6:	f000 fe93 	bl	8004b10 <HAL_ADC_Stop>
@@ -8467,27 +8461,26 @@ void Measurement_of_ADC_Current_CMOS(){
 
 08003e08 <ADC_Select_Voltage18650>:
 
-
-void ADC_Select_Voltage18650(){
+void ADC_Select_Voltage18650() {
  8003e08:	b580      	push	{r7, lr}
  8003e0a:	b082      	sub	sp, #8
  8003e0c:	af00      	add	r7, sp, #0
-ADC_ChannelConfTypeDef sConfig = {0};
+   ADC_ChannelConfTypeDef sConfig = {0};
  8003e0e:	003b      	movs	r3, r7
  8003e10:	0018      	movs	r0, r3
  8003e12:	2308      	movs	r3, #8
  8003e14:	001a      	movs	r2, r3
  8003e16:	2100      	movs	r1, #0
  8003e18:	f007 f886 	bl	800af28 <memset>
-sConfig.Channel = ADC_CHANNEL_15;
+   sConfig.Channel = ADC_CHANNEL_15;
  8003e1c:	003b      	movs	r3, r7
  8003e1e:	4a09      	ldr	r2, [pc, #36]	; (8003e44 <ADC_Select_Voltage18650+0x3c>)
  8003e20:	601a      	str	r2, [r3, #0]
-sConfig.Rank = 0;
+   sConfig.Rank = 0;
  8003e22:	003b      	movs	r3, r7
  8003e24:	2200      	movs	r2, #0
  8003e26:	605a      	str	r2, [r3, #4]
-if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
  8003e28:	003a      	movs	r2, r7
  8003e2a:	4b07      	ldr	r3, [pc, #28]	; (8003e48 <ADC_Select_Voltage18650+0x40>)
  8003e2c:	0011      	movs	r1, r2
@@ -8495,10 +8488,9 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
  8003e30:	f000 ff56 	bl	8004ce0 <HAL_ADC_ConfigChannel>
  8003e34:	1e03      	subs	r3, r0, #0
  8003e36:	d001      	beq.n	8003e3c <ADC_Select_Voltage18650+0x34>
-{
-  Error_Handler();
+      Error_Handler();
  8003e38:	f000 fa1e 	bl	8004278 <Error_Handler>
-}
+   }
 }
  8003e3c:	46c0      	nop			; (mov r8, r8)
  8003e3e:	46bd      	mov	sp, r7
@@ -8509,26 +8501,26 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 
 08003e4c <ADC_Select_VoltageCMOS>:
 
-void ADC_Select_VoltageCMOS(){
+void ADC_Select_VoltageCMOS() {
  8003e4c:	b580      	push	{r7, lr}
  8003e4e:	b082      	sub	sp, #8
  8003e50:	af00      	add	r7, sp, #0
-ADC_ChannelConfTypeDef sConfig = {0};
+   ADC_ChannelConfTypeDef sConfig = {0};
  8003e52:	003b      	movs	r3, r7
  8003e54:	0018      	movs	r0, r3
  8003e56:	2308      	movs	r3, #8
  8003e58:	001a      	movs	r2, r3
  8003e5a:	2100      	movs	r1, #0
  8003e5c:	f007 f864 	bl	800af28 <memset>
-sConfig.Channel = ADC_CHANNEL_13;
+   sConfig.Channel = ADC_CHANNEL_13;
  8003e60:	003b      	movs	r3, r7
  8003e62:	4a09      	ldr	r2, [pc, #36]	; (8003e88 <ADC_Select_VoltageCMOS+0x3c>)
  8003e64:	601a      	str	r2, [r3, #0]
-sConfig.Rank = 0;
+   sConfig.Rank = 0;
  8003e66:	003b      	movs	r3, r7
  8003e68:	2200      	movs	r2, #0
  8003e6a:	605a      	str	r2, [r3, #4]
-if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
  8003e6c:	003a      	movs	r2, r7
  8003e6e:	4b07      	ldr	r3, [pc, #28]	; (8003e8c <ADC_Select_VoltageCMOS+0x40>)
  8003e70:	0011      	movs	r1, r2
@@ -8536,11 +8528,9 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
  8003e74:	f000 ff34 	bl	8004ce0 <HAL_ADC_ConfigChannel>
  8003e78:	1e03      	subs	r3, r0, #0
  8003e7a:	d001      	beq.n	8003e80 <ADC_Select_VoltageCMOS+0x34>
-{
-Error_Handler();
+      Error_Handler();
  8003e7c:	f000 f9fc 	bl	8004278 <Error_Handler>
-}
-
+   }
 }
  8003e80:	46c0      	nop			; (mov r8, r8)
  8003e82:	46bd      	mov	sp, r7
@@ -8551,26 +8541,26 @@ Error_Handler();
 
 08003e90 <ADC_Select_Current18650>:
 
-void ADC_Select_Current18650(){
+void ADC_Select_Current18650() {
  8003e90:	b580      	push	{r7, lr}
  8003e92:	b082      	sub	sp, #8
  8003e94:	af00      	add	r7, sp, #0
-ADC_ChannelConfTypeDef sConfig = {0};
+   ADC_ChannelConfTypeDef sConfig = {0};
  8003e96:	003b      	movs	r3, r7
  8003e98:	0018      	movs	r0, r3
  8003e9a:	2308      	movs	r3, #8
  8003e9c:	001a      	movs	r2, r3
  8003e9e:	2100      	movs	r1, #0
  8003ea0:	f007 f842 	bl	800af28 <memset>
-sConfig.Channel = ADC_CHANNEL_9;
+   sConfig.Channel = ADC_CHANNEL_9;
  8003ea4:	003b      	movs	r3, r7
  8003ea6:	4a09      	ldr	r2, [pc, #36]	; (8003ecc <ADC_Select_Current18650+0x3c>)
  8003ea8:	601a      	str	r2, [r3, #0]
-sConfig.Rank = 0;
+   sConfig.Rank = 0;
  8003eaa:	003b      	movs	r3, r7
  8003eac:	2200      	movs	r2, #0
  8003eae:	605a      	str	r2, [r3, #4]
-if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
  8003eb0:	003a      	movs	r2, r7
  8003eb2:	4b07      	ldr	r3, [pc, #28]	; (8003ed0 <ADC_Select_Current18650+0x40>)
  8003eb4:	0011      	movs	r1, r2
@@ -8578,11 +8568,9 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
  8003eb8:	f000 ff12 	bl	8004ce0 <HAL_ADC_ConfigChannel>
  8003ebc:	1e03      	subs	r3, r0, #0
  8003ebe:	d001      	beq.n	8003ec4 <ADC_Select_Current18650+0x34>
-{
-	    Error_Handler();
+      Error_Handler();
  8003ec0:	f000 f9da 	bl	8004278 <Error_Handler>
-}
-
+   }
 }
  8003ec4:	46c0      	nop			; (mov r8, r8)
  8003ec6:	46bd      	mov	sp, r7
@@ -8593,26 +8581,26 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
 
 08003ed4 <ADC_Select_CurrentCMOS>:
 
-void ADC_Select_CurrentCMOS(){
+void ADC_Select_CurrentCMOS() {
  8003ed4:	b580      	push	{r7, lr}
  8003ed6:	b082      	sub	sp, #8
  8003ed8:	af00      	add	r7, sp, #0
-ADC_ChannelConfTypeDef sConfig = {0};
+   ADC_ChannelConfTypeDef sConfig = {0};
  8003eda:	003b      	movs	r3, r7
  8003edc:	0018      	movs	r0, r3
  8003ede:	2308      	movs	r3, #8
  8003ee0:	001a      	movs	r2, r3
  8003ee2:	2100      	movs	r1, #0
  8003ee4:	f007 f820 	bl	800af28 <memset>
-sConfig.Channel = ADC_CHANNEL_12;
+   sConfig.Channel = ADC_CHANNEL_12;
  8003ee8:	003b      	movs	r3, r7
  8003eea:	4a09      	ldr	r2, [pc, #36]	; (8003f10 <ADC_Select_CurrentCMOS+0x3c>)
  8003eec:	601a      	str	r2, [r3, #0]
-sConfig.Rank = 0;
+   sConfig.Rank = 0;
  8003eee:	003b      	movs	r3, r7
  8003ef0:	2200      	movs	r2, #0
  8003ef2:	605a      	str	r2, [r3, #4]
-if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
  8003ef4:	003a      	movs	r2, r7
  8003ef6:	4b07      	ldr	r3, [pc, #28]	; (8003f14 <ADC_Select_CurrentCMOS+0x40>)
  8003ef8:	0011      	movs	r1, r2
@@ -8620,11 +8608,9 @@ if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
  8003efc:	f000 fef0 	bl	8004ce0 <HAL_ADC_ConfigChannel>
  8003f00:	1e03      	subs	r3, r0, #0
  8003f02:	d001      	beq.n	8003f08 <ADC_Select_CurrentCMOS+0x34>
-{
-Error_Handler();
+      Error_Handler();
  8003f04:	f000 f9b8 	bl	8004278 <Error_Handler>
-}
-
+   }
 }
  8003f08:	46c0      	nop			; (mov r8, r8)
  8003f0a:	46bd      	mov	sp, r7
@@ -8638,39 +8624,36 @@ Error_Handler();
 void readNumber() {
  8003f18:	b580      	push	{r7, lr}
  8003f1a:	af00      	add	r7, sp, #0
-
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8003f1c:	4bd3      	ldr	r3, [pc, #844]	; (800426c <readNumber+0x354>)
  8003f1e:	2101      	movs	r1, #1
  8003f20:	0018      	movs	r0, r3
  8003f22:	f001 fb51 	bl	80055c8 <HAL_GPIO_ReadPin>
  8003f26:	1e03      	subs	r3, r0, #0
  8003f28:	d12b      	bne.n	8003f82 <readNumber+0x6a>
-		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8003f2a:	4bd0      	ldr	r3, [pc, #832]	; (800426c <readNumber+0x354>)
  8003f2c:	2102      	movs	r1, #2
  8003f2e:	0018      	movs	r0, r3
  8003f30:	f001 fb4a 	bl	80055c8 <HAL_GPIO_ReadPin>
  8003f34:	1e03      	subs	r3, r0, #0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
  8003f36:	d124      	bne.n	8003f82 <readNumber+0x6a>
-		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
  8003f38:	4bcd      	ldr	r3, [pc, #820]	; (8004270 <readNumber+0x358>)
  8003f3a:	2101      	movs	r1, #1
  8003f3c:	0018      	movs	r0, r3
  8003f3e:	f001 fb43 	bl	80055c8 <HAL_GPIO_ReadPin>
  8003f42:	1e03      	subs	r3, r0, #0
-		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8003f44:	d11d      	bne.n	8003f82 <readNumber+0x6a>
-		HAL_Delay(5);
+      HAL_Delay(5);
  8003f46:	2005      	movs	r0, #5
  8003f48:	f000 fbf6 	bl	8004738 <HAL_Delay>
-		valueToAdjust = 0;
+      valueToAdjust = 0;
  8003f4c:	4bc9      	ldr	r3, [pc, #804]	; (8004274 <readNumber+0x35c>)
  8003f4e:	2200      	movs	r2, #0
  8003f50:	601a      	str	r2, [r3, #0]
-		// Set LED to Off
-		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+      // Set LED to Off
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
  8003f52:	2380      	movs	r3, #128	; 0x80
  8003f54:	0059      	lsls	r1, r3, #1
  8003f56:	23a0      	movs	r3, #160	; 0xa0
@@ -8678,7 +8661,8 @@ void readNumber() {
  8003f5a:	2200      	movs	r2, #0
  8003f5c:	0018      	movs	r0, r3
  8003f5e:	f001 fb50 	bl	8005602 <HAL_GPIO_WritePin>
-		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  8003f62:	2380      	movs	r3, #128	; 0x80
  8003f64:	0099      	lsls	r1, r3, #2
  8003f66:	23a0      	movs	r3, #160	; 0xa0
@@ -8686,7 +8670,8 @@ void readNumber() {
  8003f6a:	2200      	movs	r2, #0
  8003f6c:	0018      	movs	r0, r3
  8003f6e:	f001 fb48 	bl	8005602 <HAL_GPIO_WritePin>
-		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  8003f72:	2380      	movs	r3, #128	; 0x80
  8003f74:	00d9      	lsls	r1, r3, #3
  8003f76:	23a0      	movs	r3, #160	; 0xa0
@@ -8694,10 +8679,10 @@ void readNumber() {
  8003f7a:	2200      	movs	r2, #0
  8003f7c:	0018      	movs	r0, r3
  8003f7e:	f001 fb40 	bl	8005602 <HAL_GPIO_WritePin>
+                        GPIO_PIN_RESET);
+   }
 
-		}
-
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8003f82:	4bba      	ldr	r3, [pc, #744]	; (800426c <readNumber+0x354>)
  8003f84:	2101      	movs	r1, #1
  8003f86:	0018      	movs	r0, r3
@@ -8705,31 +8690,29 @@ void readNumber() {
  8003f8c:	0003      	movs	r3, r0
  8003f8e:	2b01      	cmp	r3, #1
  8003f90:	d12b      	bne.n	8003fea <readNumber+0xd2>
-		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8003f92:	4bb6      	ldr	r3, [pc, #728]	; (800426c <readNumber+0x354>)
  8003f94:	2102      	movs	r1, #2
  8003f96:	0018      	movs	r0, r3
  8003f98:	f001 fb16 	bl	80055c8 <HAL_GPIO_ReadPin>
  8003f9c:	1e03      	subs	r3, r0, #0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
  8003f9e:	d124      	bne.n	8003fea <readNumber+0xd2>
-		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
  8003fa0:	4bb3      	ldr	r3, [pc, #716]	; (8004270 <readNumber+0x358>)
  8003fa2:	2101      	movs	r1, #1
  8003fa4:	0018      	movs	r0, r3
  8003fa6:	f001 fb0f 	bl	80055c8 <HAL_GPIO_ReadPin>
  8003faa:	1e03      	subs	r3, r0, #0
-		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8003fac:	d11d      	bne.n	8003fea <readNumber+0xd2>
-		HAL_Delay(5);
+      HAL_Delay(5);
  8003fae:	2005      	movs	r0, #5
  8003fb0:	f000 fbc2 	bl	8004738 <HAL_Delay>
-		valueToAdjust = 1;
+      valueToAdjust = 1;
  8003fb4:	4baf      	ldr	r3, [pc, #700]	; (8004274 <readNumber+0x35c>)
  8003fb6:	2201      	movs	r2, #1
  8003fb8:	601a      	str	r2, [r3, #0]
-		// Set Red
-		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
+      // Set Red
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
  8003fba:	2380      	movs	r3, #128	; 0x80
  8003fbc:	0059      	lsls	r1, r3, #1
  8003fbe:	23a0      	movs	r3, #160	; 0xa0
@@ -8737,7 +8720,7 @@ void readNumber() {
  8003fc2:	2201      	movs	r2, #1
  8003fc4:	0018      	movs	r0, r3
  8003fc6:	f001 fb1c 	bl	8005602 <HAL_GPIO_WritePin>
-		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  8003fca:	2380      	movs	r3, #128	; 0x80
  8003fcc:	0099      	lsls	r1, r3, #2
  8003fce:	23a0      	movs	r3, #160	; 0xa0
@@ -8745,7 +8728,8 @@ void readNumber() {
  8003fd2:	2200      	movs	r2, #0
  8003fd4:	0018      	movs	r0, r3
  8003fd6:	f001 fb14 	bl	8005602 <HAL_GPIO_WritePin>
-		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  8003fda:	2380      	movs	r3, #128	; 0x80
  8003fdc:	00d9      	lsls	r1, r3, #3
  8003fde:	23a0      	movs	r3, #160	; 0xa0
@@ -8753,41 +8737,39 @@ void readNumber() {
  8003fe2:	2200      	movs	r2, #0
  8003fe4:	0018      	movs	r0, r3
  8003fe6:	f001 fb0c 	bl	8005602 <HAL_GPIO_WritePin>
-
-	}
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+                        GPIO_PIN_RESET);
+   }
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  8003fea:	4ba0      	ldr	r3, [pc, #640]	; (800426c <readNumber+0x354>)
  8003fec:	2101      	movs	r1, #1
  8003fee:	0018      	movs	r0, r3
  8003ff0:	f001 faea 	bl	80055c8 <HAL_GPIO_ReadPin>
  8003ff4:	1e03      	subs	r3, r0, #0
  8003ff6:	d12c      	bne.n	8004052 <readNumber+0x13a>
-		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  8003ff8:	4b9c      	ldr	r3, [pc, #624]	; (800426c <readNumber+0x354>)
  8003ffa:	2102      	movs	r1, #2
  8003ffc:	0018      	movs	r0, r3
  8003ffe:	f001 fae3 	bl	80055c8 <HAL_GPIO_ReadPin>
  8004002:	0003      	movs	r3, r0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
  8004004:	2b01      	cmp	r3, #1
  8004006:	d124      	bne.n	8004052 <readNumber+0x13a>
-		HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
  8004008:	4b99      	ldr	r3, [pc, #612]	; (8004270 <readNumber+0x358>)
  800400a:	2101      	movs	r1, #1
  800400c:	0018      	movs	r0, r3
  800400e:	f001 fadb 	bl	80055c8 <HAL_GPIO_ReadPin>
  8004012:	1e03      	subs	r3, r0, #0
-		HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  8004014:	d11d      	bne.n	8004052 <readNumber+0x13a>
-		HAL_Delay(5);
+      HAL_Delay(5);
  8004016:	2005      	movs	r0, #5
  8004018:	f000 fb8e 	bl	8004738 <HAL_Delay>
-		valueToAdjust = 2;
+      valueToAdjust = 2;
  800401c:	4b95      	ldr	r3, [pc, #596]	; (8004274 <readNumber+0x35c>)
  800401e:	2202      	movs	r2, #2
  8004020:	601a      	str	r2, [r3, #0]
-		// Set Yellow
-		HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
+      // Set Yellow
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
  8004022:	2380      	movs	r3, #128	; 0x80
  8004024:	0059      	lsls	r1, r3, #1
  8004026:	23a0      	movs	r3, #160	; 0xa0
@@ -8795,7 +8777,7 @@ void readNumber() {
  800402a:	2201      	movs	r2, #1
  800402c:	0018      	movs	r0, r3
  800402e:	f001 fae8 	bl	8005602 <HAL_GPIO_WritePin>
-		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  8004032:	2380      	movs	r3, #128	; 0x80
  8004034:	0099      	lsls	r1, r3, #2
  8004036:	23a0      	movs	r3, #160	; 0xa0
@@ -8803,7 +8785,8 @@ void readNumber() {
  800403a:	2201      	movs	r2, #1
  800403c:	0018      	movs	r0, r3
  800403e:	f001 fae0 	bl	8005602 <HAL_GPIO_WritePin>
-		HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  8004042:	2380      	movs	r3, #128	; 0x80
  8004044:	00d9      	lsls	r1, r3, #3
  8004046:	23a0      	movs	r3, #160	; 0xa0
@@ -8811,9 +8794,9 @@ void readNumber() {
  800404a:	2200      	movs	r2, #0
  800404c:	0018      	movs	r0, r3
  800404e:	f001 fad8 	bl	8005602 <HAL_GPIO_WritePin>
-
-	}
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+                        GPIO_PIN_RESET);
+   }
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  8004052:	4b86      	ldr	r3, [pc, #536]	; (800426c <readNumber+0x354>)
  8004054:	2101      	movs	r1, #1
  8004056:	0018      	movs	r0, r3
@@ -8821,32 +8804,30 @@ void readNumber() {
  800405c:	0003      	movs	r3, r0
  800405e:	2b01      	cmp	r3, #1
  8004060:	d12c      	bne.n	80040bc <readNumber+0x1a4>
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  8004062:	4b82      	ldr	r3, [pc, #520]	; (800426c <readNumber+0x354>)
  8004064:	2102      	movs	r1, #2
  8004066:	0018      	movs	r0, r3
  8004068:	f001 faae 	bl	80055c8 <HAL_GPIO_ReadPin>
  800406c:	0003      	movs	r3, r0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
  800406e:	2b01      	cmp	r3, #1
  8004070:	d124      	bne.n	80040bc <readNumber+0x1a4>
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
  8004072:	4b7f      	ldr	r3, [pc, #508]	; (8004270 <readNumber+0x358>)
  8004074:	2101      	movs	r1, #1
  8004076:	0018      	movs	r0, r3
  8004078:	f001 faa6 	bl	80055c8 <HAL_GPIO_ReadPin>
  800407c:	1e03      	subs	r3, r0, #0
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  800407e:	d11d      	bne.n	80040bc <readNumber+0x1a4>
-			HAL_Delay(5);
+      HAL_Delay(5);
  8004080:	2005      	movs	r0, #5
  8004082:	f000 fb59 	bl	8004738 <HAL_Delay>
-			valueToAdjust = 3;
+      valueToAdjust = 3;
  8004086:	4b7b      	ldr	r3, [pc, #492]	; (8004274 <readNumber+0x35c>)
  8004088:	2203      	movs	r2, #3
  800408a:	601a      	str	r2, [r3, #0]
-			// Set Green
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+      // Set Green
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
  800408c:	2380      	movs	r3, #128	; 0x80
  800408e:	0059      	lsls	r1, r3, #1
  8004090:	23a0      	movs	r3, #160	; 0xa0
@@ -8854,7 +8835,8 @@ void readNumber() {
  8004094:	2200      	movs	r2, #0
  8004096:	0018      	movs	r0, r3
  8004098:	f001 fab3 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  800409c:	2380      	movs	r3, #128	; 0x80
  800409e:	0099      	lsls	r1, r3, #2
  80040a0:	23a0      	movs	r3, #160	; 0xa0
@@ -8862,7 +8844,8 @@ void readNumber() {
  80040a4:	2201      	movs	r2, #1
  80040a6:	0018      	movs	r0, r3
  80040a8:	f001 faab 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  80040ac:	2380      	movs	r3, #128	; 0x80
  80040ae:	00d9      	lsls	r1, r3, #3
  80040b0:	23a0      	movs	r3, #160	; 0xa0
@@ -8870,41 +8853,39 @@ void readNumber() {
  80040b4:	2200      	movs	r2, #0
  80040b6:	0018      	movs	r0, r3
  80040b8:	f001 faa3 	bl	8005602 <HAL_GPIO_WritePin>
-
-		}
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+                        GPIO_PIN_RESET);
+   }
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  80040bc:	4b6b      	ldr	r3, [pc, #428]	; (800426c <readNumber+0x354>)
  80040be:	2101      	movs	r1, #1
  80040c0:	0018      	movs	r0, r3
  80040c2:	f001 fa81 	bl	80055c8 <HAL_GPIO_ReadPin>
  80040c6:	1e03      	subs	r3, r0, #0
  80040c8:	d12c      	bne.n	8004124 <readNumber+0x20c>
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  80040ca:	4b68      	ldr	r3, [pc, #416]	; (800426c <readNumber+0x354>)
  80040cc:	2102      	movs	r1, #2
  80040ce:	0018      	movs	r0, r3
  80040d0:	f001 fa7a 	bl	80055c8 <HAL_GPIO_ReadPin>
  80040d4:	1e03      	subs	r3, r0, #0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
  80040d6:	d125      	bne.n	8004124 <readNumber+0x20c>
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
  80040d8:	4b65      	ldr	r3, [pc, #404]	; (8004270 <readNumber+0x358>)
  80040da:	2101      	movs	r1, #1
  80040dc:	0018      	movs	r0, r3
  80040de:	f001 fa73 	bl	80055c8 <HAL_GPIO_ReadPin>
  80040e2:	0003      	movs	r3, r0
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  80040e4:	2b01      	cmp	r3, #1
  80040e6:	d11d      	bne.n	8004124 <readNumber+0x20c>
-			HAL_Delay(5);
+      HAL_Delay(5);
  80040e8:	2005      	movs	r0, #5
  80040ea:	f000 fb25 	bl	8004738 <HAL_Delay>
-			valueToAdjust = 4;
+      valueToAdjust = 4;
  80040ee:	4b61      	ldr	r3, [pc, #388]	; (8004274 <readNumber+0x35c>)
  80040f0:	2204      	movs	r2, #4
  80040f2:	601a      	str	r2, [r3, #0]
-			// Set Cyan
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+      // Set Cyan
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
  80040f4:	2380      	movs	r3, #128	; 0x80
  80040f6:	0059      	lsls	r1, r3, #1
  80040f8:	23a0      	movs	r3, #160	; 0xa0
@@ -8912,7 +8893,8 @@ void readNumber() {
  80040fc:	2200      	movs	r2, #0
  80040fe:	0018      	movs	r0, r3
  8004100:	f001 fa7f 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  8004104:	2380      	movs	r3, #128	; 0x80
  8004106:	0099      	lsls	r1, r3, #2
  8004108:	23a0      	movs	r3, #160	; 0xa0
@@ -8920,7 +8902,8 @@ void readNumber() {
  800410c:	2201      	movs	r2, #1
  800410e:	0018      	movs	r0, r3
  8004110:	f001 fa77 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  8004114:	2380      	movs	r3, #128	; 0x80
  8004116:	00d9      	lsls	r1, r3, #3
  8004118:	23a0      	movs	r3, #160	; 0xa0
@@ -8928,9 +8911,9 @@ void readNumber() {
  800411c:	2201      	movs	r2, #1
  800411e:	0018      	movs	r0, r3
  8004120:	f001 fa6f 	bl	8005602 <HAL_GPIO_WritePin>
-
-		}
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+                        GPIO_PIN_SET);
+   }
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8004124:	4b51      	ldr	r3, [pc, #324]	; (800426c <readNumber+0x354>)
  8004126:	2101      	movs	r1, #1
  8004128:	0018      	movs	r0, r3
@@ -8938,32 +8921,30 @@ void readNumber() {
  800412e:	0003      	movs	r3, r0
  8004130:	2b01      	cmp	r3, #1
  8004132:	d12c      	bne.n	800418e <readNumber+0x276>
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  8004134:	4b4d      	ldr	r3, [pc, #308]	; (800426c <readNumber+0x354>)
  8004136:	2102      	movs	r1, #2
  8004138:	0018      	movs	r0, r3
  800413a:	f001 fa45 	bl	80055c8 <HAL_GPIO_ReadPin>
  800413e:	1e03      	subs	r3, r0, #0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
  8004140:	d125      	bne.n	800418e <readNumber+0x276>
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
  8004142:	4b4b      	ldr	r3, [pc, #300]	; (8004270 <readNumber+0x358>)
  8004144:	2101      	movs	r1, #1
  8004146:	0018      	movs	r0, r3
  8004148:	f001 fa3e 	bl	80055c8 <HAL_GPIO_ReadPin>
  800414c:	0003      	movs	r3, r0
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
  800414e:	2b01      	cmp	r3, #1
  8004150:	d11d      	bne.n	800418e <readNumber+0x276>
-			HAL_Delay(5);
+      HAL_Delay(5);
  8004152:	2005      	movs	r0, #5
  8004154:	f000 faf0 	bl	8004738 <HAL_Delay>
-			valueToAdjust = 5;
+      valueToAdjust = 5;
  8004158:	4b46      	ldr	r3, [pc, #280]	; (8004274 <readNumber+0x35c>)
  800415a:	2205      	movs	r2, #5
  800415c:	601a      	str	r2, [r3, #0]
-			// Set Blue
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);
+      // Set Blue
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
  800415e:	2380      	movs	r3, #128	; 0x80
  8004160:	0059      	lsls	r1, r3, #1
  8004162:	23a0      	movs	r3, #160	; 0xa0
@@ -8971,7 +8952,8 @@ void readNumber() {
  8004166:	2200      	movs	r2, #0
  8004168:	0018      	movs	r0, r3
  800416a:	f001 fa4a 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  800416e:	2380      	movs	r3, #128	; 0x80
  8004170:	0099      	lsls	r1, r3, #2
  8004172:	23a0      	movs	r3, #160	; 0xa0
@@ -8979,7 +8961,8 @@ void readNumber() {
  8004176:	2200      	movs	r2, #0
  8004178:	0018      	movs	r0, r3
  800417a:	f001 fa42 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  800417e:	2380      	movs	r3, #128	; 0x80
  8004180:	00d9      	lsls	r1, r3, #3
  8004182:	23a0      	movs	r3, #160	; 0xa0
@@ -8987,42 +8970,40 @@ void readNumber() {
  8004186:	2201      	movs	r2, #1
  8004188:	0018      	movs	r0, r3
  800418a:	f001 fa3a 	bl	8005602 <HAL_GPIO_WritePin>
-
-		}
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
+                        GPIO_PIN_SET);
+   }
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  800418e:	4b37      	ldr	r3, [pc, #220]	; (800426c <readNumber+0x354>)
  8004190:	2101      	movs	r1, #1
  8004192:	0018      	movs	r0, r3
  8004194:	f001 fa18 	bl	80055c8 <HAL_GPIO_ReadPin>
  8004198:	1e03      	subs	r3, r0, #0
  800419a:	d12d      	bne.n	80041f8 <readNumber+0x2e0>
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  800419c:	4b33      	ldr	r3, [pc, #204]	; (800426c <readNumber+0x354>)
  800419e:	2102      	movs	r1, #2
  80041a0:	0018      	movs	r0, r3
  80041a2:	f001 fa11 	bl	80055c8 <HAL_GPIO_ReadPin>
  80041a6:	0003      	movs	r3, r0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 &&
  80041a8:	2b01      	cmp	r3, #1
  80041aa:	d125      	bne.n	80041f8 <readNumber+0x2e0>
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
  80041ac:	4b30      	ldr	r3, [pc, #192]	; (8004270 <readNumber+0x358>)
  80041ae:	2101      	movs	r1, #1
  80041b0:	0018      	movs	r0, r3
  80041b2:	f001 fa09 	bl	80055c8 <HAL_GPIO_ReadPin>
  80041b6:	0003      	movs	r3, r0
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  80041b8:	2b01      	cmp	r3, #1
  80041ba:	d11d      	bne.n	80041f8 <readNumber+0x2e0>
-			HAL_Delay(5);
+      HAL_Delay(5);
  80041bc:	2005      	movs	r0, #5
  80041be:	f000 fabb 	bl	8004738 <HAL_Delay>
-			valueToAdjust = 6;
+      valueToAdjust = 6;
  80041c2:	4b2c      	ldr	r3, [pc, #176]	; (8004274 <readNumber+0x35c>)
  80041c4:	2206      	movs	r2, #6
  80041c6:	601a      	str	r2, [r3, #0]
-			// Set Magenta
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
+      // Set Magenta
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
  80041c8:	2380      	movs	r3, #128	; 0x80
  80041ca:	0059      	lsls	r1, r3, #1
  80041cc:	23a0      	movs	r3, #160	; 0xa0
@@ -9030,7 +9011,7 @@ void readNumber() {
  80041d0:	2201      	movs	r2, #1
  80041d2:	0018      	movs	r0, r3
  80041d4:	f001 fa15 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  80041d8:	2380      	movs	r3, #128	; 0x80
  80041da:	0099      	lsls	r1, r3, #2
  80041dc:	23a0      	movs	r3, #160	; 0xa0
@@ -9038,7 +9019,8 @@ void readNumber() {
  80041e0:	2200      	movs	r2, #0
  80041e2:	0018      	movs	r0, r3
  80041e4:	f001 fa0d 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  80041e8:	2380      	movs	r3, #128	; 0x80
  80041ea:	00d9      	lsls	r1, r3, #3
  80041ec:	23a0      	movs	r3, #160	; 0xa0
@@ -9046,9 +9028,9 @@ void readNumber() {
  80041f0:	2201      	movs	r2, #1
  80041f2:	0018      	movs	r0, r3
  80041f4:	f001 fa05 	bl	8005602 <HAL_GPIO_WritePin>
-
-		}
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
+                        GPIO_PIN_SET);
+   }
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  80041f8:	4b1c      	ldr	r3, [pc, #112]	; (800426c <readNumber+0x354>)
  80041fa:	2101      	movs	r1, #1
  80041fc:	0018      	movs	r0, r3
@@ -9056,33 +9038,31 @@ void readNumber() {
  8004202:	0003      	movs	r3, r0
  8004204:	2b01      	cmp	r3, #1
  8004206:	d12d      	bne.n	8004264 <readNumber+0x34c>
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  8004208:	4b18      	ldr	r3, [pc, #96]	; (800426c <readNumber+0x354>)
  800420a:	2102      	movs	r1, #2
  800420c:	0018      	movs	r0, r3
  800420e:	f001 f9db 	bl	80055c8 <HAL_GPIO_ReadPin>
  8004212:	0003      	movs	r3, r0
-	if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 &&
  8004214:	2b01      	cmp	r3, #1
  8004216:	d125      	bne.n	8004264 <readNumber+0x34c>
-			HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1 ) {
+       HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
  8004218:	4b15      	ldr	r3, [pc, #84]	; (8004270 <readNumber+0x358>)
  800421a:	2101      	movs	r1, #1
  800421c:	0018      	movs	r0, r3
  800421e:	f001 f9d3 	bl	80055c8 <HAL_GPIO_ReadPin>
  8004222:	0003      	movs	r3, r0
-			HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
+   if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
  8004224:	2b01      	cmp	r3, #1
  8004226:	d11d      	bne.n	8004264 <readNumber+0x34c>
-			HAL_Delay(5);
+      HAL_Delay(5);
  8004228:	2005      	movs	r0, #5
  800422a:	f000 fa85 	bl	8004738 <HAL_Delay>
-			valueToAdjust = 7;
+      valueToAdjust = 7;
  800422e:	4b11      	ldr	r3, [pc, #68]	; (8004274 <readNumber+0x35c>)
  8004230:	2207      	movs	r2, #7
  8004232:	601a      	str	r2, [r3, #0]
-			// Set White
-			HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
+      // Set White
+      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
  8004234:	2380      	movs	r3, #128	; 0x80
  8004236:	0059      	lsls	r1, r3, #1
  8004238:	23a0      	movs	r3, #160	; 0xa0
@@ -9090,7 +9070,7 @@ void readNumber() {
  800423c:	2201      	movs	r2, #1
  800423e:	0018      	movs	r0, r3
  8004240:	f001 f9df 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
  8004244:	2380      	movs	r3, #128	; 0x80
  8004246:	0099      	lsls	r1, r3, #2
  8004248:	23a0      	movs	r3, #160	; 0xa0
@@ -9098,7 +9078,8 @@ void readNumber() {
  800424c:	2201      	movs	r2, #1
  800424e:	0018      	movs	r0, r3
  8004250:	f001 f9d7 	bl	8005602 <HAL_GPIO_WritePin>
-			HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_SET);
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
  8004254:	2380      	movs	r3, #128	; 0x80
  8004256:	00d9      	lsls	r1, r3, #3
  8004258:	23a0      	movs	r3, #160	; 0xa0
@@ -9106,8 +9087,8 @@ void readNumber() {
  800425c:	2201      	movs	r2, #1
  800425e:	0018      	movs	r0, r3
  8004260:	f001 f9cf 	bl	8005602 <HAL_GPIO_WritePin>
-
-		}
+                        GPIO_PIN_SET);
+   }
 }
  8004264:	46c0      	nop			; (mov r8, r8)
  8004266:	46bd      	mov	sp, r7
@@ -9118,12 +9099,12 @@ void readNumber() {
  8004274:	200002dc 	.word	0x200002dc
 
 08004278 <Error_Handler>:
+
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
  8004278:	b580      	push	{r7, lr}
  800427a:	af00      	add	r7, sp, #0
   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
@@ -9135,10 +9116,10 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  800427c:	b672      	cpsid	i
 }
  800427e:	46c0      	nop			; (mov r8, r8)
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
+   /* USER CODE BEGIN Error_Handler_Debug */
+   /* User can add his own implementation to report the HAL error return state */
+   __disable_irq();
+   while (1) {
  8004280:	e7fe      	b.n	8004280 <Error_Handler+0x8>
 	...
 
