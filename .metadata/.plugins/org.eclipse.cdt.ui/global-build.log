@@ -756,3 +756,452 @@ Finished building: default.size.stdout
  
 Finished building: Writing_Tool_Prototype.list
  
+15:49:52 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  45580	    476	   2180	  48236	   bc6c	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+15:50:07 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+   text	   data	    bss	    dec	    hex	filename
+  45580	    476	   2180	  48236	   bc6c	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+15:55:36 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c:630:4: error: expected identifier or '(' before '}' token
+  630 |    }
+      |    ^
+../Core/Src/main.c:632:1: error: expected identifier or '(' before '}' token
+  632 | }
+      | ^
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+15:56:30 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Writing_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Writing_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  62240	    500	   2692	  65432	   ff98	Writing_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Writing_Tool_Prototype.list
+ 
+15:56:47 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Writing_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Writing_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  62240	    500	   2692	  65432	   ff98	Writing_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Writing_Tool_Prototype.list
+ 
+19:48:16 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  45716	    476	   2180	  48372	   bcf4	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+19:55:29 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  45716	    476	   2180	  48372	   bcf4	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+19:56:13 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  45716	    476	   2180	  48372	   bcf4	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+19:58:41 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:143:29: error: 'LS_9_Pin' undeclared (first use in this function); did you mean 'LS_2_Pin'?
+  143 |    HAL_GPIO_WritePin(GPIOA, LS_9_Pin, GPIO_PIN_SET);
+      |                             ^~~~~~~~
+      |                             LS_2_Pin
+../Core/Src/main.c:143:29: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+19:58:51 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  45728	    476	   2180	  48384	   bd00	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+20:20:11 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:173:10: error: expected expression before ')' token
+  173 |       if()
+      |          ^
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+20:20:18 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  45728	    476	   2180	  48384	   bd00	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+20:24:33 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:173:10: error: expected expression before ')' token
+  173 |       if()
+      |          ^
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+21:18:22 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  45904	    476	   2180	  48560	   bdb0	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+21:56:41 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:175:23: error: expected expression before 'CASE'
+  175 |               switch (CASE) {
+      |                       ^~~~
+../Core/Src/main.c:178:28: error: expected identifier or '(' before '=' token
+  178 |                       CASE = LS_8;
+      |                            ^
+../Core/Src/main.c:183:23: warning: implicit declaration of function 'StateOffSwitch' [-Wimplicit-function-declaration]
+  183 |                       StateOffSwitch();
+      |                       ^~~~~~~~~~~~~~
+../Core/Src/main.c:144:9: warning: unused variable 'state' [-Wunused-variable]
+  144 |    CASE state = CASE_INIT;
+      |         ^~~~~
+../Core/Src/main.c:143:8: warning: unused variable 'init_v' [-Wunused-variable]
+  143 |    int init_v = 1;
+      |        ^~~~~~
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+21:59:47 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:180:23: warning: implicit declaration of function 'StateOffSwitch' [-Wimplicit-function-declaration]
+  180 |                       StateOffSwitch();
+      |                       ^~~~~~~~~~~~~~
+../Core/Src/main.c:172:15: warning: enumeration value 'LS_1' not handled in switch [-Wswitch]
+  172 |               switch (state) {
+      |               ^~~~~~
+../Core/Src/main.c:172:15: warning: enumeration value 'LS_2' not handled in switch [-Wswitch]
+../Core/Src/main.c:172:15: warning: enumeration value 'LS_3' not handled in switch [-Wswitch]
+../Core/Src/main.c:172:15: warning: enumeration value 'LS_4' not handled in switch [-Wswitch]
+../Core/Src/main.c:172:15: warning: enumeration value 'LS_5' not handled in switch [-Wswitch]
+../Core/Src/main.c:172:15: warning: enumeration value 'LS_6' not handled in switch [-Wswitch]
+../Core/Src/main.c:172:15: warning: enumeration value 'LS_7' not handled in switch [-Wswitch]
+../Core/Src/main.c:143:8: warning: unused variable 'init_v' [-Wunused-variable]
+  143 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/Program Files (x86)/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.100.202309141235/tools/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: ./Core/Src/main.o: in function `main':
+C:/Users/zlink/OneDrive/Documents/GitHub/Low_Powered_STM32_Project/Switching_Tool_Prototype/Debug/../Core/Src/main.c:180: undefined reference to `StateOffSwitch'
+collect2.exe: error: ld returned 1 exit status
+make: *** [makefile:64: Switching_Tool_Prototype.elf] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+22:14:47 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  47104	    476	   2180	  49760	   c260	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+22:14:54 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  47104	    476	   2180	  49760	   c260	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+22:20:20 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  47164	    476	   2180	  49820	   c29c	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+22:20:33 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  47168	    476	   2180	  49824	   c2a0	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+22:24:39 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:271:27: error: 'sate' undeclared (first use in this function); did you mean 'state'?
+  271 |                           sate = CASE_INIT;
+      |                           ^~~~
+      |                           state
+../Core/Src/main.c:271:27: note: each undeclared identifier is reported only once for each function it appears in
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+22:28:45 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48076	    476	   2180	  50732	   c62c	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+22:53:58 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48120	    476	   2180	  50776	   c658	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+22:58:16 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48124	    476	   2180	  50780	   c65c	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+23:05:21 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48120	    476	   2180	  50776	   c658	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+23:11:03 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48128	    476	   2180	  50784	   c660	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+23:22:06 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48128	    476	   2180	  50784	   c660	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+23:24:06 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48128	    476	   2180	  50784	   c660	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+23:31:36 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:152:8: warning: unused variable 'init_v' [-Wunused-variable]
+  152 |    int init_v = 1;
+      |        ^~~~~~
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  48128	    476	   2180	  50784	   c660	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 

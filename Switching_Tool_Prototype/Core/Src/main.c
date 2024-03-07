@@ -68,6 +68,16 @@ void ADC_Select_CurrentCMOS(void);
 void setNumber();
 void User_Input_Light_Cycel();
 void Button_Debounce_Set();
+void Reset_The_Whole_B();
+void Set_LS_1();
+void Set_LS_2();
+void Set_LS_3();
+void Set_LS_4();
+void Set_LS_5();
+void Set_LS_6();
+void Set_LS_7();
+void Set_LS_8();
+
 
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
@@ -91,6 +101,11 @@ int measurement_num = 0;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+typedef enum {CASE_INIT, LS_1, LS_2, LS_3, LS_4, LS_5, LS_6, LS_7, LS_8} CASE;
+
+//typedef enum { LS_1, LS_2, LS_3, LS_4 } LOW;
+//typedef enum { LS_5, LS_6, LS_7, LS_8 } HIGH;
+
 /* USER CODE END 0 */
 
 /**
@@ -131,6 +146,13 @@ int main(void) {
    HAL_Delay(15);
    setNumber();
    HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
+
+   Reset_The_Whole_B();
+
+   int init_v = 1;
+   CASE state = CASE_INIT;
+
+
    /* USER CODE END 2 */
 
    /* Infinite loop */
@@ -141,12 +163,10 @@ int main(void) {
       HAL_Delay(10);
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
-
       Measurement_of_ADC_Voltage_18650();
       Measurement_of_ADC_Voltage_CMOS();
       Measurement_of_ADC_Current_CMOS();
       Measurement_of_ADC_Current_18650();
-
       // UART Debugging
       sprintf(msg, "%.3f,%.3f,%.3f,%.3f,%.3f,%d,%d,%d\r\n", seconds_since_start, V_18650,
               C_18650,        // 18650 Current
@@ -156,7 +176,152 @@ int main(void) {
               Switch_State, measurement_num);
       HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
 
+
+              // Handle behavior based on state
+              switch (state) {
+                  case CASE_INIT: {
+                      Reset_The_Whole_B();
+                      state = LS_8;
+                      break;
+                  }
+
+                  case LS_8: {
+                      Set_LS_8();
+                      if(C_CMOS < 2.95)
+                      {
+                    	  state = LS_7;
+                      }
+                      else
+                      {
+                    	  state = LS_8;
+                      }
+                      break;
+                  }//end of LS_8
+
+                  case LS_7: {
+                      Set_LS_7();
+                      if(C_CMOS < 2.6)
+                      {
+                    	  state = LS_6;
+                      }
+                      else if(C_CMOS >= 3.0)
+                      {
+                    	  state = LS_8;
+                      }
+                      else
+                      {
+                    	  state = LS_7;
+                      }
+                      break;
+                  }//end of LS_7
+
+                  case LS_6: {
+                      Set_LS_6();
+                      if(C_CMOS < 2.25)
+                      {
+                    	  state = LS_5;
+                      }
+                      else if(C_CMOS >= 2.65)
+                      {
+                        state = LS_8;
+                      }
+                      else
+                      {
+                    	  state = LS_6;
+                      }
+                      break;
+                  }//end of LS_6
+
+                  case LS_5: {
+                      Set_LS_5();
+                      if(C_CMOS < 1.9)
+                      {
+                    	  state = LS_4;
+                      }
+                      else if(C_CMOS >= 2.35)
+                      {
+                    	  state = LS_7;
+                      }
+                      else
+                      {
+                    	  state = LS_5;
+                      }
+                      break;
+                  }//end of LS_5
+
+                  case LS_4: {
+                	  Set_LS_4();
+                      if(C_CMOS < 1.55)
+                      {
+                          state = LS_3;
+                      }
+                      else if(C_CMOS >= 1.95)
+                                        {
+                                      	  state = LS_6;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_4;
+                                        }
+                                        break;
+                                    }//end of LS_4
+
+                  case LS_3: {
+                                        Set_LS_3();
+                                        if(C_CMOS < 1.2)
+                                        {
+                                      	  state = LS_2;
+                                        }
+                                        else if(C_CMOS >= 1.6)
+                                        {
+                                      	  state = LS_5;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_3;
+                                        }
+                                        break;
+                                    }//end of LS_3
+
+                  case LS_2: {
+                                        Set_LS_2();
+                                        if(C_CMOS < 0.85)
+                                        {
+                                      	  state = LS_1;
+                                        }
+                                        else if(C_CMOS >= 1.25)
+                                        {
+                                      	  state = LS_4;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_2;
+                                        }
+                                        break;
+                                    }//end of LS_2
+
+                  case LS_1: {
+                                        Set_LS_1();
+                                        if(C_CMOS >= 0.9)
+                                        {
+                                      	  state = LS_3;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_1;
+                                        }
+                                        break;
+                                    }//end of LS_5
+
+                  default: {
+                	  Reset_The_Whole_B();
+                	  state = CASE_INIT;
+                  }
+              }
+
       measurement_num++;
+
+
       /* USER CODE END 3 */
    }
 }
@@ -223,7 +388,7 @@ static void MX_ADC_Init(void) {
    hadc.Init.OversamplingMode = DISABLE;
    hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
    hadc.Init.Resolution = ADC_RESOLUTION_12B;
-   hadc.Init.SamplingTime = ADC_SAMPLETIME_3CYCLES_5;
+   hadc.Init.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
    hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
    hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
    hadc.Init.ContinuousConvMode = ENABLE;
@@ -663,16 +828,129 @@ void User_Input_Light_Cycel() {
    HAL_Delay(14);
 }
 
+void Reset_The_Whole_B(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
+}
+
+void Set_LS_1(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_2(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_3(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_4(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_5(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_6(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_7(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_8(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
+}
+
+void Set_Low(){
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_RESET);
+}
+
+void Set_High(){
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
+}
+
 void Button_Debounce_Set() {
    uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
    uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
 
    if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
+	   Reset_The_Whole_B();
       // set to high state
       if ((HAL_GetTick() - lastDebounceTime) > debounceDelay) {
          // Only update the value if the state has changed
          if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
              (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
+        	 Reset_The_Whole_B();
             if (currentPlusState == GPIO_PIN_SET) {
                valueToAdjust++;
                if (valueToAdjust >= 7) {
@@ -700,12 +978,15 @@ void Button_Debounce_Set() {
             // Check for subsequent button presses to restart the
             // timer
             if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
+            	Reset_The_Whole_B();
+
                flashingStartTime = HAL_GetTick();  // Restart the 5-second
                                                    // interval
 
                // Only update the value if the state has changed
                if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
                    (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
+            	   Reset_The_Whole_B();
                   if (currentPlusState == GPIO_PIN_SET) {
                      valueToAdjust++;
                      if (valueToAdjust >= 7) {
@@ -734,10 +1015,8 @@ void Button_Debounce_Set() {
       lastPlusState = currentPlusState;
       lastMinusState = currentMinusState;
 
-      /* USER CODE END WHILE */
-
-      /* USER CODE BEGIN 3 */
    }
+
 }
 
 /* USER CODE END 4 */

@@ -7566,9 +7566,9 @@ static void MX_ADC_Init(void) {
  8003838:	4b1c      	ldr	r3, [pc, #112]	; (80038ac <MX_ADC_Init+0x8c>)
  800383a:	2200      	movs	r2, #0
  800383c:	609a      	str	r2, [r3, #8]
-   hadc.Init.SamplingTime = ADC_SAMPLETIME_3CYCLES_5;
+   hadc.Init.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
  800383e:	4b1b      	ldr	r3, [pc, #108]	; (80038ac <MX_ADC_Init+0x8c>)
- 8003840:	2201      	movs	r2, #1
+ 8003840:	2207      	movs	r2, #7
  8003842:	639a      	str	r2, [r3, #56]	; 0x38
    hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
  8003844:	4b19      	ldr	r3, [pc, #100]	; (80038ac <MX_ADC_Init+0x8c>)
