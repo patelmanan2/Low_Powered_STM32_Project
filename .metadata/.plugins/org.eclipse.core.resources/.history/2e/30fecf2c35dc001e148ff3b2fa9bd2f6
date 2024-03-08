@@ -77,15 +77,6 @@ void Set_LS_5();
 void Set_LS_6();
 void Set_LS_7();
 void Set_LS_8();
-void AdjustStateTo0();
-void AdjustStateTo1();
-void AdjustStateTo2();
-void AdjustStateTo3();
-void AdjustStateTo4();
-void AdjustStateTo5();
-void AdjustStateTo6();
-void AdjustStateTo7();
-void AdjustStateTo8();
 
 
 float V_18650 = 0.0f;
@@ -168,8 +159,8 @@ int main(void) {
    /* USER CODE BEGIN WHILE */
    while (1) {
       Button_Debounce_Set();
-      //setNumber();
-      //HAL_Delay();
+      setNumber();
+      HAL_Delay(10);
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
       Measurement_of_ADC_Voltage_18650();
@@ -196,7 +187,6 @@ int main(void) {
 
                   case LS_8: {
                       Set_LS_8();
-                      AdjustStateTo7();
                       if(C_CMOS < 2.95)
                       {
                     	  state = LS_7;
@@ -210,7 +200,6 @@ int main(void) {
 
                   case LS_7: {
                       Set_LS_7();
-						AdjustStateTo6();
                       if(C_CMOS < 2.6)
                       {
                     	  state = LS_6;
@@ -228,7 +217,6 @@ int main(void) {
 
                   case LS_6: {
                       Set_LS_6();
-                      AdjustStateTo5();
                       if(C_CMOS < 2.25)
                       {
                     	  state = LS_5;
@@ -246,7 +234,6 @@ int main(void) {
 
                   case LS_5: {
                       Set_LS_5();
-                      AdjustStateTo4();
                       if(C_CMOS < 1.9)
                       {
                     	  state = LS_4;
@@ -264,7 +251,6 @@ int main(void) {
 
                   case LS_4: {
                 	  Set_LS_4();
-                	  AdjustStateTo3();
                       if(C_CMOS < 1.55)
                       {
                           state = LS_3;
@@ -282,7 +268,6 @@ int main(void) {
 
                   case LS_3: {
                                         Set_LS_3();
-                                        AdjustStateTo2();
                                         if(C_CMOS < 1.2)
                                         {
                                       	  state = LS_2;
@@ -300,7 +285,6 @@ int main(void) {
 
                   case LS_2: {
                                         Set_LS_2();
-                                        AdjustStateTo1();
                                         if(C_CMOS < 0.85)
                                         {
                                       	  state = LS_1;
@@ -318,7 +302,6 @@ int main(void) {
 
                   case LS_1: {
                                         Set_LS_1();
-                                        AdjustStateTo0();
                                         if(C_CMOS >= 0.9)
                                         {
                                       	  state = LS_3;
@@ -664,157 +647,120 @@ void ADC_Select_CurrentCMOS(void) {
    }
 }
 
-void AdjustStateTo0(){
-	// value 0 = 111
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-	      // Set White
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_RESET);
-}
-
-void AdjustStateTo1(){
-	HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-	      // Set Red
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_RESET);
-}
-
-void AdjustStateTo2(){
-	// value 2 = 010
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-	      // Set Yellow
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_RESET);
-}
-
-void AdjustStateTo3(){
-	// value 3 = 011
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-	      // Set Green
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_RESET);
-}
-
-void AdjustStateTo4(){
-	// value 4 = 100
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
-
-	      // Set Cyan
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_SET);
-}
-
-void AdjustStateTo5(){
-	// value 5 = 101
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
-
-	      // Set Blue
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_SET);
-}
-
-void AdjustStateTo6(){
-	// value 6 = 110
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
-
-	      // Set Magenta
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_RESET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_SET);
-}
-
-void AdjustStateTo7(){
-	// value 7 = 111
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
-
-	      // Set White
-	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-	                        GPIO_PIN_SET);
-	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-	                        GPIO_PIN_SET);
-}
-
 void setNumber() {
    // Check each value and set the pins accordingly
    if (valueToAdjust == 1) {
       // value 1 = 001
-	  AdjustStateTo1();
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+      // Set Red
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_RESET);
 
    } else if (valueToAdjust == 2) {
       // value 2 = 010
-	   AdjustStateTo2();
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+      // Set Yellow
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_RESET);
 
    } else if (valueToAdjust == 3) {
-      AdjustStateTo3();
+      // value 3 = 011
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+      // Set Green
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_RESET);
 
    } else if (valueToAdjust == 4) {
-	   AdjustStateTo4();
+      // value 4 = 100
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+
+      // Set Cyan
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_SET);
 
    } else if (valueToAdjust == 5) {
-	   AdjustStateTo5();
+      // value 5 = 101
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
 
+      // Set Blue
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_SET);
 
    } else if (valueToAdjust == 6) {
-	   AdjustStateTo6();
+      // value 6 = 110
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
 
+      // Set Magenta
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_SET);
 
    } else if (valueToAdjust == 7) {
-	   AdjustStateTo7();
+      // value 7 = 111
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
 
+      // Set White
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_SET);
    }
 
    else if (valueToAdjust == 0) {
       // value 7 = 111
-      AdjustStateTo0();
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+      // Set White
+      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+                        GPIO_PIN_RESET);
    }
    /*may need to implement state for numbers entered over 7 and numbers
    under zero */
@@ -1009,7 +955,6 @@ void Button_Debounce_Set() {
                valueToAdjust++;
                if (valueToAdjust >= 7) {
                   valueToAdjust = 7;
-                  setNumber();
                }
             }
 
@@ -1017,7 +962,6 @@ void Button_Debounce_Set() {
                valueToAdjust--;
                if (valueToAdjust < 0) {
                   valueToAdjust = 0;
-                  setNumber();
                }
             }
          }
@@ -1047,7 +991,6 @@ void Button_Debounce_Set() {
                      valueToAdjust++;
                      if (valueToAdjust >= 7) {
                         valueToAdjust = 7;
-                        setNumber();
                      }
                   }
 
@@ -1055,7 +998,6 @@ void Button_Debounce_Set() {
                      valueToAdjust--;
                      if (valueToAdjust < 0) {
                         valueToAdjust = 0;
-                        setNumber();
                      }
                   }
                }

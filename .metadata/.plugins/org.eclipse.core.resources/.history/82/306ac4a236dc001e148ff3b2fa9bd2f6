@@ -168,8 +168,8 @@ int main(void) {
    /* USER CODE BEGIN WHILE */
    while (1) {
       Button_Debounce_Set();
-      //setNumber();
-      //HAL_Delay();
+      setNumber();
+      HAL_Delay(10);
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
       Measurement_of_ADC_Voltage_18650();
@@ -209,8 +209,8 @@ int main(void) {
                   }//end of LS_8
 
                   case LS_7: {
-                      Set_LS_7();
-						AdjustStateTo6();
+                      Set_LS_7()
+		AdjustStateTo6();
                       if(C_CMOS < 2.6)
                       {
                     	  state = LS_6;
@@ -1009,7 +1009,6 @@ void Button_Debounce_Set() {
                valueToAdjust++;
                if (valueToAdjust >= 7) {
                   valueToAdjust = 7;
-                  setNumber();
                }
             }
 
@@ -1017,7 +1016,6 @@ void Button_Debounce_Set() {
                valueToAdjust--;
                if (valueToAdjust < 0) {
                   valueToAdjust = 0;
-                  setNumber();
                }
             }
          }
@@ -1047,7 +1045,6 @@ void Button_Debounce_Set() {
                      valueToAdjust++;
                      if (valueToAdjust >= 7) {
                         valueToAdjust = 7;
-                        setNumber();
                      }
                   }
 
@@ -1055,7 +1052,6 @@ void Button_Debounce_Set() {
                      valueToAdjust--;
                      if (valueToAdjust < 0) {
                         valueToAdjust = 0;
-                        setNumber();
                      }
                   }
                }

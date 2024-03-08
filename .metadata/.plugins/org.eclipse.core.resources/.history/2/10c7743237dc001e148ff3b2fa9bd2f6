@@ -169,7 +169,7 @@ int main(void) {
    while (1) {
       Button_Debounce_Set();
       //setNumber();
-      //HAL_Delay();
+      HAL_Delay(10);
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
       Measurement_of_ADC_Voltage_18650();
@@ -1009,7 +1009,6 @@ void Button_Debounce_Set() {
                valueToAdjust++;
                if (valueToAdjust >= 7) {
                   valueToAdjust = 7;
-                  setNumber();
                }
             }
 
@@ -1017,7 +1016,6 @@ void Button_Debounce_Set() {
                valueToAdjust--;
                if (valueToAdjust < 0) {
                   valueToAdjust = 0;
-                  setNumber();
                }
             }
          }
@@ -1047,7 +1045,6 @@ void Button_Debounce_Set() {
                      valueToAdjust++;
                      if (valueToAdjust >= 7) {
                         valueToAdjust = 7;
-                        setNumber();
                      }
                   }
 
@@ -1055,7 +1052,6 @@ void Button_Debounce_Set() {
                      valueToAdjust--;
                      if (valueToAdjust < 0) {
                         valueToAdjust = 0;
-                        setNumber();
                      }
                   }
                }

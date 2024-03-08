@@ -168,8 +168,8 @@ int main(void) {
    /* USER CODE BEGIN WHILE */
    while (1) {
       Button_Debounce_Set();
-      //setNumber();
-      //HAL_Delay();
+      setNumber();
+      HAL_Delay(10);
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
       Measurement_of_ADC_Voltage_18650();
@@ -196,7 +196,7 @@ int main(void) {
 
                   case LS_8: {
                       Set_LS_8();
-                      AdjustStateTo7();
+                      valueToAdjust == 7;
                       if(C_CMOS < 2.95)
                       {
                     	  state = LS_7;
@@ -209,8 +209,8 @@ int main(void) {
                   }//end of LS_8
 
                   case LS_7: {
-                      Set_LS_7();
-						AdjustStateTo6();
+                      Set_LS_7()
+					valueToAdjust == 6;
                       if(C_CMOS < 2.6)
                       {
                     	  state = LS_6;
@@ -228,7 +228,7 @@ int main(void) {
 
                   case LS_6: {
                       Set_LS_6();
-                      AdjustStateTo5();
+                      valueToAdjust == 5;
                       if(C_CMOS < 2.25)
                       {
                     	  state = LS_5;
@@ -246,7 +246,7 @@ int main(void) {
 
                   case LS_5: {
                       Set_LS_5();
-                      AdjustStateTo4();
+                      valueToAdjust == 4;
                       if(C_CMOS < 1.9)
                       {
                     	  state = LS_4;
@@ -264,7 +264,7 @@ int main(void) {
 
                   case LS_4: {
                 	  Set_LS_4();
-                	  AdjustStateTo3();
+                	  valueToAdjust == 3;
                       if(C_CMOS < 1.55)
                       {
                           state = LS_3;
@@ -282,7 +282,7 @@ int main(void) {
 
                   case LS_3: {
                                         Set_LS_3();
-                                        AdjustStateTo2();
+                                        valueToAdjust == 2;
                                         if(C_CMOS < 1.2)
                                         {
                                       	  state = LS_2;
@@ -300,7 +300,7 @@ int main(void) {
 
                   case LS_2: {
                                         Set_LS_2();
-                                        AdjustStateTo1();
+                                        valueToAdjust == 1;
                                         if(C_CMOS < 0.85)
                                         {
                                       	  state = LS_1;
@@ -318,7 +318,7 @@ int main(void) {
 
                   case LS_1: {
                                         Set_LS_1();
-                                        AdjustStateTo0();
+                                        valueToAdjust == 0;
                                         if(C_CMOS >= 0.9)
                                         {
                                       	  state = LS_3;
@@ -1009,7 +1009,6 @@ void Button_Debounce_Set() {
                valueToAdjust++;
                if (valueToAdjust >= 7) {
                   valueToAdjust = 7;
-                  setNumber();
                }
             }
 
@@ -1017,7 +1016,6 @@ void Button_Debounce_Set() {
                valueToAdjust--;
                if (valueToAdjust < 0) {
                   valueToAdjust = 0;
-                  setNumber();
                }
             }
          }
@@ -1047,7 +1045,6 @@ void Button_Debounce_Set() {
                      valueToAdjust++;
                      if (valueToAdjust >= 7) {
                         valueToAdjust = 7;
-                        setNumber();
                      }
                   }
 
@@ -1055,7 +1052,6 @@ void Button_Debounce_Set() {
                      valueToAdjust--;
                      if (valueToAdjust < 0) {
                         valueToAdjust = 0;
-                        setNumber();
                      }
                   }
                }
