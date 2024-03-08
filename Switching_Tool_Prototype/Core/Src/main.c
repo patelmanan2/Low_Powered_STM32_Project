@@ -68,6 +68,25 @@ void ADC_Select_CurrentCMOS(void);
 void setNumber();
 void User_Input_Light_Cycel();
 void Button_Debounce_Set();
+void Reset_The_Whole_B();
+void Set_LS_1();
+void Set_LS_2();
+void Set_LS_3();
+void Set_LS_4();
+void Set_LS_5();
+void Set_LS_6();
+void Set_LS_7();
+void Set_LS_8();
+void AdjustStateTo0();
+void AdjustStateTo1();
+void AdjustStateTo2();
+void AdjustStateTo3();
+void AdjustStateTo4();
+void AdjustStateTo5();
+void AdjustStateTo6();
+void AdjustStateTo7();
+void AdjustStateTo8();
+
 
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
@@ -91,6 +110,11 @@ int measurement_num = 0;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+typedef enum {CASE_INIT, LS_1, LS_2, LS_3, LS_4, LS_5, LS_6, LS_7, LS_8} CASE;
+
+//typedef enum { LS_1, LS_2, LS_3, LS_4 } LOW;
+//typedef enum { LS_5, LS_6, LS_7, LS_8 } HIGH;
+
 /* USER CODE END 0 */
 
 /**
@@ -131,22 +155,27 @@ int main(void) {
    HAL_Delay(15);
    setNumber();
    HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
+
+   Reset_The_Whole_B();
+
+   int init_v = 1;
+   CASE state = CASE_INIT;
+
+
    /* USER CODE END 2 */
 
    /* Infinite loop */
    /* USER CODE BEGIN WHILE */
    while (1) {
       Button_Debounce_Set();
-      setNumber();
-      HAL_Delay(10);
+      //setNumber();
+      //HAL_Delay();
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
-
       Measurement_of_ADC_Voltage_18650();
       Measurement_of_ADC_Voltage_CMOS();
       Measurement_of_ADC_Current_CMOS();
       Measurement_of_ADC_Current_18650();
-
       // UART Debugging
       sprintf(msg, "%.3f,%.3f,%.3f,%.3f,%.3f,%d,%d,%d\r\n", seconds_since_start, V_18650,
               C_18650,        // 18650 Current
@@ -156,7 +185,160 @@ int main(void) {
               Switch_State, measurement_num);
       HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
 
+
+              // Handle behavior based on state
+              switch (state) {
+                  case CASE_INIT: {
+                      Reset_The_Whole_B();
+                      state = LS_8;
+                      break;
+                  }
+
+                  case LS_8: {
+                      Set_LS_8();
+                      AdjustStateTo7();
+                      if(C_CMOS < 2.95)
+                      {
+                    	  state = LS_7;
+                      }
+                      else
+                      {
+                    	  state = LS_8;
+                      }
+                      break;
+                  }//end of LS_8
+
+                  case LS_7: {
+                      Set_LS_7();
+						AdjustStateTo6();
+                      if(C_CMOS < 2.6)
+                      {
+                    	  state = LS_6;
+                      }
+                      else if(C_CMOS >= 3.0)
+                      {
+                    	  state = LS_8;
+                      }
+                      else
+                      {
+                    	  state = LS_7;
+                      }
+                      break;
+                  }//end of LS_7
+
+                  case LS_6: {
+                      Set_LS_6();
+                      AdjustStateTo5();
+                      if(C_CMOS < 2.25)
+                      {
+                    	  state = LS_5;
+                      }
+                      else if(C_CMOS >= 2.65)
+                      {
+                        state = LS_8;
+                      }
+                      else
+                      {
+                    	  state = LS_6;
+                      }
+                      break;
+                  }//end of LS_6
+
+                  case LS_5: {
+                      Set_LS_5();
+                      AdjustStateTo4();
+                      if(C_CMOS < 1.9)
+                      {
+                    	  state = LS_4;
+                      }
+                      else if(C_CMOS >= 2.35)
+                      {
+                    	  state = LS_7;
+                      }
+                      else
+                      {
+                    	  state = LS_5;
+                      }
+                      break;
+                  }//end of LS_5
+
+                  case LS_4: {
+                	  Set_LS_4();
+                	  AdjustStateTo3();
+                      if(C_CMOS < 1.55)
+                      {
+                          state = LS_3;
+                      }
+                      else if(C_CMOS >= 1.95)
+                                        {
+                                      	  state = LS_6;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_4;
+                                        }
+                                        break;
+                                    }//end of LS_4
+
+                  case LS_3: {
+                                        Set_LS_3();
+                                        AdjustStateTo2();
+                                        if(C_CMOS < 1.2)
+                                        {
+                                      	  state = LS_2;
+                                        }
+                                        else if(C_CMOS >= 1.6)
+                                        {
+                                      	  state = LS_5;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_3;
+                                        }
+                                        break;
+                                    }//end of LS_3
+
+                  case LS_2: {
+                                        Set_LS_2();
+                                        AdjustStateTo1();
+                                        if(C_CMOS < 0.85)
+                                        {
+                                      	  state = LS_1;
+                                        }
+                                        else if(C_CMOS >= 1.25)
+                                        {
+                                      	  state = LS_4;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_2;
+                                        }
+                                        break;
+                                    }//end of LS_2
+
+                  case LS_1: {
+                                        Set_LS_1();
+                                        AdjustStateTo0();
+                                        if(C_CMOS >= 0.9)
+                                        {
+                                      	  state = LS_3;
+                                        }
+                                        else
+                                        {
+                                      	  state = LS_1;
+                                        }
+                                        break;
+                                    }//end of LS_5
+
+                  default: {
+                	  Reset_The_Whole_B();
+                	  state = CASE_INIT;
+                  }
+              }
+
       measurement_num++;
+
+
       /* USER CODE END 3 */
    }
 }
@@ -223,7 +405,7 @@ static void MX_ADC_Init(void) {
    hadc.Init.OversamplingMode = DISABLE;
    hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
    hadc.Init.Resolution = ADC_RESOLUTION_12B;
-   hadc.Init.SamplingTime = ADC_SAMPLETIME_3CYCLES_5;
+   hadc.Init.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
    hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
    hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
    hadc.Init.ContinuousConvMode = ENABLE;
@@ -482,120 +664,157 @@ void ADC_Select_CurrentCMOS(void) {
    }
 }
 
+void AdjustStateTo0(){
+	// value 0 = 111
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+	      // Set White
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_RESET);
+}
+
+void AdjustStateTo1(){
+	HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+	      // Set Red
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_RESET);
+}
+
+void AdjustStateTo2(){
+	// value 2 = 010
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+	      // Set Yellow
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_RESET);
+}
+
+void AdjustStateTo3(){
+	// value 3 = 011
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
+
+	      // Set Green
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_RESET);
+}
+
+void AdjustStateTo4(){
+	// value 4 = 100
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+
+	      // Set Cyan
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_SET);
+}
+
+void AdjustStateTo5(){
+	// value 5 = 101
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+
+	      // Set Blue
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_SET);
+}
+
+void AdjustStateTo6(){
+	// value 6 = 110
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+
+	      // Set Magenta
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_RESET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_SET);
+}
+
+void AdjustStateTo7(){
+	// value 7 = 111
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+
+	      // Set White
+	      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+	                        GPIO_PIN_SET);
+	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+	                        GPIO_PIN_SET);
+}
+
 void setNumber() {
    // Check each value and set the pins accordingly
    if (valueToAdjust == 1) {
       // value 1 = 001
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-      // Set Red
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_RESET);
+	  AdjustStateTo1();
 
    } else if (valueToAdjust == 2) {
       // value 2 = 010
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-      // Set Yellow
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_RESET);
+	   AdjustStateTo2();
 
    } else if (valueToAdjust == 3) {
-      // value 3 = 011
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-      // Set Green
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_RESET);
+      AdjustStateTo3();
 
    } else if (valueToAdjust == 4) {
-      // value 4 = 100
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
-
-      // Set Cyan
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_SET);
+	   AdjustStateTo4();
 
    } else if (valueToAdjust == 5) {
-      // value 5 = 101
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+	   AdjustStateTo5();
 
-      // Set Blue
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_SET);
 
    } else if (valueToAdjust == 6) {
-      // value 6 = 110
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+	   AdjustStateTo6();
 
-      // Set Magenta
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_SET);
 
    } else if (valueToAdjust == 7) {
-      // value 7 = 111
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_SET);
+	   AdjustStateTo7();
 
-      // Set White
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_SET);
    }
 
    else if (valueToAdjust == 0) {
       // value 7 = 111
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
-
-      // Set White
-      HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
-                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
-                        GPIO_PIN_RESET);
+      AdjustStateTo0();
    }
    /*may need to implement state for numbers entered over 7 and numbers
    under zero */
@@ -663,20 +882,134 @@ void User_Input_Light_Cycel() {
    HAL_Delay(14);
 }
 
+void Reset_The_Whole_B(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
+}
+
+void Set_LS_1(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_2(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_3(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_4(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_5(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_6(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_7(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+void Set_LS_8(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
+}
+
+void Set_Low(){
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_RESET);
+}
+
+void Set_High(){
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
+}
+
 void Button_Debounce_Set() {
    uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
    uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
 
    if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
+	   Reset_The_Whole_B();
       // set to high state
       if ((HAL_GetTick() - lastDebounceTime) > debounceDelay) {
          // Only update the value if the state has changed
          if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
              (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
+        	 Reset_The_Whole_B();
             if (currentPlusState == GPIO_PIN_SET) {
                valueToAdjust++;
                if (valueToAdjust >= 7) {
                   valueToAdjust = 7;
+                  setNumber();
                }
             }
 
@@ -684,6 +1017,7 @@ void Button_Debounce_Set() {
                valueToAdjust--;
                if (valueToAdjust < 0) {
                   valueToAdjust = 0;
+                  setNumber();
                }
             }
          }
@@ -700,16 +1034,20 @@ void Button_Debounce_Set() {
             // Check for subsequent button presses to restart the
             // timer
             if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
+            	Reset_The_Whole_B();
+
                flashingStartTime = HAL_GetTick();  // Restart the 5-second
                                                    // interval
 
                // Only update the value if the state has changed
                if ((currentPlusState == GPIO_PIN_SET && lastPlusState != GPIO_PIN_SET) ||
                    (currentMinusState == GPIO_PIN_SET && lastMinusState != GPIO_PIN_SET)) {
+            	   Reset_The_Whole_B();
                   if (currentPlusState == GPIO_PIN_SET) {
                      valueToAdjust++;
                      if (valueToAdjust >= 7) {
                         valueToAdjust = 7;
+                        setNumber();
                      }
                   }
 
@@ -717,6 +1055,7 @@ void Button_Debounce_Set() {
                      valueToAdjust--;
                      if (valueToAdjust < 0) {
                         valueToAdjust = 0;
+                        setNumber();
                      }
                   }
                }
@@ -734,10 +1073,8 @@ void Button_Debounce_Set() {
       lastPlusState = currentPlusState;
       lastMinusState = currentMinusState;
 
-      /* USER CODE END WHILE */
-
-      /* USER CODE BEGIN 3 */
    }
+
 }
 
 /* USER CODE END 4 */
