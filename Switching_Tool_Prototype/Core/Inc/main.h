@@ -101,6 +101,12 @@ void Error_Handler(void);
 #define LS_8_GPIO_Port GPIOA
 #define LS_HIGH_Pin GPIO_PIN_9
 #define LS_HIGH_GPIO_Port GPIOA
+#define Threshold_Red_Pin GPIO_PIN_3
+#define Threshold_Red_GPIO_Port GPIOB
+#define Threshold_Green_Pin GPIO_PIN_4
+#define Threshold_Green_GPIO_Port GPIOB
+#define Threshold_Blue_Pin GPIO_PIN_5
+#define Threshold_Blue_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

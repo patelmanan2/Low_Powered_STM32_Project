@@ -66,7 +66,7 @@ void ADC_Select_VoltageCMOS(void);
 void ADC_Select_Current18650(void);
 void ADC_Select_CurrentCMOS(void);
 void setNumber();
-void User_Input_Light_Cycel();
+void User_Input_Light_Cycle();
 void Button_Debounce_Set();
 void Reset_The_Whole_B();
 void Set_LS_1();
@@ -168,8 +168,6 @@ int main(void) {
    /* USER CODE BEGIN WHILE */
    while (1) {
       Button_Debounce_Set();
-      //setNumber();
-      //HAL_Delay();
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
       Measurement_of_ADC_Voltage_18650();
@@ -461,65 +459,62 @@ static void MX_USART2_UART_Init(void) {
  * @retval None
  */
 static void MX_GPIO_Init(void) {
-   GPIO_InitTypeDef GPIO_InitStruct = {0};
-   /* USER CODE BEGIN MX_GPIO_Init_1 */
-   /* USER CODE END MX_GPIO_Init_1 */
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
-   /* GPIO Ports Clock Enable */
-   __HAL_RCC_GPIOC_CLK_ENABLE();
-   __HAL_RCC_GPIOA_CLK_ENABLE();
-   __HAL_RCC_GPIOB_CLK_ENABLE();
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
-   /*Configure GPIO pin Output Level */
-   HAL_GPIO_WritePin(
-       GPIOA, Discrete_Bit_0_Pin | Discrete_Bit_1_Pin | Discrete_Bit_2_Pin | LS_8_Pin | LS_HIGH_Pin,
-       GPIO_PIN_RESET);
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin|Discrete_Bit_1_Pin|Discrete_Bit_2_Pin|LS_8_Pin
+                          |LS_HIGH_Pin, GPIO_PIN_RESET);
 
-   /*Configure GPIO pin Output Level */
-   HAL_GPIO_WritePin(GPIOB,
-                     User_Input_Status_Light_Pin | User_Input_Status_Light_Green_Pin |
-                         User_Input_Status_Light_Blue_Pin | LS_1_Pin | LS_2_Pin | LS_3_Pin |
-                         LS_4_Pin,
-                     GPIO_PIN_RESET);
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, User_Input_Status_Light_Pin|User_Input_Status_Light_Green_Pin|User_Input_Status_Light_Blue_Pin|LS_1_Pin
+                          |LS_2_Pin|LS_3_Pin|LS_4_Pin|Threshold_Red_Pin
+                          |Threshold_Green_Pin|Threshold_Blue_Pin, GPIO_PIN_RESET);
 
-   /*Configure GPIO pin Output Level */
-   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin | LS_5_Pin | LS_6_Pin | LS_7_Pin, GPIO_PIN_RESET);
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin|LS_5_Pin|LS_6_Pin|LS_7_Pin, GPIO_PIN_RESET);
 
-   /*Configure GPIO pins : Minus_Pin Plus_Pin */
-   GPIO_InitStruct.Pin = Minus_Pin | Plus_Pin;
-   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-   GPIO_InitStruct.Pull = GPIO_NOPULL;
-   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  /*Configure GPIO pins : Minus_Pin Plus_Pin */
+  GPIO_InitStruct.Pin = Minus_Pin|Plus_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-   /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin
-      Discrete_Bit_2_Pin LS_8_Pin LS_HIGH_Pin */
-   GPIO_InitStruct.Pin =
-       Discrete_Bit_0_Pin | Discrete_Bit_1_Pin | Discrete_Bit_2_Pin | LS_8_Pin | LS_HIGH_Pin;
-   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-   GPIO_InitStruct.Pull = GPIO_NOPULL;
-   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin Discrete_Bit_2_Pin LS_8_Pin
+                           LS_HIGH_Pin */
+  GPIO_InitStruct.Pin = Discrete_Bit_0_Pin|Discrete_Bit_1_Pin|Discrete_Bit_2_Pin|LS_8_Pin
+                          |LS_HIGH_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-   /*Configure GPIO pins : User_Input_Status_Light_Pin
-      User_Input_Status_Light_Green_Pin User_Input_Status_Light_Blue_Pin LS_1_Pin
-                            LS_2_Pin LS_3_Pin LS_4_Pin */
-   GPIO_InitStruct.Pin = User_Input_Status_Light_Pin | User_Input_Status_Light_Green_Pin |
-                         User_Input_Status_Light_Blue_Pin | LS_1_Pin | LS_2_Pin | LS_3_Pin |
-                         LS_4_Pin;
-   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-   GPIO_InitStruct.Pull = GPIO_NOPULL;
-   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  /*Configure GPIO pins : User_Input_Status_Light_Pin User_Input_Status_Light_Green_Pin User_Input_Status_Light_Blue_Pin LS_1_Pin
+                           LS_2_Pin LS_3_Pin LS_4_Pin Threshold_Red_Pin
+                           Threshold_Green_Pin Threshold_Blue_Pin */
+  GPIO_InitStruct.Pin = User_Input_Status_Light_Pin|User_Input_Status_Light_Green_Pin|User_Input_Status_Light_Blue_Pin|LS_1_Pin
+                          |LS_2_Pin|LS_3_Pin|LS_4_Pin|Threshold_Red_Pin
+                          |Threshold_Green_Pin|Threshold_Blue_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-   /*Configure GPIO pins : LS_LOW_Pin LS_5_Pin LS_6_Pin LS_7_Pin */
-   GPIO_InitStruct.Pin = LS_LOW_Pin | LS_5_Pin | LS_6_Pin | LS_7_Pin;
-   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-   GPIO_InitStruct.Pull = GPIO_NOPULL;
-   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  /*Configure GPIO pins : LS_LOW_Pin LS_5_Pin LS_6_Pin LS_7_Pin */
+  GPIO_InitStruct.Pin = LS_LOW_Pin|LS_5_Pin|LS_6_Pin|LS_7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-   /* USER CODE BEGIN MX_GPIO_Init_2 */
-   /* USER CODE END MX_GPIO_Init_2 */
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -664,6 +659,43 @@ void ADC_Select_CurrentCMOS(void) {
    }
 }
 
+void setNumber() {
+   // Check each value and set the pins accordingly
+   if (valueToAdjust == 1) {
+      // value 1 = 001
+	  AdjustStateTo1();
+
+   } else if (valueToAdjust == 2) {
+      // value 2 = 010
+	   AdjustStateTo2();
+
+   } else if (valueToAdjust == 3) {
+      AdjustStateTo3();
+
+   } else if (valueToAdjust == 4) {
+	   AdjustStateTo4();
+
+   } else if (valueToAdjust == 5) {
+	   AdjustStateTo5();
+
+
+   } else if (valueToAdjust == 6) {
+	   AdjustStateTo6();
+
+
+   } else if (valueToAdjust == 7) {
+	   AdjustStateTo7();
+
+   }
+
+   else if (valueToAdjust == 0) {
+      // value 7 = 111
+      AdjustStateTo0();
+   }
+   /*may need to implement state for numbers entered over 7 and numbers
+   under zero */
+}
+
 void AdjustStateTo0(){
 	// value 0 = 111
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -783,45 +815,7 @@ void AdjustStateTo7(){
 	                        GPIO_PIN_SET);
 }
 
-void setNumber() {
-   // Check each value and set the pins accordingly
-   if (valueToAdjust == 1) {
-      // value 1 = 001
-	  AdjustStateTo1();
-
-   } else if (valueToAdjust == 2) {
-      // value 2 = 010
-	   AdjustStateTo2();
-
-   } else if (valueToAdjust == 3) {
-      AdjustStateTo3();
-
-   } else if (valueToAdjust == 4) {
-	   AdjustStateTo4();
-
-   } else if (valueToAdjust == 5) {
-	   AdjustStateTo5();
-
-
-   } else if (valueToAdjust == 6) {
-	   AdjustStateTo6();
-
-
-   } else if (valueToAdjust == 7) {
-	   AdjustStateTo7();
-
-   }
-
-   else if (valueToAdjust == 0) {
-      // value 7 = 111
-      AdjustStateTo0();
-   }
-   /*may need to implement state for numbers entered over 7 and numbers
-   under zero */
-}
-// testing
-
-void User_Input_Light_Cycel() {
+void User_Input_Light_Cycle() {
    // 1. Set Red
    HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
    HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
@@ -996,6 +990,7 @@ void Set_High(){
 void Button_Debounce_Set() {
    uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
    uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
+   //setNumber();
 
    if (currentPlusState == GPIO_PIN_SET || currentMinusState == GPIO_PIN_SET) {
 	   Reset_The_Whole_B();
@@ -1064,7 +1059,7 @@ void Button_Debounce_Set() {
                // User_Input_Status_Light_Pin); HAL_Delay(100);
             }
             // 1. Set Red
-            User_Input_Light_Cycel();
+            User_Input_Light_Cycle();
          }
          lastDebounceTime = HAL_GetTick();
       }
@@ -1072,6 +1067,43 @@ void Button_Debounce_Set() {
       // Save the last state at the end of the loop
       lastPlusState = currentPlusState;
       lastMinusState = currentMinusState;
+
+      setNumber();
+      HAL_Delay(300);
+
+      AdjustStateTo0();
+      HAL_Delay(300);
+      setNumber();
+      HAL_Delay(300);
+
+      AdjustStateTo0();
+      HAL_Delay(300);
+      setNumber();
+      HAL_Delay(300);
+
+      AdjustStateTo0();
+      HAL_Delay(300);
+      setNumber();
+      HAL_Delay(300);
+
+      AdjustStateTo0();
+      HAL_Delay(300);
+      setNumber();
+      HAL_Delay(300);
+
+      AdjustStateTo0();
+      HAL_Delay(300);
+      setNumber();
+      HAL_Delay(300);
+
+      AdjustStateTo0();
+      HAL_Delay(300);
+      setNumber();
+      HAL_Delay(300);
+      AdjustStateTo0();
+      User_Input_Light_Cycle();
+      User_Input_Light_Cycle();
+      User_Input_Light_Cycle();
 
    }
 
