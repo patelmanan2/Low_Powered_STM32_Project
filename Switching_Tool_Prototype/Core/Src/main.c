@@ -86,7 +86,7 @@ void AdjustStateTo5();
 void AdjustStateTo6();
 void AdjustStateTo7();
 void AdjustStateTo8();
-
+void FlickersetNumber();
 
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
@@ -665,32 +665,88 @@ void setNumber() {
       // value 1 = 001
 	  AdjustStateTo1();
 
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	  	                        GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	  	                        GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	  	                        GPIO_PIN_RESET);
    } else if (valueToAdjust == 2) {
       // value 2 = 010
 	   AdjustStateTo2();
 
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_RESET);
+
+
    } else if (valueToAdjust == 3) {
       AdjustStateTo3();
+
+      HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+      	  	                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+      	  	                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+      	  	                        GPIO_PIN_RESET);
 
    } else if (valueToAdjust == 4) {
 	   AdjustStateTo4();
 
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
+
    } else if (valueToAdjust == 5) {
 	   AdjustStateTo5();
+
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
 
 
    } else if (valueToAdjust == 6) {
 	   AdjustStateTo6();
 
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
+
 
    } else if (valueToAdjust == 7) {
 	   AdjustStateTo7();
+
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
 
    }
 
    else if (valueToAdjust == 0) {
       // value 7 = 111
       AdjustStateTo0();
+
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_RESET);
    }
    /*may need to implement state for numbers entered over 7 and numbers
    under zero */
@@ -813,6 +869,97 @@ void AdjustStateTo7(){
 	                        GPIO_PIN_SET);
 	      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
 	                        GPIO_PIN_SET);
+}
+
+void FlickersetNumber() {
+   // Check each value and set the pins accordingly
+
+	 HAL_Delay(14);
+	  AdjustStateTo1();
+
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	  	                        GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	  	                        GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	  	                        GPIO_PIN_RESET);
+
+	  HAL_Delay(14);
+	   AdjustStateTo2();
+
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_RESET);
+
+
+	   HAL_Delay(14);
+      AdjustStateTo3();
+
+      HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+      	  	                        GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+      	  	                        GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+      	  	                        GPIO_PIN_RESET);
+
+      HAL_Delay(14);
+	   AdjustStateTo4();
+
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
+
+	   HAL_Delay(14);
+	   AdjustStateTo5();
+
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
+
+
+	   HAL_Delay(14);
+	   AdjustStateTo6();
+
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
+
+
+	   HAL_Delay(14);
+	   AdjustStateTo7();
+
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_SET);
+
+	   HAL_Delay(14);
+      // value 7 = 111
+      AdjustStateTo0();
+
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
+	   	  	                        GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
+	   	  	                        GPIO_PIN_RESET);
+
+   /*may need to implement state for numbers entered over 7 and numbers
+   under zero */
 }
 
 void User_Input_Light_Cycle() {
