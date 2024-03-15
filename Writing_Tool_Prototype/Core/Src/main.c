@@ -336,6 +336,19 @@ int fputc(int ch, FILE *f)
    return ch;
 }
 
+/*
+ * process_SD_card() allows stored values to be written to the SD card using the FAT32 file system under
+ * the FATFS library. It does so using the following basic steps:
+ * 1) Mount the SD card
+ * 2) Create the file or append to it if it already exists
+ * 3) Create a string buffer that stores all measurements as comma-separated values
+ * 4) Write to the SD card and then close the file
+ * 5) Dismount the SD card
+ *
+ * Note: The ACT light on the SD card breakout board should be flickering if functioning properly. It is
+ *       not working properly when the light either stays ON or stays OFF. In that case, check that the
+ *       breakout board is correctly wired.
+ */
 void process_SD_card(void) {
    FATFS FatFs;   // Fatfs handle
    FIL fil;       // File handle
@@ -374,11 +387,33 @@ void process_SD_card(void) {
    f_mount(NULL, "", 0);
 }
 
+//**************************************** START OF ADC-RELATED FUNCTIONS ****************************************//
+
+/*
+ * Measurement_of_ADC functions perform ADC measurements and conversions for each respective channel. This
+ * is done with the following steps:
+ * 1) Select the respective ADC channel register using CHSELR (uses standard STM bit-masking)
+ * 2) Select the respective ADC channel (using the respective ADC_Select function)
+ * 3) Start the ADC
+ * 4) Read the raw value
+ * 5) Convert to respective measurement units and store to respective global variable
+ * 6) Stop the ADC
+ *
+ * NOTE: Some of the ADC channels on the writing board differ from the channels used on the Switching board.
+ */
+
+/*
+ * Measurement_of_ADC_Voltage_18650() performs an ADC measurement and conversion for the VOLTAGE of the
+ * 18650 battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x8000h (channel 15)
+ * Calls ADC_Select_Voltage18650() to set channel
+ * Converted values store to V_18650
+ */
 void Measurement_of_ADC_Voltage_18650() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
-   float V_ref = 3.3;  // This is known for each micro controller from data
-   // sheet, V_ref = power supply in
+   float V_ref = 3.3;  // This is known for each micro controller from data sheet, V_ref = power supply in
    float ADC_resolution = (4096 - 1);  // 2^12 - 1
    float V_stepSize = V_ref / ADC_resolution;
    // ADC
@@ -395,6 +430,15 @@ void Measurement_of_ADC_Voltage_18650() {
    }
    HAL_ADC_Stop(&hadc);
 }
+
+/*
+ * Measurement_of_ADC_Voltage_CMOS() performs an ADC measurement and conversion for the VOLTAGE of the
+ * CMOS battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x2000h (channel 13)
+ * Calls ADC_Select_VoltageCMOS() to set channel
+ * Converted values store to V_CMOS
+ */
 void Measurement_of_ADC_Voltage_CMOS() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
@@ -417,6 +461,14 @@ void Measurement_of_ADC_Voltage_CMOS() {
    HAL_ADC_Stop(&hadc);
 }
 
+/*
+ * Measurement_of_ADC_CURRENT_18650() performs an ADC measurement and conversion for the CURRENT of the
+ * 18650 battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x0200h (channel 9)
+ * Calls ADC_Select_Current18650() to set channel
+ * Converted values store to C_18650
+ */
 void Measurement_of_ADC_Current_18650() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
@@ -440,6 +492,14 @@ void Measurement_of_ADC_Current_18650() {
    HAL_ADC_Stop(&hadc);
 }
 
+/*
+ * Measurement_of_ADC_Current_CMOS() performs an ADC measurement and conversion for the CURRENT of the
+ * CMOS battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x1000h (channel 8)
+ * Calls ADC_Select_CurrentCMOS() to set channel
+ * Converted values store to C_CMOS
+ */
 void Measurement_of_ADC_Current_CMOS() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
@@ -464,6 +524,11 @@ void Measurement_of_ADC_Current_CMOS() {
    HAL_ADC_Stop(&hadc);
 }
 
+/*
+ * ADC_Select_Voltage18650() selects the channel that relates to the VOLTAGE of the 18650 battery.
+ * It sets sConfig to its respective channel (15) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_Voltage18650() {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_15;
@@ -473,6 +538,11 @@ void ADC_Select_Voltage18650() {
    }
 }
 
+/*
+ * ADC_Select_VoltageCMOS() selects the channel that relates to the VOLTAGE of the CMOS battery.
+ * It sets sConfig to its respective channel (13) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_VoltageCMOS() {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_13;
@@ -482,6 +552,11 @@ void ADC_Select_VoltageCMOS() {
    }
 }
 
+/*
+ * ADC_Select_Current18650() selects the channel that relates to the CURRENT of the 18650 battery.
+ * It sets sConfig to its respective channel (9) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_Current18650() {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_9;
@@ -491,6 +566,11 @@ void ADC_Select_Current18650() {
    }
 }
 
+/*
+ * ADC_Select_CurrentCMOS() selects the channel that relates to the CURRENT of the CMOS battery.
+ * It sets sConfig to its respective channel (12) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_CurrentCMOS() {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_12;
@@ -500,6 +580,14 @@ void ADC_Select_CurrentCMOS() {
    }
 }
 
+//******************************** START OF BOARD COMMUNICATION FUNCTIONS ********************************//
+
+/*
+ * readNUmber() reads the inputs from the discrete bits (output from Switching board) and sets the
+ * valueToAdjust variable and writing LED color to its respective value and color.
+ *
+ * It is used to read both threshold input and which state the switching board is in.
+ */
 void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {

@@ -997,7 +997,7 @@ void AdjustStateTo7(){
  */
 
 /*
- * AdjustValueInTo0() Sets output communication bits to 0 (000) and the state LED to OFF
+ * AdjustValueInTo0() Sets output communication bits to 0 (000) and the threshold LED to OFF
  */
 void AdjustValueInTo0(){
 	// value 0 = 000
@@ -1013,7 +1013,7 @@ void AdjustValueInTo0(){
 }
 
 /*
- * AdjustValueInTo1() Sets output communication bits to 1 (001) and the state LED to RED
+ * AdjustValueInTo1() Sets output communication bits to 1 (001) and the threshold LED to RED
  */
 void AdjustValueInTo1(){
 	HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
@@ -1028,7 +1028,7 @@ void AdjustValueInTo1(){
 }
 
 /*
- * AdjustValueInTo2() Sets output communication bits to 2 (010) and the state LED to YELLOW
+ * AdjustValueInTo2() Sets output communication bits to 2 (010) and the threshold LED to YELLOW
  */
 void AdjustValueInTo2(){
 	// value 2 = 010
@@ -1044,7 +1044,7 @@ void AdjustValueInTo2(){
 }
 
 /*
- * AdjustValueInTo3() Sets output communication bits to 3 (110) and the state LED to GREEN
+ * AdjustValueInTo3() Sets output communication bits to 3 (110) and the threshold LED to GREEN
  */
 void AdjustValueInTo3(){
 	// value 3 = 011
@@ -1060,7 +1060,7 @@ void AdjustValueInTo3(){
 }
 
 /*
- * AdjustValueInTo4() Sets output communication bits to 4 (100) and the state LED to CYAN
+ * AdjustValueInTo4() Sets output communication bits to 4 (100) and the threshold LED to CYAN
  */
 void AdjustValueInTo4(){
 	// value 4 = 100
@@ -1076,7 +1076,7 @@ void AdjustValueInTo4(){
 }
 
 /*
- * AdjustValueInTo5() Sets output communication bits to 5 (101) and the state LED to BLUE
+ * AdjustValueInTo5() Sets output communication bits to 5 (101) and the threshold LED to BLUE
  */
 void AdjustValueInTo5(){
 	// value 5 = 101
@@ -1092,7 +1092,7 @@ void AdjustValueInTo5(){
 }
 
 /*
- * AdjustValueInTo6() Sets output communication bits to 6 (110) and the state LED to MAGENTA
+ * AdjustValueInTo6() Sets output communication bits to 6 (110) and the threshold LED to MAGENTA
  */
 void AdjustValueInTo6(){
 	// value 6 = 110
@@ -1108,7 +1108,7 @@ void AdjustValueInTo6(){
 }
 
 /*
- * AdjustValueInTo7() Sets output communication bits to 7 (111) and the state LED to WHITE
+ * AdjustValueInTo7() Sets output communication bits to 7 (111) and the threshold LED to WHITE
  */
 void AdjustValueInTo7(){
 	// value 7 = 111

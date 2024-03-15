@@ -8253,7 +8253,7 @@ void AdjustStateTo7(){
  */
 
 /*
- * AdjustValueInTo0() Sets output communication bits to 0 (000) and the state LED to OFF
+ * AdjustValueInTo0() Sets output communication bits to 0 (000) and the threshold LED to OFF
  */
 void AdjustValueInTo0(){
  8003d18:	b580      	push	{r7, lr}
@@ -8313,7 +8313,7 @@ void AdjustValueInTo0(){
 08003d7c <AdjustValueInTo1>:
 
 /*
- * AdjustValueInTo1() Sets output communication bits to 1 (001) and the state LED to RED
+ * AdjustValueInTo1() Sets output communication bits to 1 (001) and the threshold LED to RED
  */
 void AdjustValueInTo1(){
  8003d7c:	b580      	push	{r7, lr}
@@ -8372,7 +8372,7 @@ void AdjustValueInTo1(){
 08003de0 <AdjustValueInTo2>:
 
 /*
- * AdjustValueInTo2() Sets output communication bits to 2 (010) and the state LED to YELLOW
+ * AdjustValueInTo2() Sets output communication bits to 2 (010) and the threshold LED to YELLOW
  */
 void AdjustValueInTo2(){
  8003de0:	b580      	push	{r7, lr}
@@ -8432,7 +8432,7 @@ void AdjustValueInTo2(){
 08003e44 <AdjustValueInTo3>:
 
 /*
- * AdjustValueInTo3() Sets output communication bits to 3 (110) and the state LED to GREEN
+ * AdjustValueInTo3() Sets output communication bits to 3 (110) and the threshold LED to GREEN
  */
 void AdjustValueInTo3(){
  8003e44:	b580      	push	{r7, lr}
@@ -8492,7 +8492,7 @@ void AdjustValueInTo3(){
 08003ea8 <AdjustValueInTo4>:
 
 /*
- * AdjustValueInTo4() Sets output communication bits to 4 (100) and the state LED to CYAN
+ * AdjustValueInTo4() Sets output communication bits to 4 (100) and the threshold LED to CYAN
  */
 void AdjustValueInTo4(){
  8003ea8:	b580      	push	{r7, lr}
@@ -8552,7 +8552,7 @@ void AdjustValueInTo4(){
 08003f0c <AdjustValueInTo5>:
 
 /*
- * AdjustValueInTo5() Sets output communication bits to 5 (101) and the state LED to BLUE
+ * AdjustValueInTo5() Sets output communication bits to 5 (101) and the threshold LED to BLUE
  */
 void AdjustValueInTo5(){
  8003f0c:	b580      	push	{r7, lr}
@@ -8612,7 +8612,7 @@ void AdjustValueInTo5(){
 08003f70 <AdjustValueInTo6>:
 
 /*
- * AdjustValueInTo6() Sets output communication bits to 6 (110) and the state LED to MAGENTA
+ * AdjustValueInTo6() Sets output communication bits to 6 (110) and the threshold LED to MAGENTA
  */
 void AdjustValueInTo6(){
  8003f70:	b580      	push	{r7, lr}
@@ -8672,7 +8672,7 @@ void AdjustValueInTo6(){
 08003fd4 <AdjustValueInTo7>:
 
 /*
- * AdjustValueInTo7() Sets output communication bits to 7 (111) and the state LED to WHITE
+ * AdjustValueInTo7() Sets output communication bits to 7 (111) and the threshold LED to WHITE
  */
 void AdjustValueInTo7(){
  8003fd4:	b580      	push	{r7, lr}

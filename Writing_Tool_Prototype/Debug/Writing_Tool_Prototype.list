@@ -7928,7 +7928,11 @@ int fputc(int ch, FILE *f)
 	...
 
 08003a40 <process_SD_card>:
-
+ *
+ * Note: The ACT light on the SD card breakout board should be flickering if functioning properly. It is
+ *       not working properly when the light either stays ON or stays OFF. In that case, check that the
+ *       breakout board is correctly wired.
+ */
 void process_SD_card(void) {
  8003a40:	b5f0      	push	{r4, r5, r6, r7, lr}
  8003a42:	4c44      	ldr	r4, [pc, #272]	; (8003b54 <process_SD_card+0x114>)
@@ -8102,7 +8106,11 @@ void process_SD_card(void) {
  8003b84:	0000227c 	.word	0x0000227c
 
 08003b88 <Measurement_of_ADC_Voltage_18650>:
-
+ *
+ * CHSELR is set to 0x8000h (channel 15)
+ * Calls ADC_Select_Voltage18650() to set channel
+ * Converted values store to V_18650
+ */
 void Measurement_of_ADC_Voltage_18650() {
  8003b88:	b580      	push	{r7, lr}
  8003b8a:	b084      	sub	sp, #16
@@ -8115,10 +8123,9 @@ void Measurement_of_ADC_Voltage_18650() {
  8003b96:	4b1f      	ldr	r3, [pc, #124]	; (8003c14 <Measurement_of_ADC_Voltage_18650+0x8c>)
  8003b98:	0018      	movs	r0, r3
  8003b9a:	f000 fdf1 	bl	8004780 <HAL_ADC_Init>
-   float V_ref = 3.3;  // This is known for each micro controller from data
+   float V_ref = 3.3;  // This is known for each micro controller from data sheet, V_ref = power supply in
  8003b9e:	4b1e      	ldr	r3, [pc, #120]	; (8003c18 <Measurement_of_ADC_Voltage_18650+0x90>)
  8003ba0:	60fb      	str	r3, [r7, #12]
-   // sheet, V_ref = power supply in
    float ADC_resolution = (4096 - 1);  // 2^12 - 1
  8003ba2:	4b1e      	ldr	r3, [pc, #120]	; (8003c1c <Measurement_of_ADC_Voltage_18650+0x94>)
  8003ba4:	60bb      	str	r3, [r7, #8]
@@ -8191,6 +8198,11 @@ void Measurement_of_ADC_Voltage_18650() {
  8003c24:	200002c4 	.word	0x200002c4
 
 08003c28 <Measurement_of_ADC_Voltage_CMOS>:
+ *
+ * CHSELR is set to 0x2000h (channel 13)
+ * Calls ADC_Select_VoltageCMOS() to set channel
+ * Converted values store to V_CMOS
+ */
 void Measurement_of_ADC_Voltage_CMOS() {
  8003c28:	b580      	push	{r7, lr}
  8003c2a:	b084      	sub	sp, #16
@@ -8279,7 +8291,11 @@ void Measurement_of_ADC_Voltage_CMOS() {
  8003cc4:	200002c8 	.word	0x200002c8
 
 08003cc8 <Measurement_of_ADC_Current_18650>:
-
+ *
+ * CHSELR is set to 0x0200h (channel 9)
+ * Calls ADC_Select_Current18650() to set channel
+ * Converted values store to C_18650
+ */
 void Measurement_of_ADC_Current_18650() {
  8003cc8:	b580      	push	{r7, lr}
  8003cca:	b084      	sub	sp, #16
@@ -8369,7 +8385,11 @@ void Measurement_of_ADC_Current_18650() {
  8003d64:	200002d0 	.word	0x200002d0
 
 08003d68 <Measurement_of_ADC_Current_CMOS>:
-
+ *
+ * CHSELR is set to 0x1000h (channel 8)
+ * Calls ADC_Select_CurrentCMOS() to set channel
+ * Converted values store to C_CMOS
+ */
 void Measurement_of_ADC_Current_CMOS() {
  8003d68:	b580      	push	{r7, lr}
  8003d6a:	b084      	sub	sp, #16
@@ -8460,7 +8480,11 @@ void Measurement_of_ADC_Current_CMOS() {
  8003e04:	200002cc 	.word	0x200002cc
 
 08003e08 <ADC_Select_Voltage18650>:
-
+/*
+ * ADC_Select_Voltage18650() selects the channel that relates to the VOLTAGE of the 18650 battery.
+ * It sets sConfig to its respective channel (15) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_Voltage18650() {
  8003e08:	b580      	push	{r7, lr}
  8003e0a:	b082      	sub	sp, #8
@@ -8500,7 +8524,11 @@ void ADC_Select_Voltage18650() {
  8003e48:	20000210 	.word	0x20000210
 
 08003e4c <ADC_Select_VoltageCMOS>:
-
+/*
+ * ADC_Select_VoltageCMOS() selects the channel that relates to the VOLTAGE of the CMOS battery.
+ * It sets sConfig to its respective channel (13) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_VoltageCMOS() {
  8003e4c:	b580      	push	{r7, lr}
  8003e4e:	b082      	sub	sp, #8
@@ -8540,7 +8568,11 @@ void ADC_Select_VoltageCMOS() {
  8003e8c:	20000210 	.word	0x20000210
 
 08003e90 <ADC_Select_Current18650>:
-
+/*
+ * ADC_Select_Current18650() selects the channel that relates to the CURRENT of the 18650 battery.
+ * It sets sConfig to its respective channel (9) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_Current18650() {
  8003e90:	b580      	push	{r7, lr}
  8003e92:	b082      	sub	sp, #8
@@ -8580,7 +8612,11 @@ void ADC_Select_Current18650() {
  8003ed0:	20000210 	.word	0x20000210
 
 08003ed4 <ADC_Select_CurrentCMOS>:
-
+/*
+ * ADC_Select_CurrentCMOS() selects the channel that relates to the CURRENT of the CMOS battery.
+ * It sets sConfig to its respective channel (12) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_CurrentCMOS() {
  8003ed4:	b580      	push	{r7, lr}
  8003ed6:	b082      	sub	sp, #8
@@ -8620,7 +8656,11 @@ void ADC_Select_CurrentCMOS() {
  8003f14:	20000210 	.word	0x20000210
 
 08003f18 <readNumber>:
-
+ * readNUmber() reads the inputs from the discrete bits (output from Switching board) and sets the
+ * valueToAdjust variable and writing LED color to its respective value and color.
+ *
+ * It is used to read both threshold input and which state the switching board is in.
+ */
 void readNumber() {
  8003f18:	b580      	push	{r7, lr}
  8003f1a:	af00      	add	r7, sp, #0
