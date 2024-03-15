@@ -541,6 +541,27 @@ int fputc(int ch, FILE *f)
    return ch;
 }
 
+//******************************** START OF ADC-RELATED FUNCTIONS **************************************//
+
+/*
+ * Measurement_of_ADC functions perform ADC measurements and conversions for each respective channel. This
+ * is done with the following steps:
+ * 1) Select the respective ADC channel register using CHSELR (uses standard STM bit-masking)
+ * 2) Select the respective ADC channel (using the respective ADC_Select function)
+ * 3) Start the ADC
+ * 4) Read the raw value
+ * 5) Convert to respective measurement units and store to respective global variable
+ * 6) Stop the ADC
+ */
+
+/*
+ * Measurement_of_ADC_Voltage_18650() performs an ADC measurement and conversion for the VOLTAGE of the
+ * 18650 battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x8000h (channel 15)
+ * Calls ADC_Select_Voltage18650() to set channel
+ * Converted values store to V_18650
+ */
 void Measurement_of_ADC_Voltage_18650() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
@@ -561,6 +582,15 @@ void Measurement_of_ADC_Voltage_18650() {
    }
    HAL_ADC_Stop(&hadc);
 }
+
+/*
+ * Measurement_of_ADC_Voltage_CMOS() performs an ADC measurement and conversion for the VOLTAGE of the
+ * CMOS battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x2000h (channel 13)
+ * Calls ADC_Select_VoltageCMOS() to set channel
+ * Converted values store to V_CMOS
+ */
 void Measurement_of_ADC_Voltage_CMOS() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
@@ -582,12 +612,20 @@ void Measurement_of_ADC_Voltage_CMOS() {
    HAL_ADC_Stop(&hadc);
 }
 
+/*
+ * Measurement_of_ADC_Current_18650() performs an ADC measurement and conversion for the CURRENT of the
+ * 18650 battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x4000h (channel 14)
+ * Calls ADC_Select_Current18650() to set channel
+ * Converted values store to C_18650
+ */
 void Measurement_of_ADC_Current_18650() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
    float V_ref = 3.3;  // This is known for each micro controller from data
    // sheet, V_ref = power supply in
-   float ADC_resolution = (4096 - 1);  // 2^12 - 1
+   float ADC_resolution = (4096 - 1);  // 2^12 bits - 1
    float V_stepSize = V_ref / ADC_resolution;
    // ADC
    /* Start ADC Conversion for ADC1 */
@@ -607,6 +645,14 @@ void Measurement_of_ADC_Current_18650() {
    HAL_ADC_Stop(&hadc);
 }
 
+/*
+ * Measurement_of_ADC_Current_CMOS() performs an ADC measurement and conversion for the CURRENT of the
+ * CMOS battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
+ *
+ * CHSELR is set to 0x1000h (channel 12)
+ * Calls ADC_Select_CurrentCMOS() to set channel
+ * Converted values store to C_CMOS
+ */
 void Measurement_of_ADC_Current_CMOS() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
@@ -631,6 +677,11 @@ void Measurement_of_ADC_Current_CMOS() {
    HAL_ADC_Stop(&hadc);
 }
 
+/*
+ * ADC_Select_Voltage18650() selects the channel that relates to the VOLTAGE of the 18650 battery.
+ * It sets sConfig to its respective channel (15) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_Voltage18650(void) {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_15;
@@ -640,6 +691,11 @@ void ADC_Select_Voltage18650(void) {
    }
 }
 
+/*
+ * ADC_Select_VoltageCMOS() selects the channel that relates to the VOLTAGE of the 18650 battery.
+ * It sets sConfig to its respective channel (13) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_VoltageCMOS(void) {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_13;
@@ -649,6 +705,11 @@ void ADC_Select_VoltageCMOS(void) {
    }
 }
 
+/*
+ * ADC_Select_Current18650() selects the channel that relates to the VOLTAGE of the 18650 battery.
+ * It sets sConfig to its respective channel (14) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_Current18650(void) {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_14;
@@ -658,6 +719,11 @@ void ADC_Select_Current18650(void) {
    }
 }
 
+/*
+ * ADC_Select_CurrentCMOS() selects the channel that relates to the VOLTAGE of the 18650 battery.
+ * It sets sConfig to its respective channel (12) and channel rank. It then checks if the channel
+ * has been configured correctly.
+ */
 void ADC_Select_CurrentCMOS(void) {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_12;
@@ -667,6 +733,12 @@ void ADC_Select_CurrentCMOS(void) {
    }
 }
 
+//************************ START OF THRESHOLD INPUT AND BOARD COMMUNICATION FUNCTIONS **********************//
+
+/*
+ * setNumber() checks the value of valueToAdjust variable. If the value is set as a number from 0 to 7,
+ * it calls the respective AdjustValueInTo function and sets the threshold LED to its respective color.
+ */
 void setNumber() {
    // Check each value and set the pins accordingly
    if (valueToAdjust == 1) {
@@ -760,8 +832,21 @@ void setNumber() {
    under zero */
 }
 
+/*
+ * AdjustStateTo functions are related to board communication features. Each of the functions will set
+ * the OUTPUT bits to their respective State values to be received by the writing board. Then, it sets
+ * the state LED to it's corresponding state color by setting each of the RGB pins ON or OFF.
+ *
+ * NOTE: Does NOT change the actual state the board is in, ONLY changes outputs between LEDs and Writing board
+ *
+ * Used in the State Machine, Button_Debounce_Set(), and setNumber() functions.
+ */
+
+/*
+ * AdjustStateTo0() Sets output communication bits to 0 (000) and the state LED to OFF
+ */
 void AdjustStateTo0(){
-	// value 0 = 111
+	// value 0 = 000
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_2_Pin, GPIO_PIN_RESET);
@@ -775,6 +860,9 @@ void AdjustStateTo0(){
 	                        GPIO_PIN_RESET);
 }
 
+/*
+ * AdjustStateTo1() Sets output communication bits to 1 (001) and the state LED to RED
+ */
 void AdjustStateTo1(){
 	HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
@@ -789,6 +877,9 @@ void AdjustStateTo1(){
 	                        GPIO_PIN_RESET);
 }
 
+/*
+ * AdjustStateTo2() Sets output communication bits to 2 (010) and the state LED to YELLOW
+ */
 void AdjustStateTo2(){
 	// value 2 = 010
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -804,6 +895,9 @@ void AdjustStateTo2(){
 	                        GPIO_PIN_RESET);
 }
 
+/*
+ * AdjustStateTo3() Sets output communication bits to 3 (011) and the state LED to GREEN
+ */
 void AdjustStateTo3(){
 	// value 3 = 011
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
@@ -819,6 +913,9 @@ void AdjustStateTo3(){
 	                        GPIO_PIN_RESET);
 }
 
+/*
+ * AdjustStateTo4() Sets output communication bits to 4 (100) and the state LED to CYAN
+ */
 void AdjustStateTo4(){
 	// value 4 = 100
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -834,6 +931,9 @@ void AdjustStateTo4(){
 	                        GPIO_PIN_SET);
 }
 
+/*
+ * AdjustStateTo5() Sets output communication bits to 5 (101) and the state LED to BLUE
+ */
 void AdjustStateTo5(){
 	// value 5 = 101
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
@@ -849,6 +949,9 @@ void AdjustStateTo5(){
 	                        GPIO_PIN_SET);
 }
 
+/*
+ * AdjustStateTo6() Sets output communication bits to 6 (110) and the state LED to MAGENTA
+ */
 void AdjustStateTo6(){
 	// value 6 = 110
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -864,6 +967,9 @@ void AdjustStateTo6(){
 	                        GPIO_PIN_SET);
 }
 
+/*
+ * AdjustStateTo7() Sets output communication bits to 7 (111) and the state LED to WHITE
+ */
 void AdjustStateTo7(){
 	// value 7 = 111
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
@@ -879,6 +985,20 @@ void AdjustStateTo7(){
 	                        GPIO_PIN_SET);
 }
 
+/*
+ * AdjustValueInTo functions are related to board communication and threshold input features. Each of
+ * the functions will set the OUTPUT bits to their respective threshold input values to be received by the
+ * writing board. Then, it sets the threshold LED to it's corresponding state color by setting each of the
+ * RGB pins ON or OFF.
+ *
+ * NOTE: Does NOT change the actual threshold value, ONLY changes outputs between LEDs and Writing board
+ *
+ * Used in setNumber() function.
+ */
+
+/*
+ * AdjustValueInTo0() Sets output communication bits to 0 (000) and the state LED to OFF
+ */
 void AdjustValueInTo0(){
 	// value 0 = 000
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -892,6 +1012,9 @@ void AdjustValueInTo0(){
 	      HAL_Delay(14);
 }
 
+/*
+ * AdjustValueInTo1() Sets output communication bits to 1 (001) and the state LED to RED
+ */
 void AdjustValueInTo1(){
 	HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOA, Discrete_Bit_1_Pin, GPIO_PIN_RESET);
@@ -904,6 +1027,9 @@ void AdjustValueInTo1(){
 	   HAL_Delay(14);
 }
 
+/*
+ * AdjustValueInTo2() Sets output communication bits to 2 (010) and the state LED to YELLOW
+ */
 void AdjustValueInTo2(){
 	// value 2 = 010
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -917,6 +1043,9 @@ void AdjustValueInTo2(){
 	      HAL_Delay(14);
 }
 
+/*
+ * AdjustValueInTo3() Sets output communication bits to 3 (110) and the state LED to GREEN
+ */
 void AdjustValueInTo3(){
 	// value 3 = 011
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
@@ -930,6 +1059,9 @@ void AdjustValueInTo3(){
 	      HAL_Delay(14);
 }
 
+/*
+ * AdjustValueInTo4() Sets output communication bits to 4 (100) and the state LED to CYAN
+ */
 void AdjustValueInTo4(){
 	// value 4 = 100
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -943,6 +1075,9 @@ void AdjustValueInTo4(){
 	      HAL_Delay(14);
 }
 
+/*
+ * AdjustValueInTo5() Sets output communication bits to 5 (101) and the state LED to BLUE
+ */
 void AdjustValueInTo5(){
 	// value 5 = 101
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
@@ -956,6 +1091,9 @@ void AdjustValueInTo5(){
 	      HAL_Delay(14);
 }
 
+/*
+ * AdjustValueInTo6() Sets output communication bits to 6 (110) and the state LED to MAGENTA
+ */
 void AdjustValueInTo6(){
 	// value 6 = 110
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_RESET);
@@ -969,6 +1107,9 @@ void AdjustValueInTo6(){
 	      HAL_Delay(14);
 }
 
+/*
+ * AdjustValueInTo7() Sets output communication bits to 7 (111) and the state LED to WHITE
+ */
 void AdjustValueInTo7(){
 	// value 7 = 111
 	      HAL_GPIO_WritePin(GPIOA, Discrete_Bit_0_Pin, GPIO_PIN_SET);
@@ -982,98 +1123,14 @@ void AdjustValueInTo7(){
 	      HAL_Delay(14);
 }
 
-void FlickersetNumber() {
-   // Check each value and set the pins accordingly
-
-	 HAL_Delay(14);
-	  AdjustStateTo1();
-
-	  HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-	  	                        GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-	  	                        GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-	  	                        GPIO_PIN_RESET);
-
-	  HAL_Delay(14);
-	   AdjustStateTo2();
-
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-	   	  	                        GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-	   	  	                        GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-	   	  	                        GPIO_PIN_RESET);
-
-
-	   HAL_Delay(14);
-      AdjustStateTo3();
-
-      HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-      	  	                        GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-      	  	                        GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-      	  	                        GPIO_PIN_RESET);
-
-      HAL_Delay(14);
-	   AdjustStateTo4();
-
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-	   	  	                        GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-	   	  	                        GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-	   	  	                        GPIO_PIN_SET);
-
-	   HAL_Delay(14);
-	   AdjustStateTo5();
-
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-	   	  	                        GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-	   	  	                        GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-	   	  	                        GPIO_PIN_SET);
-
-
-	   HAL_Delay(14);
-	   AdjustStateTo6();
-
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-	   	  	                        GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-	   	  	                        GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-	   	  	                        GPIO_PIN_SET);
-
-
-	   HAL_Delay(14);
-	   AdjustStateTo7();
-
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-	   	  	                        GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-	   	  	                        GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-	   	  	                        GPIO_PIN_SET);
-
-	   HAL_Delay(14);
-      // value 7 = 111
-      AdjustStateTo0();
-
-	  HAL_GPIO_WritePin(GPIOB, Threshold_Red_Pin,
-	   	  	                        GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOB, Threshold_Green_Pin,
-	   	  	                        GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOB, Threshold_Blue_Pin,
-	   	  	                        GPIO_PIN_RESET);
-
-   /*may need to implement state for numbers entered over 7 and numbers
-   under zero */
-}
-
-//Input status light to "flicker" through colors
+/*
+ * User_Input_Light_Cycle() goes through each of the seven colors (red, yellow, green, cyan, blue
+ * magenta, white) of the threshold LED. Each has a 14ms delay to remain visible to user.
+ *
+ * NOTE: Only cycles through colors once! To cycle multiple times, call the function multiple times.
+ *
+ * Used in Button_Debounce_Set()
+ */
 void User_Input_Light_Cycle() {
    // 1. Set Red
    HAL_GPIO_WritePin(Threshold_Red_GPIO_Port, Threshold_Red_Pin, GPIO_PIN_SET);
@@ -1118,118 +1175,13 @@ void User_Input_Light_Cycle() {
    HAL_Delay(14);
 }
 
-void Reset_The_Whole_B(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
-	   state = CASE_INIT;
-}
-
-void Set_LS_1(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
-}
-
-void Set_LS_2(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
-}
-
-void Set_LS_3(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
-}
-
-void Set_LS_4(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
-}
-
-void Set_LS_5(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
-}
-
-void Set_LS_6(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
-}
-
-void Set_LS_7(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
-}
-
-void Set_LS_8(){
-	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
-}
-
-void Set_Low(){
-	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_SET);
-	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_RESET);
-}
-
-void Set_High(){
-	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
-	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
-}
-
+/*
+ * Button_Debounce_Set() changes the valueToAdjust variable based on threshold push-button input. It
+ * only updates when a button is pressed for at least 50ms to reduce bounce.
+ * While the button is being pressed, the load switch output is set to the highest by calling
+ * Reset_The_Whole_B() and the threshold LED flashes using User_Input_Light_Cycle().
+ * Outputs by calling setNumber() after every change to valueToAdjust and at the end of the function.
+ */
 void Button_Debounce_Set() {
    uint8_t currentPlusState = HAL_GPIO_ReadPin(GPIOC, Plus_Pin);
    uint8_t currentMinusState = HAL_GPIO_ReadPin(GPIOC, Minus_Pin);
@@ -1311,18 +1263,184 @@ void Button_Debounce_Set() {
       lastPlusState = currentPlusState;
       lastMinusState = currentMinusState;
 
-
-
-      /*User_Input_Light_Cycle();
-      User_Input_Light_Cycle();
-      User_Input_Light_Cycle();
-      User_Input_Light_Cycle();
-      User_Input_Light_Cycle();*/
       setNumber();
 
    }
 
 }
+
+
+//************************************* START OF "SET" STATE FUNCTIONS *************************************//
+
+/*
+ * Reset_The_Whole_B() SETS the highest load switch output (8) and SETS the 18650 battery as output.
+ * RESETS all other load switch outputs.
+ *
+ * NOTE: This is the ONLY state function that also sets the state variable. All other states are handled
+ * in the state machine.
+ */
+void Reset_The_Whole_B(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
+	   state = CASE_INIT;
+}
+
+/*
+ * Set_LS_1() SETS the output for load switch 1 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_1(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_LS_2() SETS the output for load switch 2 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_2(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_LS_3() SETS the output for load switch 3 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_3(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_LS_4() SETS the output for load switch 4 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_4(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_LS_5() SETS the output for load switch 5 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_5(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_LS_6() SETS the output for load switch 6 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_6(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_LS_7() SETS the output for load switch 7 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_7(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_LS_8() SETS the output for load switch 8 and RESETS all other load switch outputs.
+ *
+ * NOTE: Does NOT change output to battery load switches.
+ */
+void Set_LS_8(){
+	   HAL_GPIO_WritePin(GPIOB, LS_1_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_2_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_3_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOB, LS_4_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_5_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_6_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, LS_7_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_8_Pin, GPIO_PIN_SET);
+}
+
+/*
+ * Set_Low() SETS the output for the CMOS battery load switch and RESETS the 18650 load switch output.
+ *
+ * NOTE: Does NOT change output to other non-battery load switches.
+ */
+void Set_Low(){
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_SET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_RESET);
+}
+
+/*
+ * Set_High() SETS the output for the 18650 battery load switch and RESETS the CMOS load switch output.
+ *
+ * NOTE: Does NOT change output to other non-battery load switches.
+ */
+void Set_High(){
+	   HAL_GPIO_WritePin(GPIOC, LS_LOW_Pin, GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOA, LS_HIGH_Pin, GPIO_PIN_SET);
+}
+
 
 /* USER CODE END 4 */
 
