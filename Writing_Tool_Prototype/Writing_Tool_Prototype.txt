@@ -1,14 +1,14 @@
 Configuration	Writing_Tool_Prototype
 STM32CubeMX 	6.10.0
-Date	02/12/2024
+Date	03/25/2024
 MCU	STM32L010RBTx
 
 
 
 PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN9	ADC_IN9	PB1
 ADC	IN12	ADC_IN12	PC2
 ADC	IN13	ADC_IN13	PC3
-ADC	IN14	ADC_IN14	PC4
 ADC	IN15	ADC_IN15	PC5
 SPI1	Full-Duplex Master	SPI1_MISO	PA6
 SPI1	Full-Duplex Master	SPI1_MOSI	PA7
@@ -28,16 +28,16 @@ Pin Nb	PINs	FUNCTIONs	LABELs
 21	PA5	SPI1_SCK	
 22	PA6	SPI1_MISO	
 23	PA7	SPI1_MOSI	
-24	PC4	ADC_IN14	Current_ADC_18650
 25	PC5	ADC_IN15	Voltage_ADC_18650
 26	PB0	GPIO_Input	Discrete_Bit_2
-41	PA8	GPIO_Output	User_Input_Status_Light
+27	PB1	ADC_IN9	Current_ADC_18650
+41	PA8	GPIO_Output	User_Input_Status_Light_Red
 42	PA9	GPIO_Output	User_Input_Status_Light_Green
 43	PA10	GPIO_Output	User_Input_Status_Light_Blue
 PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN9	ADC_IN9	PB1
 ADC	IN12	ADC_IN12	PC2
 ADC	IN13	ADC_IN13	PC3
-ADC	IN14	ADC_IN14	PC4
 ADC	IN15	ADC_IN15	PC5
 SPI1	Full-Duplex Master	SPI1_MISO	PA6
 SPI1	Full-Duplex Master	SPI1_MOSI	PA7
@@ -57,10 +57,10 @@ Pin Nb	PINs	FUNCTIONs	LABELs
 21	PA5	SPI1_SCK	
 22	PA6	SPI1_MISO	
 23	PA7	SPI1_MOSI	
-24	PC4	ADC_IN14	Current_ADC_18650
 25	PC5	ADC_IN15	Voltage_ADC_18650
 26	PB0	GPIO_Input	Discrete_Bit_2
-41	PA8	GPIO_Output	User_Input_Status_Light
+27	PB1	ADC_IN9	Current_ADC_18650
+41	PA8	GPIO_Output	User_Input_Status_Light_Red
 42	PA9	GPIO_Output	User_Input_Status_Light_Green
 43	PA10	GPIO_Output	User_Input_Status_Light_Blue
 
@@ -70,7 +70,7 @@ SOFTWARE PROJECT
 
 Project Settings : 
 Project Name : Writing_Tool_Prototype
-Project Folder : C:\Users\patel\STM32CubeIDE\workspace_1.14.0\Low_Powered_STM32_Project\Senior_Project
+Project Folder : C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype
 Toolchain / IDE : STM32CubeIDE
 Firmware Package Name and Version : STM32Cube FW_L0 V1.12.2
 

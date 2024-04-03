@@ -77,6 +77,8 @@ void Set_LS_5();
 void Set_LS_6();
 void Set_LS_7();
 void Set_LS_8();
+void Set_High();
+void Set_Low();
 void AdjustStateTo0();
 void AdjustStateTo1();
 void AdjustStateTo2();
@@ -114,6 +116,21 @@ int valueToAdjust = 0;  // Integer value to be adjusted
 uint8_t lastPlusState = GPIO_PIN_RESET;
 uint8_t lastMinusState = GPIO_PIN_RESET;
 int measurement_num = 0;
+float conversionFactor = 0;
+// State transition flags
+int entered_LS1_from_LS2 = 0; // Indicates if LS1 was entered from LS2
+int entered_LS2_from_LS1 = 0; // Indicates if LS2 was entered from LS1
+int entered_LS2_from_LS3 = 0; // Indicates if LS2 was entered from LS3
+int entered_LS3_from_LS2 = 0; // Indicates if LS3 was entered from LS2
+int entered_LS3_from_LS4 = 0; // Indicates if LS3 was entered from LS4
+int entered_LS4_from_LS3 = 0; // Indicates if LS4 was entered from LS3
+// State transition flags
+int entered_LS5_from_LS6 = 0; // Indicates if LS5 was entered from LS6
+int entered_LS6_from_LS5 = 0; // Indicates if LS6 was entered from LS5
+int entered_LS6_from_LS7 = 0; // Indicates if LS6 was entered from LS7
+int entered_LS7_from_LS6 = 0; // Indicates if LS7 was entered from LS6
+int entered_LS7_from_LS8 = 0; // Indicates if LS7 was entered from LS8
+int entered_LS8_from_LS7 = 0; // Indicates if LS8 was entered from LS7
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -166,9 +183,6 @@ int main(void) {
 
    Reset_The_Whole_B();
 
-   int init_v = 1;
-
-
 
    /* USER CODE END 2 */
 
@@ -191,156 +205,190 @@ int main(void) {
               Switch_State, measurement_num);
       HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
 
+      	  Set_High();
 
-              // Handle behavior based on state
-              switch (state) {
-                  case CASE_INIT: {
-                      Reset_The_Whole_B();
-                      state = LS_8;
-                      break;
-                  }
 
-                  case LS_8: {
-                      Set_LS_8();
-                      AdjustStateTo7();
-                      if(C_CMOS < 2.95)
-                      {
-                    	  state = LS_7;
-                      }
-                      else
-                      {
-                    	  state = LS_8;
-                      }
-                      break;
-                  }//end of LS_8
 
-                  case LS_7: {
-                      Set_LS_7();
-						AdjustStateTo6();
-                      if(C_CMOS < 2.6)
-                      {
-                    	  state = LS_6;
-                      }
-                      else if(C_CMOS >= 3.0)
-                      {
-                    	  state = LS_8;
-                      }
-                      else
-                      {
-                    	  state = LS_7;
-                      }
-                      break;
-                  }//end of LS_7
+ //              Handle behavior based on state
+          switch (state) {
+          case CASE_INIT: {
+                  Reset_The_Whole_B();
+                  state = LS_8;
+                  break;
+          }
 
-                  case LS_6: {
-                      Set_LS_6();
-                      AdjustStateTo5();
-                      if(C_CMOS < 2.25)
-                      {
-                    	  state = LS_5;
-                      }
-                      else if(C_CMOS >= 2.65)
-                      {
-                        state = LS_8;
-                      }
-                      else
-                      {
-                    	  state = LS_6;
-                      }
-                      break;
-                  }//end of LS_6
+          case LS_8:
+              static int Hys_ls8 = 1;
+              Set_LS_8();
+              AdjustStateTo7();
 
-                  case LS_5: {
-                      Set_LS_5();
-                      AdjustStateTo4();
-                      if(C_CMOS < 1.9)
-                      {
-                    	  state = LS_4;
-                      }
-                      else if(C_CMOS >= 2.35)
-                      {
-                    	  state = LS_7;
-                      }
-                      else
-                      {
-                    	  state = LS_5;
-                      }
-                      break;
-                  }//end of LS_5
-
-                  case LS_4: {
-                	  Set_LS_4();
-                	  AdjustStateTo3();
-                      if(C_CMOS < 1.55)
-                      {
-                          state = LS_3;
-                      }
-                      else if(C_CMOS >= 1.95)
-                                        {
-                                      	  state = LS_6;
-                                        }
-                                        else
-                                        {
-                                      	  state = LS_4;
-                                        }
-                                        break;
-                                    }//end of LS_4
-
-                  case LS_3: {
-                                        Set_LS_3();
-                                        AdjustStateTo2();
-                                        if(C_CMOS < 1.2)
-                                        {
-                                      	  state = LS_2;
-                                        }
-                                        else if(C_CMOS >= 1.6)
-                                        {
-                                      	  state = LS_5;
-                                        }
-                                        else
-                                        {
-                                      	  state = LS_3;
-                                        }
-                                        break;
-                                    }//end of LS_3
-
-                  case LS_2: {
-                                        Set_LS_2();
-                                        AdjustStateTo1();
-                                        if(C_CMOS < 0.85)
-                                        {
-                                      	  state = LS_1;
-                                        }
-                                        else if(C_CMOS >= 1.25)
-                                        {
-                                      	  state = LS_4;
-                                        }
-                                        else
-                                        {
-                                      	  state = LS_2;
-                                        }
-                                        break;
-                                    }//end of LS_2
-
-                  case LS_1: {
-                                        Set_LS_1();
-                                        AdjustStateTo0();
-                                        if(C_CMOS >= 0.9)
-                                        {
-                                      	  state = LS_3;
-                                        }
-                                        else
-                                        {
-                                      	  state = LS_1;
-                                        }
-                                        break;
-                                    }//end of LS_5
-
-                  default: {
-                	  Reset_The_Whole_B();
-                	  state = CASE_INIT;
-                  }
+              // Transitioning back to LS_7
+              if ((Hys_ls8 == 0 && C_18650 < .33) || (Hys_ls8 == 1 && C_18650 < .231)) {
+                  Set_LS_7();
+                  state = LS_7;
+                  Hys_ls8 = 1; // Reset Hys_ls8 when leaving LS_8
               }
+
+              // Update hysteresis flag based on remaining in LS_8
+              if (C_18650 > .429) {
+                  Hys_ls8 = 0;
+              }
+
+              break;
+
+          case LS_7:
+              static int Hys_ls7 = 1;
+              Set_LS_7();
+              AdjustStateTo6();
+
+              // Transitioning to LS_6 or LS_8 based on conditions
+              if ((Hys_ls7 == 0 && C_18650 < .33) || (Hys_ls7 == 1 && C_18650 < .231)) {
+                  Set_LS_6();
+                  state = LS_6;
+                  // Indicate entering LS_6 from LS_7
+                  entered_LS6_from_LS7 = 1;
+              } else if ((Hys_ls7 == 0 && C_18650 > 2.97) || (Hys_ls7 == 1 && C_18650 > 3.069)) {
+                  Set_LS_8();
+                  state = LS_8;
+                  // Reset flags related to LS_7 transitions
+                  entered_LS7_from_LS6 = 0;
+              }
+
+              // Update hysteresis flag based on voltage thresholds
+              if (C_18650 > .429 || C_18650 > 3.069) {
+                  Hys_ls7 = 0;
+              } else {
+                  Hys_ls7 = 1;
+              }
+
+              break;
+
+          case LS_6:
+              static int Hys_ls6 = 1; // For persistence across state transitions
+              Set_LS_6();
+              AdjustStateTo5();
+
+              // Transitioning from LS_6 to LS_5
+              if ((Hys_ls6 == 0 && C_18650 < .33) || (Hys_ls6 == 1 && C_18650 < .231)) {
+                  Set_LS_5();
+                  state = LS_5;
+                  // Reset flags related to LS_6 transitions
+                  entered_LS6_from_LS7 = 0;
+              } else if ((Hys_ls6 == 0 && C_18650 > 2.97) || (Hys_ls6 == 1 && C_18650 > 3.069)) {
+                  Set_LS_7();
+                  state = LS_7;
+                  // Indicate entering LS_7 from LS_6
+                  entered_LS7_from_LS6 = 1;
+              }
+
+              // Update hysteresis flag based on voltage thresholds
+              if (C_18650 > .429 || C_18650 > 3.069) {
+                  Hys_ls6 = 0;
+              } else {
+                  Hys_ls6 = 1;
+              }
+
+              break;
+
+          case LS_5:
+              int Hys_ls5 = 1;
+              Set_LS_5();
+              AdjustStateTo4();
+              if (C_18650 >= 2.97) { // Using the special threshold for moving up from a very low state
+                  Set_LS_6();
+                  state = LS_6;
+              }
+              break;
+               //end of LS_5
+
+          case LS_4:
+              static int Hys_ls4 = 1;
+              Set_LS_4();
+              AdjustStateTo3();
+
+              // Transitioning back to LS_3
+              if ((Hys_ls4 == 0 && C_CMOS < .33) || (Hys_ls4 == 1 && C_CMOS < .231)) {
+                  Set_LS_3();
+                  state = LS_3;
+                  Hys_ls4 = 1; // Reset Hys_ls4 when leaving LS_4
+              }
+
+              // Update hysteresis flag based on remaining in LS_4
+              if (C_CMOS > .429) {
+                  Hys_ls4 = 0;
+              }
+
+              break;
+
+          case LS_3:
+              static int Hys_ls3 = 1;
+              Set_LS_3();
+              AdjustStateTo2();
+
+              // Transitioning to LS_2 or LS_4 based on conditions
+              if ((Hys_ls3 == 0 && C_CMOS < .33) || (Hys_ls3 == 1 && C_CMOS < .231)) {
+                  Set_LS_2();
+                  state = LS_2;
+                  // Indicate entering LS_2 from LS_3
+                  entered_LS2_from_LS3 = 1;
+              } else if ((Hys_ls3 == 0 && C_CMOS > 2.97) || (Hys_ls3 == 1 && C_CMOS > 3.069)) {
+                  Set_LS_4();
+                  state = LS_4;
+                  // Reset flags related to LS_3 transitions
+                  entered_LS3_from_LS2 = 0;
+              }
+
+              // Update hysteresis flag based on voltage thresholds
+              if (C_CMOS > .429 || C_CMOS > 3.069) {
+                  Hys_ls3 = 0;
+              } else {
+                  Hys_ls3 = 1;
+              }
+
+              break;
+
+          case LS_2:
+              static int Hys_ls2 = 1; // For persistence across state transitions
+              Set_LS_2();
+              AdjustStateTo1();
+
+              // Transitioning from LS_2 to LS_1
+              if ((Hys_ls2 == 0 && C_CMOS < .33) || (Hys_ls2 == 1 && C_CMOS < .231)) {
+                  Set_LS_1();
+                  state = LS_1;
+                  // Reset flags related to LS_2 transitions
+                  entered_LS2_from_LS3 = 0;
+              } else if ((Hys_ls2 == 0 && C_CMOS > 2.97) || (Hys_ls2 == 1 && C_CMOS > 3.069)) {
+                  Set_LS_3();
+                  state = LS_3;
+                  // Indicate entering LS_3 from LS_2
+                  entered_LS3_from_LS2 = 1;
+              }
+
+              // Update hysteresis flag based on voltage thresholds
+              if (C_CMOS > .429 || C_CMOS > 3.069) {
+                  Hys_ls2 = 0;
+              } else {
+                  Hys_ls2 = 1;
+              }
+
+              break;
+
+          case LS_1:
+              int Hys_ls1 = 1;
+              Set_LS_1();
+              AdjustStateTo0();
+              if (C_CMOS >= 2.97) { // Using the special threshold for moving up from a very low state
+                  Set_LS_2();
+                  state = LS_2;
+              }
+              break;
+
+          default: {
+                  Reset_The_Whole_B();
+                  state = CASE_INIT;
+          }
+          }
 
       measurement_num++;
 
@@ -608,6 +656,9 @@ void Measurement_of_ADC_Voltage_CMOS() {
       /* Read the ADC1 value */
       rawValue1 = HAL_ADC_GetValue(&hadc);
       V_CMOS = rawValue1 * V_stepSize;
+
+
+
    }
    HAL_ADC_Stop(&hadc);
 }
@@ -637,10 +688,6 @@ void Measurement_of_ADC_Current_18650() {
       /* Read the ADC1 value */
       rawValue1 = HAL_ADC_GetValue(&hadc);
       C_18650 = ((rawValue1 * V_stepSize));
-
-      /// 50) /
-      //.0299562) // I_load = ((V_ADC / 50 gain) / .03 calibrated
-      // shunt)
    }
    HAL_ADC_Stop(&hadc);
 }
@@ -670,9 +717,6 @@ void Measurement_of_ADC_Current_CMOS() {
       /* Read the ADC1 value */
       rawValue1 = HAL_ADC_GetValue(&hadc);
       C_CMOS = ((rawValue1 * V_stepSize));
-      /// 20) /
-      // 4.713492);  // I_load = (( V_ADC / 20 Gain ) / 4.71
-      // calibrated shunt )
    }
    HAL_ADC_Stop(&hadc);
 }
