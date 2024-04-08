@@ -57,8 +57,10 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void Measurement_of_ADC_Voltage_18650();
 void Measurement_of_ADC_Voltage_CMOS();
-void Measurement_of_ADC_Current_CMOS();
-void Measurement_of_ADC_Current_18650();
+void Measurement_of_ADC_Voltage_DiffAmp_CMOS();
+void Measurement_of_ADC_Voltage_DiffAmp_18650();
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(float Voltage_DiffAmp_18650);
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(float Voltage_DiffAmp_CMOS);
 void Continuous_Same_State_Average();
 void process_SD_card(void);
 void ADC_Select_Voltage18650(void);
@@ -97,13 +99,16 @@ void AdjustValueInTo4();
 void AdjustValueInTo5();
 void AdjustValueInTo6();
 void AdjustValueInTo7();
+float Threshold(int value_from_button);
 
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
 float V_50gain = 0.0f;
 float V_25gain = 0.0f;
-float C_CMOS = 0.0f;
+float Voltage_DiffAmp_CMOS = 0.0f;
 float C_18650 = 0.0f;
+float Voltage_DiffAmp_18650 = 0.0f;
+float C_CMOS = 0.0f;
 int i, j;
 unsigned int Switch_State = 0;
 float seconds_since_start = 0.0f;
@@ -184,70 +189,98 @@ int main(void) {
    Reset_The_Whole_B();
 
 
+
    /* USER CODE END 2 */
 
    /* Infinite loop */
    /* USER CODE BEGIN WHILE */
    while (1) {
+	   /* USER CODE BEGIN 3 */
+	   Measurement_of_ADC_Voltage_18650();
+	         Measurement_of_ADC_Voltage_CMOS();
+	         Measurement_of_ADC_Voltage_DiffAmp_CMOS();
+	         Measurement_of_ADC_Voltage_DiffAmp_18650();
+	         C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(Voltage_DiffAmp_18650);
+	         C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(Voltage_DiffAmp_CMOS);
       Button_Debounce_Set();
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
+      if(state == LS_8 || state == LS_7 || state == LS_6 || state == LS_5){
+            		  if(C_18650 <= (Threshold(valueToAdjust))*.9){
+            			 Set_Low();
+            			 state = LS_4;
+            			 Set_LS_4();
+            		  }
+                  	  }
+
+            	  else if(state == LS_4 || state == LS_3 || state == LS_2 || state == LS_1){
+            		  if(C_CMOS >=(Threshold(valueToAdjust))*1.1){
+            			 Set_High();
+            			 state = LS_8;
+            			 Set_LS_8();
+            	  }
+            	  }
+
       Measurement_of_ADC_Voltage_18650();
       Measurement_of_ADC_Voltage_CMOS();
-      Measurement_of_ADC_Current_CMOS();
-      Measurement_of_ADC_Current_18650();
-      // UART Debugging
-      sprintf(msg, "%.3f,%.3f,%.3f,%.3f,%.3f,%d,%d,%d\r\n", seconds_since_start, V_18650,
+      Measurement_of_ADC_Voltage_DiffAmp_CMOS();
+      Measurement_of_ADC_Voltage_DiffAmp_18650();
+      C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(Voltage_DiffAmp_18650);
+      C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(Voltage_DiffAmp_CMOS);
+      // UART Debuggin
+      sprintf(msg, "%.3f,%.3f,%.5f,%.3f,%.5f,%d,%d,%d\r\n", seconds_since_start, V_18650,
               C_18650,        // 18650 Current
               V_CMOS,         // CMOS Voltage
-              C_CMOS,         // CMOS Current
+			  C_CMOS,         // CMOS Current
               valueToAdjust,  // Threshold
               Switch_State, measurement_num);
       HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
 
-      	  Set_High();
 
 
 
- //              Handle behavior based on state
+
+
+//               Handle behavior based on state
           switch (state) {
           case CASE_INIT: {
-                  Reset_The_Whole_B();
                   state = LS_8;
                   break;
           }
 
           case LS_8:
+        	  Switch_State = 8;
               static int Hys_ls8 = 1;
               Set_LS_8();
               AdjustStateTo7();
 
               // Transitioning back to LS_7
-              if ((Hys_ls8 == 0 && C_18650 < .33) || (Hys_ls8 == 1 && C_18650 < .231)) {
+              if ((Hys_ls8 == 0 && Voltage_DiffAmp_18650 < .33) || (Hys_ls8 == 1 && Voltage_DiffAmp_18650 < .231)) {
                   Set_LS_7();
                   state = LS_7;
                   Hys_ls8 = 1; // Reset Hys_ls8 when leaving LS_8
               }
 
               // Update hysteresis flag based on remaining in LS_8
-              if (C_18650 > .429) {
+              if (Voltage_DiffAmp_18650 > .429) {
                   Hys_ls8 = 0;
               }
 
               break;
 
           case LS_7:
+        	  Switch_State = 7;
               static int Hys_ls7 = 1;
               Set_LS_7();
               AdjustStateTo6();
 
               // Transitioning to LS_6 or LS_8 based on conditions
-              if ((Hys_ls7 == 0 && C_18650 < .33) || (Hys_ls7 == 1 && C_18650 < .231)) {
+              if ((Hys_ls7 == 0 && Voltage_DiffAmp_18650 < .33) || (Hys_ls7 == 1 && Voltage_DiffAmp_18650 < .231)) {
                   Set_LS_6();
                   state = LS_6;
                   // Indicate entering LS_6 from LS_7
                   entered_LS6_from_LS7 = 1;
-              } else if ((Hys_ls7 == 0 && C_18650 > 2.97) || (Hys_ls7 == 1 && C_18650 > 3.069)) {
+              } else if ((Hys_ls7 == 0 && Voltage_DiffAmp_18650 > 2.97) || (Hys_ls7 == 1 && Voltage_DiffAmp_18650 > 3.069)) {
                   Set_LS_8();
                   state = LS_8;
                   // Reset flags related to LS_7 transitions
@@ -255,7 +288,7 @@ int main(void) {
               }
 
               // Update hysteresis flag based on voltage thresholds
-              if (C_18650 > .429 || C_18650 > 3.069) {
+              if (Voltage_DiffAmp_18650 > .429 || Voltage_DiffAmp_18650 > 3.069) {
                   Hys_ls7 = 0;
               } else {
                   Hys_ls7 = 1;
@@ -264,17 +297,18 @@ int main(void) {
               break;
 
           case LS_6:
+        	  Switch_State = 6;
               static int Hys_ls6 = 1; // For persistence across state transitions
               Set_LS_6();
               AdjustStateTo5();
 
               // Transitioning from LS_6 to LS_5
-              if ((Hys_ls6 == 0 && C_18650 < .33) || (Hys_ls6 == 1 && C_18650 < .231)) {
+              if ((Hys_ls6 == 0 && Voltage_DiffAmp_18650 < .33) || (Hys_ls6 == 1 && Voltage_DiffAmp_18650 < .231)) {
                   Set_LS_5();
                   state = LS_5;
                   // Reset flags related to LS_6 transitions
                   entered_LS6_from_LS7 = 0;
-              } else if ((Hys_ls6 == 0 && C_18650 > 2.97) || (Hys_ls6 == 1 && C_18650 > 3.069)) {
+              } else if ((Hys_ls6 == 0 && Voltage_DiffAmp_18650 > 2.97) || (Hys_ls6 == 1 && Voltage_DiffAmp_18650 > 3.069)) {
                   Set_LS_7();
                   state = LS_7;
                   // Indicate entering LS_7 from LS_6
@@ -282,7 +316,7 @@ int main(void) {
               }
 
               // Update hysteresis flag based on voltage thresholds
-              if (C_18650 > .429 || C_18650 > 3.069) {
+              if (Voltage_DiffAmp_18650 > .429 || Voltage_DiffAmp_18650 > 3.069) {
                   Hys_ls6 = 0;
               } else {
                   Hys_ls6 = 1;
@@ -291,10 +325,11 @@ int main(void) {
               break;
 
           case LS_5:
+        	  Switch_State = 5;
               int Hys_ls5 = 1;
               Set_LS_5();
               AdjustStateTo4();
-              if (C_18650 >= 2.97) { // Using the special threshold for moving up from a very low state
+              if (Voltage_DiffAmp_18650 >= 2.97) { // Using the special threshold for moving up from a very low state
                   Set_LS_6();
                   state = LS_6;
               }
@@ -302,36 +337,38 @@ int main(void) {
                //end of LS_5
 
           case LS_4:
+        	  Switch_State = 4;
               static int Hys_ls4 = 1;
               Set_LS_4();
               AdjustStateTo3();
 
               // Transitioning back to LS_3
-              if ((Hys_ls4 == 0 && C_CMOS < .33) || (Hys_ls4 == 1 && C_CMOS < .231)) {
+              if ((Hys_ls4 == 0 && Voltage_DiffAmp_CMOS < .33) || (Hys_ls4 == 1 && Voltage_DiffAmp_CMOS < .231)) {
                   Set_LS_3();
                   state = LS_3;
                   Hys_ls4 = 1; // Reset Hys_ls4 when leaving LS_4
               }
 
               // Update hysteresis flag based on remaining in LS_4
-              if (C_CMOS > .429) {
+              if (Voltage_DiffAmp_CMOS > .429) {
                   Hys_ls4 = 0;
               }
 
               break;
 
           case LS_3:
+        	  Switch_State = 3;
               static int Hys_ls3 = 1;
               Set_LS_3();
               AdjustStateTo2();
 
               // Transitioning to LS_2 or LS_4 based on conditions
-              if ((Hys_ls3 == 0 && C_CMOS < .33) || (Hys_ls3 == 1 && C_CMOS < .231)) {
+              if ((Hys_ls3 == 0 && Voltage_DiffAmp_CMOS < .33) || (Hys_ls3 == 1 && Voltage_DiffAmp_CMOS < .231)) {
                   Set_LS_2();
                   state = LS_2;
                   // Indicate entering LS_2 from LS_3
                   entered_LS2_from_LS3 = 1;
-              } else if ((Hys_ls3 == 0 && C_CMOS > 2.97) || (Hys_ls3 == 1 && C_CMOS > 3.069)) {
+              } else if ((Hys_ls3 == 0 && Voltage_DiffAmp_CMOS > 2.97) || (Hys_ls3 == 1 && Voltage_DiffAmp_CMOS > 3.069)) {
                   Set_LS_4();
                   state = LS_4;
                   // Reset flags related to LS_3 transitions
@@ -339,7 +376,7 @@ int main(void) {
               }
 
               // Update hysteresis flag based on voltage thresholds
-              if (C_CMOS > .429 || C_CMOS > 3.069) {
+              if (Voltage_DiffAmp_CMOS > .429 || Voltage_DiffAmp_CMOS > 3.069) {
                   Hys_ls3 = 0;
               } else {
                   Hys_ls3 = 1;
@@ -348,17 +385,18 @@ int main(void) {
               break;
 
           case LS_2:
+        	  Switch_State = 2;
               static int Hys_ls2 = 1; // For persistence across state transitions
               Set_LS_2();
               AdjustStateTo1();
 
               // Transitioning from LS_2 to LS_1
-              if ((Hys_ls2 == 0 && C_CMOS < .33) || (Hys_ls2 == 1 && C_CMOS < .231)) {
+              if ((Hys_ls2 == 0 && Voltage_DiffAmp_CMOS < .33) || (Hys_ls2 == 1 && Voltage_DiffAmp_CMOS < .231)) {
                   Set_LS_1();
                   state = LS_1;
                   // Reset flags related to LS_2 transitions
                   entered_LS2_from_LS3 = 0;
-              } else if ((Hys_ls2 == 0 && C_CMOS > 2.97) || (Hys_ls2 == 1 && C_CMOS > 3.069)) {
+              } else if ((Hys_ls2 == 0 && Voltage_DiffAmp_CMOS > 2.97) || (Hys_ls2 == 1 && Voltage_DiffAmp_CMOS > 3.069)) {
                   Set_LS_3();
                   state = LS_3;
                   // Indicate entering LS_3 from LS_2
@@ -366,7 +404,7 @@ int main(void) {
               }
 
               // Update hysteresis flag based on voltage thresholds
-              if (C_CMOS > .429 || C_CMOS > 3.069) {
+              if (Voltage_DiffAmp_CMOS > .429 || Voltage_DiffAmp_CMOS > 3.069) {
                   Hys_ls2 = 0;
               } else {
                   Hys_ls2 = 1;
@@ -375,10 +413,11 @@ int main(void) {
               break;
 
           case LS_1:
+        	  Switch_State = 1;
               int Hys_ls1 = 1;
               Set_LS_1();
               AdjustStateTo0();
-              if (C_CMOS >= 2.97) { // Using the special threshold for moving up from a very low state
+              if (Voltage_DiffAmp_CMOS >= 2.97) { // Using the special threshold for moving up from a very low state
                   Set_LS_2();
                   state = LS_2;
               }
@@ -626,7 +665,7 @@ void Measurement_of_ADC_Voltage_18650() {
    if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
       /* Read the ADC1 value */
       rawValue1 = HAL_ADC_GetValue(&hadc);
-      V_18650 = rawValue1 * V_stepSize;
+      V_18650 = ((rawValue1 * V_stepSize) * (1/.65)); //change this math here
    }
    HAL_ADC_Stop(&hadc);
 }
@@ -655,7 +694,7 @@ void Measurement_of_ADC_Voltage_CMOS() {
    if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
       /* Read the ADC1 value */
       rawValue1 = HAL_ADC_GetValue(&hadc);
-      V_CMOS = rawValue1 * V_stepSize;
+      V_CMOS = ((rawValue1 * V_stepSize) * (1/.65));
 
 
 
@@ -664,14 +703,43 @@ void Measurement_of_ADC_Voltage_CMOS() {
 }
 
 /*
- * Measurement_of_ADC_Current_18650() performs an ADC measurement and conversion for the CURRENT of the
+ * Measurement_of_ADC_Voltage_DiffAmp_18650() performs an ADC measurement and conversion for the CURRENT of the
  * 18650 battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
  *
  * CHSELR is set to 0x4000h (channel 14)
  * Calls ADC_Select_Current18650() to set channel
- * Converted values store to C_18650
+ * Converted values store to Voltage_DiffAmp_18650
  */
-void Measurement_of_ADC_Current_18650() {
+
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(float Voltage_DiffAmp_18650){
+	float conversion_18650 = 0;
+	if(state == LS_5)
+	{
+		conversion_18650 = (Voltage_DiffAmp_18650/888); // do math
+	}
+	if(state == LS_6)
+	{
+		conversion_18650 = (Voltage_DiffAmp_18650/101); // do math
+	}
+	if(state == LS_7)
+	{
+		conversion_18650 = (Voltage_DiffAmp_18650/11.5); // do math
+	}
+	if(state == LS_8)
+	{
+		conversion_18650 = (Voltage_DiffAmp_18650/1.18); // do math
+	}
+	if(state == CASE_INIT)
+	{
+		conversion_18650 = (Voltage_DiffAmp_18650/1.18); // do math
+	}
+
+	return conversion_18650;
+}
+
+
+
+void Measurement_of_ADC_Voltage_DiffAmp_18650() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
    float V_ref = 3.3;  // This is known for each micro controller from data
@@ -687,20 +755,73 @@ void Measurement_of_ADC_Current_18650() {
    if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
       /* Read the ADC1 value */
       rawValue1 = HAL_ADC_GetValue(&hadc);
-      C_18650 = ((rawValue1 * V_stepSize));
+      Voltage_DiffAmp_18650 = ((rawValue1 * V_stepSize));
    }
    HAL_ADC_Stop(&hadc);
 }
 
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(float Voltage_DiffAmp_CMOS){
+	float conversion_CMOS = 0;
+	if(state == LS_1)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/889); // do math
+	}
+	if(state == LS_2)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/99.7); // do math
+	}
+	if(state == LS_3)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/11.1);
+	}
+	if(state == LS_4)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/1.149); // do math
+	}
+	if(state == CASE_INIT)
+		{
+			conversion_CMOS = 0;
+		}
+
+	return conversion_CMOS;
+}
+
+float Threshold(int value_from_button){
+	if (value_from_button == 0){
+		return .001;
+	}
+	if (value_from_button == 1){
+			return .005;
+	}
+	if (value_from_button == 2){
+			return .010;
+	}
+	if (value_from_button == 3){
+			return .050;
+	}
+	if (value_from_button == 4){
+			return .100;
+	}
+	if (value_from_button == 5){
+			return .500;
+	}
+	if (value_from_button == 6){
+			return 1.00;
+	}
+	if (value_from_button == 7){
+			return 1.5;
+	}
+}
+
 /*
- * Measurement_of_ADC_Current_CMOS() performs an ADC measurement and conversion for the CURRENT of the
+ * Measurement_of_ADC_Voltage_DiffAmp_CMOS() performs an ADC measurement and conversion for the CURRENT of the
  * CMOS battery. *Refer to Measurement_of_ADC steps above for more detail on steps*
  *
  * CHSELR is set to 0x1000h (channel 12)
  * Calls ADC_Select_CurrentCMOS() to set channel
- * Converted values store to C_CMOS
+ * Converted values store to Voltage_DiffAmp_CMOS
  */
-void Measurement_of_ADC_Current_CMOS() {
+void Measurement_of_ADC_Voltage_DiffAmp_CMOS() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
    float V_ref = 3.3;  // This is known for each micro controller from data
@@ -716,7 +837,7 @@ void Measurement_of_ADC_Current_CMOS() {
    if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
       /* Read the ADC1 value */
       rawValue1 = HAL_ADC_GetValue(&hadc);
-      C_CMOS = ((rawValue1 * V_stepSize));
+      Voltage_DiffAmp_CMOS = ((rawValue1 * V_stepSize));
    }
    HAL_ADC_Stop(&hadc);
 }
