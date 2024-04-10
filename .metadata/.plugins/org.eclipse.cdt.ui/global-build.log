@@ -6165,3 +6165,210 @@ Finished building: default.size.stdout
  
 Finished building: Switching_Tool_Prototype.list
  
+17:09:01 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'Threshold':
+../Core/Src/main.c:816:1: warning: control reaches end of non-void function [-Wreturn-type]
+  816 | }
+      | ^
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  47520	    476	   2196	  50192	   c410	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+17:09:57 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'Threshold':
+../Core/Src/main.c:816:1: warning: control reaches end of non-void function [-Wreturn-type]
+  816 | }
+      | ^
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  47652	    476	   2196	  50324	   c494	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+17:10:36 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'Threshold':
+../Core/Src/main.c:816:1: warning: control reaches end of non-void function [-Wreturn-type]
+  816 | }
+      | ^
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  47652	    476	   2196	  50324	   c494	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+17:31:33 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:417:19: warning: unused variable 'Hys_ls1' [-Wunused-variable]
+  417 |               int Hys_ls1 = 1;
+      |                   ^~~~~~~
+../Core/Src/main.c:329:19: warning: unused variable 'Hys_ls5' [-Wunused-variable]
+  329 |               int Hys_ls5 = 1;
+      |                   ^~~~~~~
+../Core/Src/main.c: In function 'Threshold':
+../Core/Src/main.c:814:1: warning: control reaches end of non-void function [-Wreturn-type]
+  814 | }
+      | ^
+arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Switching_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Switching_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  50600	    500	   2212	  53312	   d040	Switching_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Switching_Tool_Prototype.list
+ 
+19:49:36 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c:546:6: error: expected identifier or '(' before numeric constant
+  546 | void 0() {
+      |      ^
+../Core/Src/main.c: In function 'Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current':
+../Core/Src/main.c:743:1: warning: control reaches end of non-void function [-Wreturn-type]
+  743 | }
+      | ^
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+19:50:23 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c:546:7: error: expected identifier or '(' before ')' token
+  546 | void () {
+      |       ^
+../Core/Src/main.c: In function 'Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current':
+../Core/Src/main.c:743:1: warning: control reaches end of non-void function [-Wreturn-type]
+  743 | }
+      | ^
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+19:50:36 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current':
+../Core/Src/main.c:743:1: warning: control reaches end of non-void function [-Wreturn-type]
+  743 | }
+      | ^
+arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Writing_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Writing_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  62748	    500	   2700	  65948	  1019c	Writing_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Writing_Tool_Prototype.list
+ 
+19:58:29 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'process_SD_card':
+../Core/Src/main.c:414:60: warning: unknown conversion type character '.' in format [-Wformat=]
+  414 |    snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%..5f,%.3f,%.5f,%d,\n",
+      |                                                            ^
+../Core/Src/main.c:414:75: warning: format '%d' expects argument of type 'int', but argument 8 has type 'double' [-Wformat=]
+  414 |    snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%..5f,%.3f,%.5f,%d,\n",
+      |                                                                          ~^
+      |                                                                           |
+      |                                                                           int
+      |                                                                          %f
+......
+  419 |             C_CMOS,               // CMOS Current
+      |             ~~~~~~                                                         
+      |             |
+      |             double
+../Core/Src/main.c:414:47: warning: too many arguments for format [-Wformat-extra-args]
+  414 |    snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%..5f,%.3f,%.5f,%d,\n",
+      |                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current':
+../Core/Src/main.c:743:1: warning: control reaches end of non-void function [-Wreturn-type]
+  743 | }
+      | ^
+arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Writing_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Writing_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  62748	    500	   2700	  65948	  1019c	Writing_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Writing_Tool_Prototype.list
+ 
+20:03:04 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current':
+../Core/Src/main.c:743:1: warning: control reaches end of non-void function [-Wreturn-type]
+  743 | }
+      | ^
+arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Writing_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Writing_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  62748	    500	   2700	  65948	  1019c	Writing_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Writing_Tool_Prototype.list
+ 
+20:07:27 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current':
+../Core/Src/main.c:743:1: warning: control reaches end of non-void function [-Wreturn-type]
+  743 | }
+      | ^
+arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Writing_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Writing_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  62800	    500	   2700	  66000	  101d0	Writing_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Writing_Tool_Prototype.list
+ 
+20:15:15 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Writing_Tool_Prototype.elf
+ 
+arm-none-eabi-size  Writing_Tool_Prototype.elf 
+arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
+   text	   data	    bss	    dec	    hex	filename
+  62844	    500	   2700	  66044	  101fc	Writing_Tool_Prototype.elf
+Finished building: default.size.stdout
+ 
+Finished building: Writing_Tool_Prototype.list
+ 

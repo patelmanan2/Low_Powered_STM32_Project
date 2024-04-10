@@ -68,9 +68,7 @@ void ADC_Select_VoltageCMOS();
 void ADC_Select_Current18650();
 void ADC_Select_CurrentCMOS();
 void readNumber();
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state);
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state);
-
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current(float V_DiffAmp, int state);
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
 float V_DiffAmp_18650 = 0.0f;
@@ -138,8 +136,8 @@ int main(void)
          Measurement_of_ADC_Voltage_CMOS();
          Measurement_of_ADC_Current_CMOS();
          Measurement_of_ADC_Current_18650();
-         C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(V_DiffAmp_CMOS, valueToAdjust);
-         C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(V_DiffAmp_18650, valueToAdjust);
+         C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current(V_DiffAmp_CMOS, valueToAdjust);
+         C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current(V_DiffAmp_18650, valueToAdjust);
 
          process_SD_card();
       } else {
@@ -729,19 +727,7 @@ void readNumber() {
    }
 }
 
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state)
-{
-	switch(state)
-	{
-	case 4: return (V_DiffAmp/888); break;   //conversion for LS_5
-	case 5: return (V_DiffAmp/101); break;   //conversion for LS_6
-	case 6: return (V_DiffAmp/11.5); break;  //conversion for LS_7
-	case 7: return (V_DiffAmp/1.18); break;  //conversion for LS_8
-	default: return 0; break;
-	}
-}
-
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state)
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current(float V_DiffAmp, int state)
 {
 	switch(state)
 	{
@@ -749,7 +735,10 @@ float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp
 	case 1: return (V_DiffAmp/99.7); break;  //conversion for LS_2
 	case 2: return (V_DiffAmp/11.1); break;  //conversion for LS_3
 	case 3: return (V_DiffAmp/1.149); break; //conversion for LS_4
-	default: return 0; break;
+	case 4: return (V_DiffAmp/888); break;   //conversion for LS_5
+	case 5: return (V_DiffAmp/101); break;   //conversion for LS_6
+	case 6: return (V_DiffAmp/11.5); break;  //conversion for LS_7
+	case 7: return (V_DiffAmp/1.18); break;  //conversion for LS_8
 	}
 }
 

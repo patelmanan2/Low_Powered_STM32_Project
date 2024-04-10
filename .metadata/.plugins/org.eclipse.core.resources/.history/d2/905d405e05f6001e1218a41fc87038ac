@@ -214,7 +214,7 @@ int main(void) {
                   	  }
 
             	  else if(state == LS_4 || state == LS_3 || state == LS_2 || state == LS_1){
-            		  if(C_CMOS >= (Threshold(valueToAdjust))*1.1){
+            		  if(C_CMOS >=(Threshold(valueToAdjust))*1.1){
             			 Set_High();
             			 state = LS_8;
             			 Set_LS_8();
