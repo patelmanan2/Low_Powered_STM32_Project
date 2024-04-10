@@ -61,7 +61,6 @@ void Measurement_of_ADC_Voltage_18650();
 void Measurement_of_ADC_Voltage_CMOS();
 void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
-// void Continuous_Same_State_Average();
 void process_SD_card(void);
 void ADC_Select_Voltage18650();
 void ADC_Select_VoltageCMOS();
@@ -628,7 +627,7 @@ void ADC_Select_CurrentCMOS() {
 //******************************** START OF BOARD COMMUNICATION FUNCTIONS ********************************//
 
 /*
- * readNUmber() reads the inputs from the discrete bits (output from Switching board) and sets the
+ * readNumber() reads the inputs from the discrete bits (output from Switching board) and sets the
  * valueToAdjust variable and writing LED color to its respective value and color.
  *
  * It is used to read both threshold input and which state the switching board is in.
@@ -729,6 +728,47 @@ void readNumber() {
    }
 }
 
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current functions allow the conversion equations for each load
+ * switch to be used on the Writing board. This function determines which load switch it has just measured given
+ * the voltage at the differential amplifier (V_DiffAmp) and the state (normally given by valueToAdjust) to return
+ * a converted float that represents the measured current (in amps).
+ *
+ * Based on which state the load switch is in will determine the conversion value for the measured current.
+ */
+
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS is used to convert the differential voltage of the
+ * "LOW" battery to a current value (in Amps).
+ * @param V_DiffAmp is the voltage of the LOW battery at the differential amplifier (typically V_DiffAmp_CMOS)
+ * @param state is the state the switching board is in (typically valueToAdjust)
+ *
+ * @return Converted value representing the current of the LOW battery in Amps
+ *
+ * NOTE: If the LOW battery is not currently active (the state is not 0-3), then it will return a 0
+ */
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state)
+{
+	switch(state)
+	{
+	case 0: return (V_DiffAmp/889); break;   //conversion for LS_1
+	case 1: return (V_DiffAmp/99.7); break;  //conversion for LS_2
+	case 2: return (V_DiffAmp/11.1); break;  //conversion for LS_3
+	case 3: return (V_DiffAmp/1.149); break; //conversion for LS_4
+	default: return 0; break;
+	}
+}
+
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650 is used to convert the differential voltage of the
+ * "HIGH" battery to a current value (in Amps).
+ * @param V_DiffAmp is the voltage of the HIGH battery at the differential amplifier (typically V_DiffAmp_18650)
+ * @param state is the state the switching board is in (typically valueToAdjust)
+ *
+ * @return Converted value representing the current of the HIGH battery in Amps
+ *
+ * NOTE: If the HIGH battery is not currently active (the state is not 4-7), then it will return a 0
+ */
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state)
 {
 	switch(state)
@@ -741,17 +781,7 @@ float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAm
 	}
 }
 
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state)
-{
-	switch(state)
-	{
-	case 0: return (V_DiffAmp/889); break;   //conversion for LS_1
-	case 1: return (V_DiffAmp/99.7); break;  //conversion for LS_2
-	case 2: return (V_DiffAmp/11.1); break;  //conversion for LS_3
-	case 3: return (V_DiffAmp/1.149); break; //conversion for LS_4
-	default: return 0; break;
-	}
-}
+
 
 /* USER CODE END 4 */
 
