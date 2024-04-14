@@ -203,6 +203,7 @@ int main(void) {
 	         C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(Voltage_DiffAmp_18650);
 	         C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(Voltage_DiffAmp_CMOS);
       Button_Debounce_Set();
+
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
       if(state == LS_8 || state == LS_7 || state == LS_6 || state == LS_5){
@@ -211,6 +212,11 @@ int main(void) {
             			 state = LS_4;
             			 Set_LS_4();
             		  }
+            		  else if(C_18650 >= 2.05){
+            			  MX_GPIO_Init();
+            			  Error_Handler();
+
+            		    }
                   	  }
 
             	  else if(state == LS_4 || state == LS_3 || state == LS_2 || state == LS_1){
@@ -219,8 +225,11 @@ int main(void) {
             			 state = LS_8;
             			 Set_LS_8();
             	  }
+            		  else if(C_CMOS >= 2.05){
+            			  MX_GPIO_Init();
+            			  Error_Handler();
             	  }
-
+            	  }
       Measurement_of_ADC_Voltage_18650();
       Measurement_of_ADC_Voltage_CMOS();
       Measurement_of_ADC_Voltage_DiffAmp_CMOS();
@@ -346,7 +355,7 @@ int main(void) {
               if ((Hys_ls4 == 0 && Voltage_DiffAmp_CMOS < .33) || (Hys_ls4 == 1 && Voltage_DiffAmp_CMOS < .231)) {
                   Set_LS_3();
                   state = LS_3;
-                  Hys_ls4 = 1; // Reset Hys_ls4 when leaving LS_4
+                  Hys_ls4 = 1; // Reset Hys_ls4 when leaviQ21aZaqw21	AQ2Ang LS_4
               }
 
               // Update hysteresis flag based on remaining in LS_4

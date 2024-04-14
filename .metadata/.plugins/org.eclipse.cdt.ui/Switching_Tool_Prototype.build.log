@@ -1,16 +1,16 @@
-17:31:33 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
+21:47:13 **** Incremental Build of configuration Debug for project Switching_Tool_Prototype ****
 make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
 ../Core/Src/main.c: In function 'main':
-../Core/Src/main.c:417:19: warning: unused variable 'Hys_ls1' [-Wunused-variable]
-  417 |               int Hys_ls1 = 1;
+../Core/Src/main.c:426:19: warning: unused variable 'Hys_ls1' [-Wunused-variable]
+  426 |               int Hys_ls1 = 1;
       |                   ^~~~~~~
-../Core/Src/main.c:329:19: warning: unused variable 'Hys_ls5' [-Wunused-variable]
-  329 |               int Hys_ls5 = 1;
+../Core/Src/main.c:338:19: warning: unused variable 'Hys_ls5' [-Wunused-variable]
+  338 |               int Hys_ls5 = 1;
       |                   ^~~~~~~
 ../Core/Src/main.c: In function 'Threshold':
-../Core/Src/main.c:814:1: warning: control reaches end of non-void function [-Wreturn-type]
-  814 | }
+../Core/Src/main.c:823:1: warning: control reaches end of non-void function [-Wreturn-type]
+  823 | }
       | ^
 arm-none-eabi-gcc -o "Switching_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Switching_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Switching_Tool_Prototype.elf
@@ -18,11 +18,11 @@ Finished building target: Switching_Tool_Prototype.elf
 arm-none-eabi-size  Switching_Tool_Prototype.elf 
 arm-none-eabi-objdump -h -S Switching_Tool_Prototype.elf  > "Switching_Tool_Prototype.list"
    text	   data	    bss	    dec	    hex	filename
-  50600	    500	   2212	  53312	   d040	Switching_Tool_Prototype.elf
+  50672	    500	   2212	  53384	   d088	Switching_Tool_Prototype.elf
 Finished building: default.size.stdout
  
 Finished building: Switching_Tool_Prototype.list
  
 
-17:31:34 Build Finished. 0 errors, 3 warnings. (took 622ms)
+21:47:14 Build Finished. 0 errors, 3 warnings. (took 768ms)
 

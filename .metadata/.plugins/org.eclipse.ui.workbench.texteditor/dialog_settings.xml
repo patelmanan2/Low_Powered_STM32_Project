@@ -6,8 +6,9 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="Whole_B"/>
+		<item key="selection" value="Threshold"/>
 		<list key="findhistory">
+			<item value="Threshold"/>
 			<item value="Whole_B"/>
 			<item value="reset"/>
 			<item value="C_CMOS"/>

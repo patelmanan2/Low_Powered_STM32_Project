@@ -61,12 +61,14 @@ void Measurement_of_ADC_Voltage_18650();
 void Measurement_of_ADC_Voltage_CMOS();
 void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
+void Measurement_of_Load_Voltage();
 // void Continuous_Same_State_Average();
 void process_SD_card(void);
 void ADC_Select_Voltage18650();
 void ADC_Select_VoltageCMOS();
 void ADC_Select_Current18650();
 void ADC_Select_CurrentCMOS();
+void ADC_Select_Load_Voltage();
 void readNumber();
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state);
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state);
@@ -77,6 +79,7 @@ float V_DiffAmp_18650 = 0.0f;
 float V_DiffAmp_CMOS = 0.0f;
 float C_CMOS = 0.0f;
 float C_18650 = 0.0f;
+float Load_Voltage = 0.0f;
 float Continuous_Average = 0.0f;
 int i, j;
 unsigned int Switch_State = 0;
@@ -138,6 +141,7 @@ int main(void)
          Measurement_of_ADC_Voltage_CMOS();
          Measurement_of_ADC_Current_CMOS();
          Measurement_of_ADC_Current_18650();
+         Measurement_of_Load_Voltage();
          C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(V_DiffAmp_CMOS, valueToAdjust);
          C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(V_DiffAmp_18650, valueToAdjust);
 
@@ -207,7 +211,6 @@ static void MX_ADC_Init(void)
 
   /* USER CODE END ADC_Init 0 */
 
-  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC_Init 1 */
 
@@ -237,41 +240,6 @@ static void MX_ADC_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_9;
-  sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_12;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_13;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel to be converted.
-  */
-  sConfig.Channel = ADC_CHANNEL_15;
-  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN ADC_Init 2 */
-
-  /* USER CODE END ADC_Init 2 */
 
 }
 
@@ -406,19 +374,20 @@ void process_SD_card(void) {
    if (fres != FR_OK) return;      // Exit if fail to mount
 
    // Open or create the file and append data
-   fres = f_open(&fil, "TestingReadings.csv", FA_WRITE | FA_READ | FA_OPEN_APPEND);
+   fres = f_open(&fil, "Readings.csv", FA_WRITE | FA_READ | FA_OPEN_APPEND);
    if (fres != FR_OK) {
       f_mount(NULL, "", 0);  // Dismount the SD card if fail to open
       return;                // Exit if fail to open/create the file
    }
 
    // Prepare the data string
-   snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%.5f,%.3f,%.5f,%d,\n",
+   snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%.5f,%.3f,%.5f,%.3f,%d,\n",
             seconds_since_start,  // Time
             V_18650,              // 18650 Voltage
             C_18650,              // 18650 Current
             V_CMOS,               // CMOS Voltage
-            C_CMOS,               // CMOS Current
+            C_CMOS,
+			Load_Voltage,// CMOS Current
             valueToAdjust);       // Switch State
 
    // Write the prepared string to the file
@@ -569,11 +538,44 @@ void Measurement_of_ADC_Current_CMOS() {
    HAL_ADC_Stop(&hadc);
 }
 
+void Measurement_of_Load_Voltage() {
+   HAL_ADC_Stop(&hadc);
+   HAL_ADC_Init(&hadc);
+   float V_ref = 3.3;  // This is known for each micro controller from data
+   // sheet, V_ref = power supply in
+   float ADC_resolution = (4096 - 1);  // 2^12 - 1
+   float V_stepSize = V_ref / ADC_resolution;
+   // ADC
+   /* Start ADC Conversion for ADC1 */
+   ADC1->CHSELR = 0x0004;
+   ADC_Select_CurrentCMOS();
+   HAL_ADC_Start(&hadc);
+   uint16_t rawValue5;
+   if (HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY) == HAL_OK) {
+      /* Read the ADC1 value */
+      rawValue5 = HAL_ADC_GetValue(&hadc);
+      Load_Voltage = ((rawValue5 * V_stepSize) * (1/.65));
+      // C_CMOS = rawValue4;
+      /// 20)/4.713492); // I_load = (( V_ADC / 20 Gain ) / 4.71 calibrated shunt
+      /// )
+   }
+   HAL_ADC_Stop(&hadc);
+}
+
 /*
  * ADC_Select_Voltage18650() selects the channel that relates to the VOLTAGE of the 18650 battery.
  * It sets sConfig to its respective channel (15) and channel rank. It then checks if the channel
  * has been configured correctly.
  */
+void ADC_Select_Load_Voltage() {
+   ADC_ChannelConfTypeDef sConfig = {0};
+   sConfig.Channel = ADC_CHANNEL_2;
+   sConfig.Rank = 0;
+   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
+      Error_Handler();
+   }
+}
+
 void ADC_Select_Voltage18650() {
    ADC_ChannelConfTypeDef sConfig = {0};
    sConfig.Channel = ADC_CHANNEL_15;
