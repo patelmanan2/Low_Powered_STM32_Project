@@ -47,6 +47,8 @@ ADC_HandleTypeDef hadc;
 
 SPI_HandleTypeDef hspi1;
 
+UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -56,13 +58,13 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void Measurement_of_ADC_Voltage_18650();
 void Measurement_of_ADC_Voltage_CMOS();
 void Measurement_of_ADC_Current_CMOS();
 void Measurement_of_ADC_Current_18650();
 void Measurement_of_Load_Voltage();
-// void Continuous_Same_State_Average();
 void process_SD_card(void);
 void ADC_Select_Voltage18650();
 void ADC_Select_VoltageCMOS();
@@ -70,6 +72,7 @@ void ADC_Select_Current18650();
 void ADC_Select_CurrentCMOS();
 void ADC_Select_Load_Voltage();
 void readNumber();
+int write_num = 0;
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state);
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state);
 
@@ -124,7 +127,9 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   MX_ADC_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+   char msg[128];
    start_time_ms = HAL_GetTick();
    HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
   /* USER CODE END 2 */
@@ -146,12 +151,23 @@ int main(void)
          C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(V_DiffAmp_18650, valueToAdjust);
 
          process_SD_card();
+         sprintf(msg, "%.3f,%.3f,%.5f,%.3f,%.5f,%d,%d\r\n",
+             		  seconds_since_start, //time (in seconds)
+         			  V_18650,		  // 18650 Voltage
+                       C_18650,        // 18650 Current
+                       V_CMOS,         // CMOS Voltage
+         			  C_CMOS,         // CMOS Current
+                       valueToAdjust,  // Threshold
+
+         			  write_num);//Total number of measurements
+               HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
       } else {
          HAL_GPIO_WritePin(SD_CardDetect_Output_GPIO_Port, SD_CardDetect_Output_Pin, GPIO_PIN_RESET);
       }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+      write_num++;
    }
   /* USER CODE END 3 */
 }
@@ -164,6 +180,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -172,13 +189,11 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
-  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+  RCC_OscInitStruct.MSICalibrationValue = 0;
+  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -188,12 +203,18 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
+  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
@@ -210,6 +231,7 @@ static void MX_ADC_Init(void)
   /* USER CODE BEGIN ADC_Init 0 */
 
   /* USER CODE END ADC_Init 0 */
+
 
 
   /* USER CODE BEGIN ADC_Init 1 */
@@ -233,13 +255,17 @@ static void MX_ADC_Init(void)
   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   hadc.Init.LowPowerAutoWait = DISABLE;
-  hadc.Init.LowPowerFrequencyMode = DISABLE;
+  hadc.Init.LowPowerFrequencyMode = ENABLE;
   hadc.Init.LowPowerAutoPowerOff = DISABLE;
   if (HAL_ADC_Init(&hadc) != HAL_OK)
   {
     Error_Handler();
   }
 
+
+  /* USER CODE BEGIN ADC_Init 2 */
+
+  /* USER CODE END ADC_Init 2 */
 
 }
 
@@ -278,6 +304,41 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
 
 }
 
@@ -381,14 +442,15 @@ void process_SD_card(void) {
    }
 
    // Prepare the data string
-   snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%.5f,%.3f,%.5f,%.3f,%d,\n",
+   snprintf(writeBuffer, sizeof(writeBuffer), "%.3f,%.3f,%.5f,%.3f,%.5f,%.3f,%d,%d,\n",
             seconds_since_start,  // Time
             V_18650,              // 18650 Voltage
             C_18650,              // 18650 Current
             V_CMOS,               // CMOS Voltage
             C_CMOS,
 			Load_Voltage,// CMOS Current
-            valueToAdjust);       // Switch State
+            valueToAdjust,
+			write_num);       // Switch State
 
    // Write the prepared string to the file
    f_puts(writeBuffer, &fil);
@@ -630,7 +692,7 @@ void ADC_Select_CurrentCMOS() {
 //******************************** START OF BOARD COMMUNICATION FUNCTIONS ********************************//
 
 /*
- * readNUmber() reads the inputs from the discrete bits (output from Switching board) and sets the
+ * readNumber() reads the inputs from the discrete bits (output from Switching board) and sets the
  * valueToAdjust variable and writing LED color to its respective value and color.
  *
  * It is used to read both threshold input and which state the switching board is in.
@@ -639,7 +701,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
       HAL_Delay(5);
-      valueToAdjust = 0;
+      valueToAdjust = 1;
       // Set LED to Off
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
                         GPIO_PIN_RESET);
@@ -652,7 +714,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
       HAL_Delay(5);
-      valueToAdjust = 1;
+      valueToAdjust = 2;
       // Set Red
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
       HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
@@ -663,7 +725,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
       HAL_Delay(5);
-      valueToAdjust = 2;
+      valueToAdjust = 3;
       // Set Yellow
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
       HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
@@ -674,7 +736,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 0) {
       HAL_Delay(5);
-      valueToAdjust = 3;
+      valueToAdjust = 4;
       // Set Green
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
                         GPIO_PIN_RESET);
@@ -686,7 +748,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
       HAL_Delay(5);
-      valueToAdjust = 4;
+      valueToAdjust = 5;
       // Set Cyan
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
                         GPIO_PIN_RESET);
@@ -698,7 +760,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 0 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
       HAL_Delay(5);
-      valueToAdjust = 5;
+      valueToAdjust = 6;
       // Set Blue
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
                         GPIO_PIN_RESET);
@@ -710,7 +772,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 0 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
       HAL_Delay(5);
-      valueToAdjust = 6;
+      valueToAdjust = 7;
       // Set Magenta
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
       HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
@@ -721,7 +783,7 @@ void readNumber() {
    if (HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_0_Pin) == 1 && HAL_GPIO_ReadPin(GPIOC, Discrete_Bit_1_Pin) == 1 &&
        HAL_GPIO_ReadPin(GPIOB, Discrete_Bit_2_Pin) == 1) {
       HAL_Delay(5);
-      valueToAdjust = 7;
+      valueToAdjust = 8;
       // Set White
       HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET);
       HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
@@ -731,29 +793,60 @@ void readNumber() {
    }
 }
 
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state)
-{
-	switch(state)
-	{
-	case 4: return (V_DiffAmp/888); break;   //conversion for LS_5
-	case 5: return (V_DiffAmp/101); break;   //conversion for LS_6
-	case 6: return (V_DiffAmp/11.5); break;  //conversion for LS_7
-	case 7: return (V_DiffAmp/1.18); break;  //conversion for LS_8
-	default: return 0; break;
-	}
-}
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current functions allow the conversion equations for each load
+ * switch to be used on the Writing board. This function determines which load switch it has just measured given
+ * the voltage at the differential amplifier (V_DiffAmp) and the state (normally given by valueToAdjust) to return
+ * a converted float that represents the measured current (in amps).
+ *
+ * Based on which state the load switch is in will determine the conversion value for the measured current.
+ */
 
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS is used to convert the differential voltage of the
+ * "LOW" battery to a current value (in Amps).
+ * @param V_DiffAmp is the voltage of the LOW battery at the differential amplifier (typically V_DiffAmp_CMOS)
+ * @param state is the state the switching board is in (typically valueToAdjust)
+ *
+ * @return Converted value representing the current of the LOW battery in Amps
+ *
+ * NOTE: If the LOW battery is not currently active (the state is not 0-3), then it will return a 0
+ */
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state)
 {
 	switch(state)
 	{
-	case 0: return (V_DiffAmp/889); break;   //conversion for LS_1
-	case 1: return (V_DiffAmp/99.7); break;  //conversion for LS_2
-	case 2: return (V_DiffAmp/11.1); break;  //conversion for LS_3
-	case 3: return (V_DiffAmp/1.149); break; //conversion for LS_4
+	case 1: return (V_DiffAmp/905); break;   //conversion for LS_1
+	case 2: return (V_DiffAmp/99.); break;  //conversion for LS_2
+	case 3: return (V_DiffAmp/10.4); break;  //conversion for LS_3
+	case 4: return (V_DiffAmp/1.22); break; //conversion for LS_4
 	default: return 0; break;
 	}
 }
+
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650 is used to convert the differential voltage of the
+ * "HIGH" battery to a current value (in Amps).
+ * @param V_DiffAmp is the voltage of the HIGH battery at the differential amplifier (typically V_DiffAmp_18650)
+ * @param state is the state the switching board is in (typically valueToAdjust)
+ *
+ * @return Converted value representing the current of the HIGH battery in Amps
+ *
+ * NOTE: If the HIGH battery is not currently active (the state is not 4-7), then it will return a 0
+ */
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state)
+{
+	switch(state)
+	{
+	case 5: return (V_DiffAmp/885); break;   //conversion for LS_5
+	case 6: return (V_DiffAmp/98.7); break;   //conversion for LS_6
+	case 7: return (V_DiffAmp/11.0); break;  //conversion for LS_7
+	case 8: return (V_DiffAmp/1.17); break;  //conversion for LS_8
+	default: return 0; break;
+	}
+}
+
+
 
 /* USER CODE END 4 */
 

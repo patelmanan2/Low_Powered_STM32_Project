@@ -69,8 +69,6 @@ void Error_Handler(void);
 #define SD_CardDetect_Input_GPIO_Port GPIOA
 #define SD_CardDetect_Output_Pin GPIO_PIN_1
 #define SD_CardDetect_Output_GPIO_Port GPIOA
-#define Load_Voltage_Pin GPIO_PIN_2
-#define Load_Voltage_GPIO_Port GPIOA
 #define Voltage_ADC_18650_Pin GPIO_PIN_5
 #define Voltage_ADC_18650_GPIO_Port GPIOC
 #define Discrete_Bit_2_Pin GPIO_PIN_0

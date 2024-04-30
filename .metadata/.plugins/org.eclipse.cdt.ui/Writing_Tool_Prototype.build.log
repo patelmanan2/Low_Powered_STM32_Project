@@ -1,4 +1,4 @@
-21:47:14 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
+21:26:54 **** Incremental Build of configuration Debug for project Writing_Tool_Prototype ****
 make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L010xB -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
 arm-none-eabi-gcc -o "Writing_Tool_Prototype.elf" @"objects.list"   -mcpu=cortex-m0plus -T"C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype\STM32L010RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Writing_Tool_Prototype.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
@@ -7,11 +7,11 @@ Finished building target: Writing_Tool_Prototype.elf
 arm-none-eabi-size  Writing_Tool_Prototype.elf 
 arm-none-eabi-objdump -h -S Writing_Tool_Prototype.elf  > "Writing_Tool_Prototype.list"
    text	   data	    bss	    dec	    hex	filename
-  62976	    500	   2708	  66184	  10288	Writing_Tool_Prototype.elf
+  67004	    500	   2844	  70348	  112cc	Writing_Tool_Prototype.elf
 Finished building: default.size.stdout
  
 Finished building: Writing_Tool_Prototype.list
  
 
-21:47:14 Build Finished. 0 errors, 0 warnings. (took 717ms)
+21:26:55 Build Finished. 0 errors, 0 warnings. (took 698ms)
 

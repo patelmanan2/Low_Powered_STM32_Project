@@ -6,8 +6,12 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="Threshold"/>
+		<item key="selection" value="TIM_MODULE"/>
 		<list key="findhistory">
+			<item value="TIM_MODULE"/>
+			<item value="i2c"/>
+			<item value="handler"/>
+			<item value="Load"/>
 			<item value="Threshold"/>
 			<item value="Whole_B"/>
 			<item value="reset"/>
@@ -26,7 +30,7 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="1137"/>
+		<item key="DIALOG_X_ORIGIN" value="554"/>
 		<item key="DIALOG_Y_ORIGIN" value="516"/>
 		<item key="DIALOG_WIDTH" value="414"/>
 		<item key="DIALOG_HEIGHT" value="454"/>

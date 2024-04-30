@@ -9,6 +9,7 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="C:\Users\zlink\Downloads\SERVO-PWM"/>
 			<item value="C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Writing_Tool_Prototype"/>
 			<item value="C:\Users\zlink\OneDrive\Documents\GitHub\Low_Powered_STM32_Project\Switching_Tool_Prototype"/>
 		</list>

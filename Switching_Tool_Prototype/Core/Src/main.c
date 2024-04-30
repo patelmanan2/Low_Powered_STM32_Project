@@ -101,6 +101,8 @@ void AdjustValueInTo6();
 void AdjustValueInTo7();
 float Threshold(int value_from_button);
 
+
+
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
 float V_50gain = 0.0f;
@@ -189,64 +191,58 @@ int main(void) {
    Reset_The_Whole_B();
 
 
-
    /* USER CODE END 2 */
 
    /* Infinite loop */
    /* USER CODE BEGIN WHILE */
-   while (1) {
-	   /* USER CODE BEGIN 3 */
-	   Measurement_of_ADC_Voltage_18650();
-	         Measurement_of_ADC_Voltage_CMOS();
-	         Measurement_of_ADC_Voltage_DiffAmp_CMOS();
-	         Measurement_of_ADC_Voltage_DiffAmp_18650();
-	         C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(Voltage_DiffAmp_18650);
-	         C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(Voltage_DiffAmp_CMOS);
+   while (1)
+   {
+	  /* USER CODE BEGIN 3 */
+	  Measurement_of_ADC_Voltage_18650();
+	  Measurement_of_ADC_Voltage_CMOS();
+	  Measurement_of_ADC_Voltage_DiffAmp_CMOS();
+	  Measurement_of_ADC_Voltage_DiffAmp_18650();
+	  C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(Voltage_DiffAmp_18650);
+	  C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(Voltage_DiffAmp_CMOS);
+	  C_CMOS = (C_CMOS - .00001);
+	  if(C_CMOS < 0.0){
+		  C_CMOS = 0;
+	  }
       Button_Debounce_Set();
 
       uint32_t current_time_ms = HAL_GetTick();
       seconds_since_start = (current_time_ms - start_time_ms) / 1000.0f;
-      if(state == LS_8 || state == LS_7 || state == LS_6 || state == LS_5){
-            		  if(C_18650 <= (Threshold(valueToAdjust))*.9){
-            			 Set_Low();
-            			 state = LS_4;
-            			 Set_LS_4();
-            		  }
-            		  else if(C_18650 >= 2.05){
-            			  MX_GPIO_Init();
-            			  Error_Handler();
 
-            		    }
-                  	  }
+      if(state == LS_8 || state == LS_7 || state == LS_6 || state == LS_5)
+      {
+    	  if(C_18650 <= (Threshold(valueToAdjust))*.9)
+    	  {
+    		  Set_Low();
+    		  state = LS_4;
+    		  Set_LS_4();
+           }
+       }
+       else if(state == LS_4 || state == LS_3 || state == LS_2 || state == LS_1)
+       {
+    	   if(C_CMOS >= (Threshold(valueToAdjust))*1.1)
+    	   {
+    		   Set_High();
+    		   state = LS_8;
+    		   Set_LS_8();
+           }
+       }
 
-            	  else if(state == LS_4 || state == LS_3 || state == LS_2 || state == LS_1){
-            		  if(C_CMOS >= (Threshold(valueToAdjust))*1.1){
-            			 Set_High();
-            			 state = LS_8;
-            			 Set_LS_8();
-            	  }
-            		  else if(C_CMOS >= 2.05){
-            			  MX_GPIO_Init();
-            			  Error_Handler();
-            	  }
-            	  }
-      Measurement_of_ADC_Voltage_18650();
-      Measurement_of_ADC_Voltage_CMOS();
-      Measurement_of_ADC_Voltage_DiffAmp_CMOS();
-      Measurement_of_ADC_Voltage_DiffAmp_18650();
-      C_18650 = Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(Voltage_DiffAmp_18650);
-      C_CMOS = Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(Voltage_DiffAmp_CMOS);
       // UART Debuggin
-      sprintf(msg, "%.3f,%.3f,%.5f,%.3f,%.5f,%d,%d,%d\r\n", seconds_since_start, V_18650,
+      sprintf(msg, "Time:%.3f High Voltage:%.3f High Current:%.5f Low Voltage:%.3f Low Current:%.5f Threshold State:%d Active Switch:%d Number Of Measurements:%d\r\n\r\n\r\n",
+    		  seconds_since_start, //time (in seconds)
+			  V_18650,		  // 18650 Voltage
               C_18650,        // 18650 Current
               V_CMOS,         // CMOS Voltage
 			  C_CMOS,         // CMOS Current
               valueToAdjust,  // Threshold
-              Switch_State, measurement_num);
+              Switch_State,   // Which load switch is active
+			  measurement_num);//Total number of measurements
       HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
-
-
-
 
 
 
@@ -719,35 +715,6 @@ void Measurement_of_ADC_Voltage_CMOS() {
  * Calls ADC_Select_Current18650() to set channel
  * Converted values store to Voltage_DiffAmp_18650
  */
-
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(float Voltage_DiffAmp_18650){
-	float conversion_18650 = 0;
-	if(state == LS_5)
-	{
-		conversion_18650 = (Voltage_DiffAmp_18650/888); // do math
-	}
-	if(state == LS_6)
-	{
-		conversion_18650 = (Voltage_DiffAmp_18650/101); // do math
-	}
-	if(state == LS_7)
-	{
-		conversion_18650 = (Voltage_DiffAmp_18650/11.5); // do math
-	}
-	if(state == LS_8)
-	{
-		conversion_18650 = (Voltage_DiffAmp_18650/1.18); // do math
-	}
-	if(state == CASE_INIT)
-	{
-		conversion_18650 = (Voltage_DiffAmp_18650/1.18); // do math
-	}
-
-	return conversion_18650;
-}
-
-
-
 void Measurement_of_ADC_Voltage_DiffAmp_18650() {
    HAL_ADC_Stop(&hadc);
    HAL_ADC_Init(&hadc);
@@ -769,57 +736,43 @@ void Measurement_of_ADC_Voltage_DiffAmp_18650() {
    HAL_ADC_Stop(&hadc);
 }
 
-float Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(float Voltage_DiffAmp_CMOS){
-	float conversion_CMOS = 0;
-	if(state == LS_1)
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650 is used to convert the differential voltage
+ * of the "HIGH" battery to a current value (in Amps). Based on what the global "state" variable is will determine
+ * which conversion factor to use.
+ * @param Voltage_DiffAmp_18650 is the voltage of the HIGH battery at the differential amplifier (typically
+ * 		  Voltage_DiffAmp_18650)
+ *
+ * @return float representing the current of the HIGH battery in Amps
+ *
+ * NOTE: If the state is CASE_INIT, then it will convert the same value as LS_8
+ * NOTE: If the state is not 5-8 (or CASE_INIT) (indicating the HIGH battery is not currently active), then it
+ *       will return a 0
+ */
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_18650_to_Current_of_18650(float Voltage_DiffAmp_18650){
+	float conversion_18650 = 0;
+	if(state == LS_5)
 	{
-		conversion_CMOS = (Voltage_DiffAmp_CMOS/889); // do math
+		conversion_18650 = (Voltage_DiffAmp_18650/885); // do math
 	}
-	if(state == LS_2)
+	if(state == LS_6)
 	{
-		conversion_CMOS = (Voltage_DiffAmp_CMOS/99.7); // do math
+		conversion_18650 = (Voltage_DiffAmp_18650/98.7); // do math
 	}
-	if(state == LS_3)
+	if(state == LS_7)
 	{
-		conversion_CMOS = (Voltage_DiffAmp_CMOS/11.1);
+		conversion_18650 = (Voltage_DiffAmp_18650/11.0); // do math
 	}
-	if(state == LS_4)
+	if(state == LS_8)
 	{
-		conversion_CMOS = (Voltage_DiffAmp_CMOS/1.149); // do math
+		conversion_18650 = (Voltage_DiffAmp_18650/1.17); // do math
 	}
 	if(state == CASE_INIT)
-		{
-			conversion_CMOS = 0;
-		}
+	{
+		conversion_18650 = (Voltage_DiffAmp_18650/1.17); // do math
+	}
 
-	return conversion_CMOS;
-}
-
-float Threshold(int value_from_button){
-	if (value_from_button == 0){
-		return .001;
-	}
-	if (value_from_button == 1){
-			return .005;
-	}
-	if (value_from_button == 2){
-			return .010;
-	}
-	if (value_from_button == 3){
-			return .050;
-	}
-	if (value_from_button == 4){
-			return .100;
-	}
-	if (value_from_button == 5){
-			return .500;
-	}
-	if (value_from_button == 6){
-			return 1.00;
-	}
-	if (value_from_button == 7){
-			return 1.5;
-	}
+	return conversion_18650;
 }
 
 /*
@@ -849,6 +802,44 @@ void Measurement_of_ADC_Voltage_DiffAmp_CMOS() {
       Voltage_DiffAmp_CMOS = ((rawValue1 * V_stepSize));
    }
    HAL_ADC_Stop(&hadc);
+}
+
+/*
+ * Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS is used to convert the differential voltage
+ * of the "LOW" battery to a current value (in Amps). Based on what the global "state" variable is will determine
+ * which conversion factor to use.
+ * @param Voltage_DiffAmp_CMOS is the voltage of the LOW battery at the differential amplifier (typically
+ * 		  Voltage_DiffAmp_CMOS)
+ *
+ * @return float representing the current of the LOW battery in Amps
+ *
+ * NOTE: If the state is not 0-3 or state is CASE_INIT (indicating the LOW battery is not currently active), then
+ * 		 it will return a 0
+ */
+float Convert_Measurement_of_ADC_Voltage_DiffAmp_CMOS_to_Current_of_CMOS(float Voltage_DiffAmp_CMOS){
+	float conversion_CMOS = 0;
+	if(state == LS_1)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/905); // do math
+	}
+	if(state == LS_2)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/99.1); // do math
+	}
+	if(state == LS_3)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/10.4);
+	}
+	if(state == LS_4)
+	{
+		conversion_CMOS = (Voltage_DiffAmp_CMOS/1.22); // do math
+	}
+	if(state == CASE_INIT)
+	{
+		conversion_CMOS = 0;
+	}
+
+	return conversion_CMOS;
 }
 
 /*
@@ -1004,6 +995,39 @@ void setNumber() {
    }
    /*may need to implement state for numbers entered over 7 and numbers
    under zero */
+}
+
+/*
+ * Threshold returns the current threshold limit based on the value from the buttons
+ *
+ * @param value_from_button is an integer representing the state of the push buttons (typically valutToAdjust)
+ * @return float representing the current switching threshold limit (in Amps)
+ */
+float Threshold(int value_from_button){
+	if (value_from_button == 0){
+		return .001;
+	}
+	if (value_from_button == 1){
+			return .005;
+	}
+	if (value_from_button == 2){
+			return .010;
+	}
+	if (value_from_button == 3){
+			return .10;
+	}
+	if (value_from_button == 4){
+			return .300;
+	}
+	if (value_from_button == 5){
+			return .400;
+	}
+	if (value_from_button == 6){
+			return .5;
+	}
+	if (value_from_button == 7){
+			return 1;
+	}
 }
 
 /*
