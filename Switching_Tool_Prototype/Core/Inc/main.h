@@ -107,6 +107,10 @@ void Error_Handler(void);
 #define Threshold_Green_GPIO_Port GPIOB
 #define Threshold_Blue_Pin GPIO_PIN_5
 #define Threshold_Blue_GPIO_Port GPIOB
+#define SD_INPUT_DATA_Pin GPIO_PIN_8
+#define SD_INPUT_DATA_GPIO_Port GPIOB
+#define SD_INPUT_DIGIT_Pin GPIO_PIN_9
+#define SD_INPUT_DIGIT_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

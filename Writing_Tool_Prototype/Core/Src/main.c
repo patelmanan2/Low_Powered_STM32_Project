@@ -75,6 +75,8 @@ void readNumber();
 int write_num = 0;
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_18650(float V_DiffAmp, int state);
 float Convert_Measurement_of_ADC_Voltage_DiffAmp_to_Current_CMOS(float V_DiffAmp, int state);
+int read_SD(void);
+void communicate_value(int number);
 
 float V_18650 = 0.0f;
 float V_CMOS = 0.0f;
@@ -83,7 +85,6 @@ float V_DiffAmp_CMOS = 0.0f;
 float C_CMOS = 0.0f;
 float C_18650 = 0.0f;
 float Load_Voltage = 0.0f;
-float Continuous_Average = 0.0f;
 int i, j;
 unsigned int Switch_State = 0;
 float seconds_since_start = 0.0f;
@@ -129,6 +130,10 @@ int main(void)
   MX_ADC_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  int number = read_SD();
+  communicate_value(number);
+  HAL_Delay(2000);
+
    char msg[128];
    start_time_ms = HAL_GetTick();
    HAL_ADCEx_Calibration_Start(&hadc, ADC_SINGLE_ENDED);
@@ -460,6 +465,147 @@ void process_SD_card(void) {
 
    // Dismount the SD card
    f_mount(NULL, "", 0);
+}
+
+/*
+ * read_SD() checks if there is a custom threshold switching value written on the SD card in "config.txt" and returns
+ * the value converted from a String to a integer. If there is no file, this function will return a 0.
+ *
+ * NOTE: If the file is present, this function will attempt to read regardless of actual content. Assumes the value is
+ * given as whole numbers, in mA, and up to four digits (between 0 - 2000 mA) for communicate_vlaue() to function
+ * properly.
+ *
+ * @return an integer that represents the the custom switching threshold value in mA. Will return 0 if file does not
+ * exist
+ */
+int read_SD(void)
+{
+	FATFS FatFs;   // Fatfs handle
+	   FIL fil;       // File handle
+	   FRESULT fres;  // Result after operations
+
+	   // Buffer for storing the complete string to read
+	   char readBuffer[6];  // Adjust the size based on your needs
+
+	   // Attempt to mount the SD Card
+	   fres = f_mount(&FatFs, "", 1);  // 1=mount now
+	   if (fres != FR_OK) return 0;      // Exit if fail to mount
+
+	   // Open or create the file and append data
+	   fres = f_open(&fil, "config.txt", FA_READ);
+	   if (fres != FR_OK)
+	   {
+	      f_mount(NULL, "", 0);  // Dismount the SD card if fail to open
+	      return 0;                // Exit if fail to open the file
+	   }
+
+	   f_gets(readBuffer, sizeof(readBuffer), &fil); //store read values to string buffer
+
+	   // Close the file
+	   f_close(&fil);
+
+	   // Dismount the SD card
+	   f_mount(NULL, "", 0);
+
+	   return atoi(readBuffer);
+
+}//end of read_SD()
+
+/*
+ * communicate_value(number) sends the value given by number to be read by the Switching board (typically, read_SD()).
+ *  If the number to be sent is greater than zero, it will cycle through each of the decimal places until the number
+ *  is complete and/or when it reaches 4 digits. Each cycle will %10 to obtain the last digit of the number. If that
+ *  value is greater than 0, then toggle the DATA pin [digit] amount of times. When the decimal "place" is complete,
+ *  the DIGIT pin is toggled and the number is now set to number/10 to reduce the number by a factor of 10 and repeats
+ *  through the function until either all numbers have been read or the number of decimal "places" read = 4.
+ *
+ * For example, if the number was 1234:
+ *
+ * digit = 1234%10 = 4
+ * Toggle DATA pin 4 times (DATA pin output: 10101010)
+ * Toggle DIGIT pin        (Digit pin output:        10)
+ * number = 1234/10 = 123
+ * NEXT PLACE! (place = 1)
+ *
+ * digit = 123%10 = 3
+ * Toggle DATA pin 3 times (DATA pin output: 101010)
+ * Toggle DIGIT pin        (Digit pin output:      10)
+ * number = 123/10 = 12
+ * NEXT PLACE! (place = 2)
+ *
+ * digit = 12%10 = 2
+ * Toggle DATA pin 2 times (DATA pin output: 1010)
+ * Toggle DIGIT pin        (Digit pin output:    10)
+ * number = 12/10 = 1
+ * NEXT PLACE! (place = 3)
+ *
+ * digit = 1%10 = 1
+ * Toggle DATA pin 1 times (DATA pin output: 10)
+ * Toggle DIGIT pin        (Digit pin output:  10)
+ * number = 1/10 = 0
+ * Exit (place = 4)
+ *
+ * Uninterrupted output will look like the following:
+ *                   4       3     2   1
+ * DATA pin: 1010101000101010001010001000
+ * DIGIT pin:0000000010000000100000100010
+ *
+ * @param: number is an integer that represents the threshold value between 0 - 9999 to be sent from the Writing
+ * board to the Switching board (typically obtained from read_SD())
+ *
+ */
+void communicate_value(int number)
+{
+	int place = 0;
+
+	if(number > 0) //if the given number is greater than zero
+	{
+		while(place < 4)//while the number of "places" (1's, 10's, 100's, 1000's place) sent out is less than 4 (starting at 0 for a total of 4 digits)
+		{
+			int digit = number%10; //get the last digit of the given number
+
+			while(digit > 0)
+			{
+				// Set Red
+				HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET); //Send "1" on data pin
+				HAL_Delay(7);
+				HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);//Send "0" on data pin
+				HAL_Delay(5);
+				digit--;
+			}//digit finished sending
+
+			// Set Green
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);//Send "1" on digit pin
+			HAL_Delay(7);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);//Send "0" on digit pin
+			HAL_Delay(5);
+
+			number = number/10; //set the number to be a factor of 10 less (if number was 1000, number is now 100)
+			place++; //indicates the "place" of the number has increased to the next "place"
+		}
+
+	}
+	else //otherwise send that the number is 0
+	{
+		while(place < 4)
+		{
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);//Send "1" on digit pin
+			HAL_Delay(7);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);//Send "0" on digit pin
+			HAL_Delay(5);
+
+			place++;
+		}
+		// Set Blue
+				      HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin,
+				                        GPIO_PIN_RESET);
+				      HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin,
+				                        GPIO_PIN_RESET);
+				      HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin,
+				                        GPIO_PIN_SET);
+		return;
+	}
+
 }
 
 //**************************************** START OF ADC-RELATED FUNCTIONS ****************************************//

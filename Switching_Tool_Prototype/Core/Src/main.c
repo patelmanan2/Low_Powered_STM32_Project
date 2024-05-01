@@ -24,6 +24,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,6 +44,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -70,6 +72,7 @@ void ADC_Select_CurrentCMOS(void);
 void setNumber();
 void User_Input_Light_Cycle();
 void Button_Debounce_Set();
+void read_from_SD_board();
 void Reset_The_Whole_B();
 void Set_LS_1();
 void Set_LS_2();
@@ -117,13 +120,14 @@ float seconds_since_start = 0.0f;
 uint32_t start_time_ms = 0;
 static uint32_t lastDebounceTime = 0;
 const uint32_t debounceDelay = 50;      // milliseconds
-const uint32_t flashingDuration = 150;  // 5 seconds
+const uint32_t flashingDuration = 150;  // 150 milliseconds
 uint32_t flashingStartTime = 0;
 int valueToAdjust = 0;  // Integer value to be adjusted
 uint8_t lastPlusState = GPIO_PIN_RESET;
 uint8_t lastMinusState = GPIO_PIN_RESET;
 int measurement_num = 0;
 float conversionFactor = 0;
+float threshold_value = 0.0f;
 // State transition flags
 int entered_LS1_from_LS2 = 0; // Indicates if LS1 was entered from LS2
 int entered_LS2_from_LS1 = 0; // Indicates if LS2 was entered from LS1
@@ -150,39 +154,62 @@ CASE state = CASE_INIT;
 /* USER CODE END 0 */
 
 /**
- * @brief  The application entry point.
- * @retval int
- */
-int main(void) {
-   /* USER CODE BEGIN 1 */
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+  /* USER CODE BEGIN 1 */
 
-   /* USER CODE END 1 */
+  /* USER CODE END 1 */
 
-   /* MCU
-    * Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
-   /* Reset of all peripherals, Initializes the Flash interface and the
-    * Systick. */
-   HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-   /* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-   /* USER CODE END Init */
+  /* USER CODE END Init */
 
-   /* Configure the system clock */
-   SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-   /* USER CODE BEGIN SysInit */
+  /* USER CODE BEGIN SysInit */
 
-   /* USER CODE END SysInit */
+  /* USER CODE END SysInit */
 
-   /* Initialize all configured peripherals */
-   MX_GPIO_Init();
-   MX_ADC_Init();
-   MX_USART2_UART_Init();
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_ADC_Init();
+  MX_USART2_UART_Init();
+  /* USER CODE BEGIN 2 */
+  char msg[128];
 
-   /* USER CODE BEGIN 2 */
-   char msg[128];
+  //BEGIN CHECK FOR THRESHOLD VALUE FROM WRITE BOARD
+  sprintf(msg, "%.3f\r\n", threshold_value);
+  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
+
+    //set red
+    HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+
+    HAL_Delay(1000);
+
+    read_from_SD_board();
+    sprintf(msg, "%.3f\r\n", threshold_value);
+    HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
+
+    HAL_Delay(1000);
+
+    //turn off LEDs
+    HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(User_Input_Status_Light_Blue_GPIO_Port, User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
+
+    //CONTINUE WITH NORMAL BOARD FUNCTIONS
+
    start_time_ms = HAL_GetTick();
    HAL_Delay(15);
    setNumber();
@@ -191,13 +218,15 @@ int main(void) {
    Reset_The_Whole_B();
 
 
-   /* USER CODE END 2 */
+  /* USER CODE END 2 */
 
-   /* Infinite loop */
-   /* USER CODE BEGIN WHILE */
-   while (1)
-   {
-	  /* USER CODE BEGIN 3 */
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
 	  Measurement_of_ADC_Voltage_18650();
 	  Measurement_of_ADC_Voltage_CMOS();
 	  Measurement_of_ADC_Voltage_DiffAmp_CMOS();
@@ -437,128 +466,149 @@ int main(void) {
       measurement_num++;
 
 
-      /* USER CODE END 3 */
-   }
+  /* USER CODE END 3 */
+  }
 }
 
 /**
- * @brief System Clock Configuration
- * @retval None
- */
-void SystemClock_Config(void) {
-   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-   /** Configure the main internal regulator output voltage
-    */
-   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-   /** Initializes the RCC Oscillators according to the specified parameters
-    * in the RCC_OscInitTypeDef structure.
-    */
-   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
-   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
-   RCC_OscInitStruct.MSICalibrationValue = 0;
-   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_5;
-   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
-      Error_Handler();
-   }
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
+  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-   /** Initializes the CPU, AHB and APB buses clocks
-    */
-   RCC_ClkInitStruct.ClockType =
-       RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
-   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
-      Error_Handler();
-   }
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
+  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /**
- * @brief ADC Initialization Function
- * @param None
- * @retval None
- */
-static void MX_ADC_Init(void) {
-   /* USER CODE BEGIN ADC_Init 0 */
+  * @brief ADC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC_Init(void)
+{
+
+  /* USER CODE BEGIN ADC_Init 0 */
    // ADC_Select_Voltage18650();
    // ADC_Select_VoltageCMOS();
    // ADC_Select_Current18650();
    // ADC_Select_CurrentCMOS();
-   /* USER CODE END ADC_Init 0 */
+  /* USER CODE END ADC_Init 0 */
 
-   /* USER CODE BEGIN ADC_Init 1 */
+  ADC_ChannelConfTypeDef sConfig = {0};
 
-   /* USER CODE END ADC_Init 1 */
+  /* USER CODE BEGIN ADC_Init 1 */
 
-   /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of
-    * conversion)
-    */
-   hadc.Instance = ADC1;
-   hadc.Init.OversamplingMode = DISABLE;
-   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-   hadc.Init.Resolution = ADC_RESOLUTION_12B;
-   hadc.Init.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
-   hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
-   hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-   hadc.Init.ContinuousConvMode = ENABLE;
-   hadc.Init.DiscontinuousConvMode = DISABLE;
-   hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-   hadc.Init.DMAContinuousRequests = DISABLE;
-   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-   hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-   hadc.Init.LowPowerAutoWait = DISABLE;
-   hadc.Init.LowPowerFrequencyMode = DISABLE;
-   hadc.Init.LowPowerAutoPowerOff = DISABLE;
-   if (HAL_ADC_Init(&hadc) != HAL_OK) {
-      Error_Handler();
-   }
+  /* USER CODE END ADC_Init 1 */
 
-   /** Configure for the selected ADC regular channel to be converted.
-    */
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc.Instance = ADC1;
+  hadc.Init.OversamplingMode = DISABLE;
+  hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc.Init.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
+  hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
+  hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc.Init.ContinuousConvMode = ENABLE;
+  hadc.Init.DiscontinuousConvMode = DISABLE;
+  hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc.Init.DMAContinuousRequests = DISABLE;
+  hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc.Init.LowPowerAutoWait = DISABLE;
+  hadc.Init.LowPowerFrequencyMode = DISABLE;
+  hadc.Init.LowPowerAutoPowerOff = DISABLE;
+  if (HAL_ADC_Init(&hadc) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-   /* USER CODE BEGIN ADC_Init 2 */
-
-   /* USER CODE END ADC_Init 2 */
-}
-static void MX_USART2_UART_Init(void) {
-   /* USER CODE BEGIN USART2_Init 0 */
-
-   /* USER CODE END USART2_Init 0 */
-
-   /* USER CODE BEGIN USART2_Init 1 */
-
-   /* USER CODE END USART2_Init 1 */
-   huart2.Instance = USART2;
-   huart2.Init.BaudRate = 115200;
-   huart2.Init.WordLength = UART_WORDLENGTH_8B;
-   huart2.Init.StopBits = UART_STOPBITS_1;
-   huart2.Init.Parity = UART_PARITY_NONE;
-   huart2.Init.Mode = UART_MODE_TX_RX;
-   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-   huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-   if (HAL_UART_Init(&huart2) != HAL_OK) {
-      Error_Handler();
-   }
-   /* USER CODE BEGIN USART2_Init 2 */
-
-   /* USER CODE END USART2_Init 2 */
 }
 
 /**
- * @brief GPIO Initialization Function
- * @param None
- * @retval None
- */
-static void MX_GPIO_Init(void) {
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 /* USER CODE BEGIN MX_GPIO_Init_1 */
 /* USER CODE END MX_GPIO_Init_1 */
@@ -612,6 +662,18 @@ static void MX_GPIO_Init(void) {
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SD_INPUT_DATA_Pin */
+  GPIO_InitStruct.Pin = SD_INPUT_DATA_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(SD_INPUT_DATA_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SD_INPUT_DIGIT_Pin */
+  GPIO_InitStruct.Pin = SD_INPUT_DIGIT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(SD_INPUT_DIGIT_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
@@ -998,35 +1060,50 @@ void setNumber() {
 }
 
 /*
- * Threshold returns the current threshold limit based on the value from the buttons
+ * Threshold returns the current threshold limit based on the value from the buttons. If there was a value read
+ * from the SD card (via read_from_SD_board()), then the threshold limit will be set to that value.
  *
- * @param value_from_button is an integer representing the state of the push buttons (typically valutToAdjust)
+ * NOTE: This function still allows for default button threshold input values even with a value read from the SD
+ * card. *If the button is adjusted, it will OVERRIDE the value from the SD card*.
+ *
+ * @param value_from_button is an integer representing the state of the push buttons (typically valueToAdjust)
  * @return float representing the current switching threshold limit (in Amps)
  */
 float Threshold(int value_from_button){
 	if (value_from_button == 0){
-		return .001;
+		if(threshold_value > 0)
+		{
+			return threshold_value;
+		}
+		else return .001;
 	}
 	if (value_from_button == 1){
+		threshold_value = 0;
 			return .005;
 	}
 	if (value_from_button == 2){
+		threshold_value = 0;
 			return .010;
 	}
 	if (value_from_button == 3){
-			return .10;
+		threshold_value = 0;
+			return .100;
 	}
 	if (value_from_button == 4){
+		threshold_value = 0;
 			return .300;
 	}
 	if (value_from_button == 5){
+		threshold_value = 0;
 			return .400;
 	}
 	if (value_from_button == 6){
-			return .5;
+		threshold_value = 0;
+			return 0.500;
 	}
 	if (value_from_button == 7){
-			return 1;
+		threshold_value = 0;
+			return 1.000;
 	}
 }
 
@@ -1467,6 +1544,106 @@ void Button_Debounce_Set() {
 
 }
 
+/*
+ * read_from_SD_board() allows the Switching board to read a value from the SD card. This works by reading each
+ * "data" value sent from the Writing board. Each digit is considered complete when the "digit" pin goes high.
+ * When this happens, the value is set to the (number * 10^(digit)) + previous value and the number is reset to
+ * zero. Once all the digits have been read (4 digits), it will covert the value to Amps (instead of mA) and check if this
+ * is a reasonable value. If not, set the state to the highest default value.
+ *
+ * For example: if the value being sent from the Writing board is 1.234,
+ * Uninterrupted input will look like the following:
+ *                   4       3     2   1
+ * DATA pin: 1010101000101010001010001000
+ * DIGIT pin:0000000010000000100000100010
+ *
+ * Step by step:
+ *
+ * DATA pin: 101010100 <- 4
+ * DIGIT pin:000000001 <- Digit completed
+ * value = (4 * 10^(0)) + 0 = 4
+ * NEXT DIGIT (Digit = 1)
+ *
+ * DATA pin: 1010100 <- 3
+ * DIGIT pin:0000001 <- Digit completed
+ * value = (3 * 10^(1)) + 4 = 30 + 4 = 34
+ * NEXT DIGIT (Digit = 2)
+ *
+ * DATA pin: 10100 <- 2
+ * DIGIT pin:00001 <- Digit completed
+ * value = (2 * 10^(2)) + 34 = 200 + 34 = 234
+ * NEXT DIGIT (Digit = 3)
+ *
+ * DATA pin: 100 <- 1
+ * DIGIT pin:001 <- Digit completed
+ * value = (1 * 10^(3)) + 234 = 1000 + 234 = 1234
+ * NEXT DIGIT (Digit = 4)
+ *
+ * threshold_value = 1234/1000 = 1.234 A
+ *
+ *
+ */
+void read_from_SD_board()
+{
+	float digit = 0.0f;
+	float number = 0.0f;
+	float value = 0.0f;
+	char msg[128];
+
+	while(digit < 4)
+	{
+		sprintf(msg, "%.3f,%.3f,%.3f\r\n", digit, number, value);
+		HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
+		if(HAL_GPIO_ReadPin(GPIOB, SD_INPUT_DATA_Pin))
+		{
+			// Set Red
+			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+
+			number++; //increase the number being read for specified digit
+
+			while(HAL_GPIO_ReadPin(GPIOB, SD_INPUT_DATA_Pin))//wait for input to be zero before reading next 1
+			{
+				// Turn off Red
+				HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+			}
+		}
+		if(HAL_GPIO_ReadPin(GPIOB, SD_INPUT_DIGIT_Pin))
+		{
+			//set Green
+			HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+
+			value = (number * pow(10,(digit))) + value; //value = (number * 10^(digit)) + value
+			digit++; //move to next digit
+			number = 0; //reset number
+			while(HAL_GPIO_ReadPin(GPIOB, SD_INPUT_DIGIT_Pin)) //wait for "digit" pin to reset before continuing
+			{
+				// Turn off Green
+				HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+			}
+		}
+	}
+	threshold_value = value/1000; //convert from mA to Amps
+
+	if(threshold_value >= 2) //check if new threshold is valid
+	{
+		valueToAdjust = 8;
+		// Set Red
+		HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);
+	}
+
+    // Set Yellow
+    HAL_GPIO_WritePin(User_Input_Status_Light_GPIO_Port, User_Input_Status_Light_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);
+
+	sprintf(msg, "%.3f,%.3f,%.3f\r\n", digit, number, value);
+	HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
+}
+
 
 //************************************* START OF "SET" STATE FUNCTIONS *************************************//
 
@@ -1643,32 +1820,34 @@ void Set_High(){
 /* USER CODE END 4 */
 
 /**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
-void Error_Handler(void) {
-   /* USER CODE BEGIN Error_Handler_Debug */
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
    /* User can add his own implementation to report the HAL error return state
     */
    __disable_irq();
    while (1) {
    }
-   /* USER CODE END Error_Handler_Debug */
+  /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef USE_FULL_ASSERT
+#ifdef  USE_FULL_ASSERT
 /**
- * @brief  Reports the name of the source file and the source line number
- *         where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
- * @retval None
- */
-void assert_failed(uint8_t *file, uint32_t line) {
-   /* USER CODE BEGIN 6 */
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
    /* User can add his own implementation to report the file name and line
       number, ex: printf("Wrong parameters value: file %s on line %d\r\n",
       file, line) */
-   /* USER CODE END 6 */
+  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
