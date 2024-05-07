@@ -10853,8 +10853,8 @@ void Button_Debounce_Set() {
  8004fc4:	20000328 	.word	0x20000328
 
 08004fc8 <read_from_SD_board>:
- * threshold_value = 1234/1000 = 1.234 A
  *
+ * threshold_value = 1234/1000 = 1.234 A
  *
  */
 void read_from_SD_board()

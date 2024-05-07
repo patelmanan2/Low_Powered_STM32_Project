@@ -81,6 +81,10 @@ void Error_Handler(void);
 #define User_Input_Status_Light_Green_GPIO_Port GPIOA
 #define User_Input_Status_Light_Blue_Pin GPIO_PIN_10
 #define User_Input_Status_Light_Blue_GPIO_Port GPIOA
+#define SD_OUT_DATA_Pin GPIO_PIN_4
+#define SD_OUT_DATA_GPIO_Port GPIOB
+#define SD_OUT_DIGIT_Pin GPIO_PIN_5
+#define SD_OUT_DIGIT_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

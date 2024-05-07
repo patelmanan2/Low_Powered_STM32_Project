@@ -1581,7 +1581,6 @@ void Button_Debounce_Set() {
  *
  * threshold_value = 1234/1000 = 1.234 A
  *
- *
  */
 void read_from_SD_board()
 {

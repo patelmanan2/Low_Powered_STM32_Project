@@ -103,6 +103,7 @@ int valueToAdjust = 0;  // Integer value to be adjusted
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -237,7 +238,7 @@ static void MX_ADC_Init(void)
 
   /* USER CODE END ADC_Init 0 */
 
-
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC_Init 1 */
 
@@ -267,7 +268,38 @@ static void MX_ADC_Init(void)
     Error_Handler();
   }
 
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_9;
+  sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_12;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_13;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_15;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN ADC_Init 2 */
 
   /* USER CODE END ADC_Init 2 */
@@ -367,6 +399,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, SD_CardDetect_Output_Pin|GPIO_PIN_4|User_Input_Status_Light_Red_Pin|User_Input_Status_Light_Green_Pin
                           |User_Input_Status_Light_Blue_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, SD_OUT_DATA_Pin|SD_OUT_DIGIT_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pins : Discrete_Bit_0_Pin Discrete_Bit_1_Pin */
   GPIO_InitStruct.Pin = Discrete_Bit_0_Pin|Discrete_Bit_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -393,6 +428,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(Discrete_Bit_2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SD_OUT_DATA_Pin SD_OUT_DIGIT_Pin */
+  GPIO_InitStruct.Pin = SD_OUT_DATA_Pin|SD_OUT_DIGIT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
@@ -567,17 +609,17 @@ void communicate_value(int number)
 			while(digit > 0)
 			{
 				// Set Red
-				HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_SET); //Send "1" on data pin
+				HAL_GPIO_WritePin(GPIOB, SD_OUT_DATA_Pin, GPIO_PIN_SET); //Send "1" on data pin
 				HAL_Delay(7);
-				HAL_GPIO_WritePin(User_Input_Status_Light_Red_GPIO_Port, User_Input_Status_Light_Red_Pin, GPIO_PIN_RESET);//Send "0" on data pin
+				HAL_GPIO_WritePin(GPIOB, SD_OUT_DATA_Pin, GPIO_PIN_RESET);//Send "0" on data pin
 				HAL_Delay(5);
 				digit--;
 			}//digit finished sending
 
 			// Set Green
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);//Send "1" on digit pin
+			HAL_GPIO_WritePin(GPIOB, SD_OUT_DIGIT_Pin, GPIO_PIN_SET);//Send "1" on digit pin
 			HAL_Delay(7);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);//Send "0" on digit pin
+			HAL_GPIO_WritePin(GPIOB, SD_OUT_DIGIT_Pin, GPIO_PIN_RESET);//Send "0" on digit pin
 			HAL_Delay(5);
 
 			number = number/10; //set the number to be a factor of 10 less (if number was 1000, number is now 100)
@@ -589,9 +631,9 @@ void communicate_value(int number)
 	{
 		while(place < 4)
 		{
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_SET);//Send "1" on digit pin
+			HAL_GPIO_WritePin(GPIOB, SD_OUT_DIGIT_Pin, GPIO_PIN_SET);//Send "1" on digit pin
 			HAL_Delay(7);
-			HAL_GPIO_WritePin(User_Input_Status_Light_Green_GPIO_Port, User_Input_Status_Light_Green_Pin, GPIO_PIN_RESET);//Send "0" on digit pin
+			HAL_GPIO_WritePin(GPIOB, SD_OUT_DIGIT_Pin, GPIO_PIN_RESET);//Send "0" on digit pin
 			HAL_Delay(5);
 
 			place++;
